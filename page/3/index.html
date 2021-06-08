@@ -182,48 +182,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/08/2021-DASCTF%E4%B8%89%E6%9C%88%E8%B5%9Bweb%E6%80%BB%E7%BB%93/" target="_self">
-          2021 DASCTF三月赛web总结
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/04/08/2021-DASCTF%E4%B8%89%E6%9C%88%E8%B5%9Bweb%E6%80%BB%E7%BB%93/" target="_self">
-          
-          
-            
-          
-          BestDBunion注入
-开始就提示了sql语句，单引号和空格被过滤，双引号闭合即可
-1$sql &#x3D; &quot;SELECT * FROM users WHERE id &#x3D; &#39;$query&#39; OR username &#x3D; \&quot;$query\&quot;&quot;;
-
-
-读取表名
-1http:&#x2F;&#x2F;183.129.189.
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-08 13:12" pubdate>
-              2021-04-08
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
         <a href="/2021/04/05/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" target="_self">
           无列名注入总结
         </a>
@@ -399,9 +357,9 @@ https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&a
           
           phar文件结构分析 大体来说 Phar 结构由4部分组成
 1.stub ：phar文件标识
-12345&lt;?phpPhar::mapPhar();include &#39;phar:&#x2F;&#x2F;phar.phar&#x2F;index.php&#39;;__HALT_COMPILER();?&gt;
+12345&lt;?phpPhar::mapPhar();include &#x27;phar://phar.phar/index.php&#x27;;__HALT_COMPILER();?&gt;
 
-可以理解为一个标志，格式为xxx&lt;?php xxx; __HALT_CO
+可以理解为一个标志，格式为xxx&lt;?php xxx; __HALT_COMPILER();?&gt
         </a>
       </p>
 
@@ -476,17 +434,17 @@ https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&a
           
           随便注堆叠注入
 测试时发现过滤了一些函数
-1preg_match(&quot;&#x2F;select|update|delete|drop|insert|where|\.&#x2F;i&quot;,$inject);
+1preg_match(&quot;/select|update|delete|drop|insert|where|\./i&quot;,$inject);
 
 [
 查看数据库
-11&#39;;show databases #
+11&#x27;;show databases #
 
 [
 查看表名，发现两张表
 1919810931114514
 words
-1?inject&#x3D;1&#39
+1?inject=1&#x27;;show tables
         </a>
       </p>
 
@@ -565,9 +523,9 @@ msf派生给cs只有meterpreter类型的session才能派生给cs
           
             
           
-          python编写Redis漏洞检测和利用脚本环境配置1234# wget http:&#x2F;&#x2F;download.redis.io&#x2F;releases&#x2F;redis-6.0.8.tar.gz# tar xzf redis-6.0.8.tar.gz# cd redis-6.0.8# make
+          python编写Redis漏洞检测和利用脚本环境配置1234# wget http://download.redis.io/releases/redis-6.0.8.tar.gz# tar xzf redis-6.0.8.tar.gz# cd redis-6.0.8# make
 
-执行完 make 命令后，redis-6.0.8 的 src 目录下会出现编译
+执行完 make 命令后，redis-6.0.8 的 src 目录下会出现编译后的 redis 服务程序 redis-
         </a>
       </p>
 
@@ -577,6 +535,43 @@ msf派生给cs只有meterpreter类型的session才能派生给cs
             <i class="iconfont icon-date"></i>
             <time datetime="2021-03-06 11:15" pubdate>
               2021-03-06
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/03/04/%E5%9F%BA%E4%BA%8ECOM%E7%BB%84%E4%BB%B6%E6%8E%A5%E5%8F%A3%E7%9A%84BypassUAC/" target="_self">
+          基于COM组件接口的BypassUAC
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/03/04/%E5%9F%BA%E4%BA%8ECOM%E7%BB%84%E4%BB%B6%E6%8E%A5%E5%8F%A3%E7%9A%84BypassUAC/" target="_self">
+          
+          
+            
+          
+          COM提升名称（COM Elevation Moniker）技术允许运行在用户账户控制下的应用程序用提升权限的方法来激活COM类，以此提升COM接口权限。其中，ICMLuaUtil接口提供了ShellExec方法执行命令，创建指定进程。
+原理是利用COM提升名称以高权限调用ICMLuaUtil接口，从而以高权限执行ShellExec创建指定进程。使用权限提升COM类的程序必须通过调用CoCreat
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-03-04 20:55" pubdate>
+              2021-03-04
             </time>
           </div>
         

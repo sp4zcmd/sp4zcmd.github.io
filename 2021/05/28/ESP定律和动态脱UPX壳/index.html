@@ -229,7 +229,7 @@
             
             <div class="markdown-body">
               <h1 id="关于ESP定律"><a href="#关于ESP定律" class="headerlink" title="关于ESP定律"></a>关于ESP定律</h1><p>简单来说，给栈顶ESP下硬件断点，ESP被拿走的时候就会停住，而在ESP上面push值或者pop值都不会停住</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">S:Stack栈</span><br><span class="line">P:Pointer指针</span><br></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">S:</span>Stack栈<br><span class="hljs-symbol">P:</span>Pointer指针<br></code></pre></td></tr></table></figure>
 
 
 
@@ -243,14 +243,14 @@
 <p><a href="https://imgtu.com/i/2FnVmD"><img src="https://z3.ax1x.com/2021/05/28/2FnVmD.png" srcset="/img/loading.gif" lazyload alt="2FnVmD.png"></a></p>
 <p>现在正式开始ESP定律</p>
 <p>在<code>0012FFA4</code>下一个硬件访问断点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">端点：就是运行到这个地方暂停</span><br><span class="line">访问断电：再次访问0012FFA4这个地址就停下来</span><br><span class="line">硬件访问端点：可以设置在任何位置上（普通软件断点可以用于内存，堆栈上。要记住）</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">端点：就是运行到这个地方暂停<br>访问断电：再次访问0012FFA4这个地址就停下来<br>硬件访问端点：可以设置在任何位置上（普通软件断点可以用于内存，堆栈上。要记住）<br></code></pre></td></tr></table></figure>
 
 
 
 <p>下列语句执行完后</p>
 <p><a href="https://imgtu.com/i/2FnKfI"><img src="https://z3.ax1x.com/2021/05/28/2FnKfI.png" srcset="/img/loading.gif" lazyload alt="2FnKfI.png"></a></p>
 <p>上面语句执行完后，结果如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">访问断点：0012FFA4 EDI这个羽毛球不在桶里的时候，一改变就停止</span><br></pre></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stata">访问断点：0012FFA4 <span class="hljs-keyword">EDI</span>这个羽毛球不在桶里的时候，一改变就停止<br></code></pre></td></tr></table></figure>
 
 <p><a href="https://imgtu.com/i/2FnZ0e"><img src="https://z3.ax1x.com/2021/05/28/2FnZ0e.png" srcset="/img/loading.gif" lazyload alt="2FnZ0e.png"></a></p>
 <p>现在给<code>0012FFAC</code>处下了硬件访问断点，研究一下怎么才会停下</p>
@@ -261,7 +261,7 @@
 <p><a href="https://imgtu.com/i/2Fn3X8"><img src="https://z3.ax1x.com/2021/05/28/2Fn3X8.png" srcset="/img/loading.gif" lazyload alt="2Fn3X8.png"></a></p>
 <p>这个才会停下，一定要把<code>0012FFAC</code>位置上的给拿走了（pop），才会停住</p>
 <p><a href="https://imgtu.com/i/2FnUts"><img src="https://z3.ax1x.com/2021/05/28/2FnUts.png" srcset="/img/loading.gif" lazyload alt="2FnUts.png"></a></p>
-<h2 id="堆栈平衡"><a href="#堆栈平衡" class="headerlink" title="堆栈平衡"></a>堆栈平衡</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">简单来说：</span><br><span class="line">程序1（解压代码）执行过程中往栈里先push再pop-&gt;执行结束后栈为空，真正代码开始执行，找到OEP</span><br></pre></td></tr></table></figure>
+<h2 id="堆栈平衡"><a href="#堆栈平衡" class="headerlink" title="堆栈平衡"></a>堆栈平衡</h2><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs avrasm">简单来说：<br>程序<span class="hljs-number">1</span>（解压代码）执行过程中往栈里先<span class="hljs-keyword">push</span>再<span class="hljs-keyword">pop</span>-&gt;执行结束后栈为空，真正代码开始执行，找到OEP<br></code></pre></td></tr></table></figure>
 
 <p>upx加壳后的程序运行时会先加载upx加入的代码（我们叫它程序1），把压缩后的代码还原出来。程序1是一个完整的程序，作用是解码后面的代码</p>
 <p><a href="https://imgtu.com/i/2FnQpt"><img src="https://z3.ax1x.com/2021/05/28/2FnQpt.png" srcset="/img/loading.gif" lazyload alt="2FnQpt.png"></a></p>
@@ -280,7 +280,7 @@
 <p><a href="https://imgtu.com/i/2Fnahn"><img src="https://z3.ax1x.com/2021/05/28/2Fnahn.png" srcset="/img/loading.gif" lazyload alt="2Fnahn.png"></a></p>
 <h2 id="ESP定律的变形用法"><a href="#ESP定律的变形用法" class="headerlink" title="ESP定律的变形用法"></a>ESP定律的变形用法</h2><p>初始状态的ESP地址为<code>0012FFC4</code>，在它的上一个地址<code>0012FFC0</code>下一个硬件访问断点</p>
 <p><a href="https://imgtu.com/i/2Fnwpq"><img src="https://z3.ax1x.com/2021/05/28/2Fnwpq.png" srcset="/img/loading.gif" lazyload alt="2Fnwpq.png"></a></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">初始ESP指向0012FFC4，upx加壳程序运行时先执行解压代码，解压代码会在栈里先pushad再popad，在解压代码执行完后栈空了，只要事先在0012FFC4的上面0012FFC0下一个硬件访问断点，这样popad拿到初始ESP的时候就停住了，</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs x86asm">初始<span class="hljs-built_in">ESP</span>指向0012FFC4，upx加壳程序运行时先执行解压代码，解压代码会在栈里先<span class="hljs-keyword">pushad</span>再<span class="hljs-keyword">popad</span>，在解压代码执行完后栈空了，只要事先在0012FFC4的上面0012FFC0下一个硬件访问断点，这样<span class="hljs-keyword">popad</span>拿到初始<span class="hljs-built_in">ESP</span>的时候就停住了，<br></code></pre></td></tr></table></figure>
 
 
 

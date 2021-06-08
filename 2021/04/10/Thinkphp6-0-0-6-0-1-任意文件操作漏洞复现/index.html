@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      634 字
+      623 字
     </span>
   
 
@@ -235,7 +235,7 @@
 <h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><p>修改cookie为<code>PHPSESSID=aaaabbbbccccddddeeeeffff1234.php</code>，文件名长度必须等于32位</p>
 <p><img src="https://i.loli.net/2021/04/10/rAE1VqHf87vWnNK.png" srcset="/img/loading.gif" lazyload alt="image-20210410121629403.png"></p>
 <p>写入成功</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost&#x2F;tp6.0.0&#x2F;runtime&#x2F;session&#x2F;sess_aaaabbbbccccddddeeeeffff1234.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>localhost<span class="hljs-regexp">/tp6.0.0/</span>runtime<span class="hljs-regexp">/session/</span>sess_aaaabbbbccccddddeeeeffff1234.php<br></code></pre></td></tr></table></figure>
 
 <p><img src="https://www.hualigs.cn/image/607146af4dd4b.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>写入文件内容</p>
@@ -284,7 +284,7 @@
 <p><img src="https://www.hualigs.cn/image/607146a99aef8.jpg" srcset="/img/loading.gif" lazyload></p>
 <p><img src="https://www.hualigs.cn/image/607146b00fce8.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>成功写入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;70366b0f-3c41-4ddb-8e92-2f4fae6b1b2e.node3.buuoj.cn&#x2F;runtime&#x2F;session&#x2F;sess_aaaabbbbccccddddeeeeffff1234.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">70366</span>b<span class="hljs-number">0</span>f-<span class="hljs-number">3</span>c<span class="hljs-number">41</span>-<span class="hljs-number">4</span>ddb-<span class="hljs-number">8</span>e<span class="hljs-number">92</span>-<span class="hljs-number">2</span>f<span class="hljs-number">4</span>fae<span class="hljs-number">6</span>b<span class="hljs-number">1</span>b<span class="hljs-number">2</span>e.node<span class="hljs-number">3</span>.buuoj.cn/runtime/session/sess_aaaabbbbccccddddeeeeffff<span class="hljs-number">1234</span>.php<br></code></pre></td></tr></table></figure>
 
 <p><img src="https://www.hualigs.cn/image/607146b09f419.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>蚁剑连接后发现flag为空，根目录存在readflag文件，需要执行readflag</p>

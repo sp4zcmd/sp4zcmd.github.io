@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      340 字
+      335 字
     </span>
   
 
@@ -233,16 +233,16 @@
 <h2 id="InnoDb"><a href="#InnoDb" class="headerlink" title="InnoDb"></a>InnoDb</h2><p>要求：Mysql版本&gt;5.6</p>
 <p>inndb中有innodb_index_stats和innodb_table_stats两张表，这两张表中存储了数据库和其中的数据表的信息，但是没有存储列名。</p>
 <p>查询表名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(table_name) from mysql.innodb_table_stats where database_name&#x3D;database();</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <span class="hljs-keyword">group_concat</span>(table_name) <span class="hljs-keyword">from</span> mysql.innodb_table_stats <span class="hljs-keyword">where</span> database_name=<span class="hljs-keyword">database</span>();<br></code></pre></td></tr></table></figure>
 
 
 
 <h2 id="sys"><a href="#sys" class="headerlink" title="sys"></a>sys</h2><p>要求：Mysql版本&gt;5.7</p>
 <p>通过查询sys.schema_table_statistics_with_buffer和sys.schema_auto_increment_columns获得表名</p>
-<h3 id="sys-schema-auto-increment-columns"><a href="#sys-schema-auto-increment-columns" class="headerlink" title="sys.schema_auto_increment_columns"></a>sys.schema_auto_increment_columns</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(table_name)from sys.schema_auto_increment_columns where table_schema&#x3D;database();</span><br></pre></td></tr></table></figure>
+<h3 id="sys-schema-auto-increment-columns"><a href="#sys-schema-auto-increment-columns" class="headerlink" title="sys.schema_auto_increment_columns"></a>sys.schema_auto_increment_columns</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <span class="hljs-keyword">group_concat</span>(table_name)<span class="hljs-keyword">from</span> sys.schema_auto_increment_columns <span class="hljs-keyword">where</span> table_schema=<span class="hljs-keyword">database</span>();<br></code></pre></td></tr></table></figure>
 
 <p><img src="https://i.loli.net/2021/04/05/rGXQ39aUF2iejdp.png" srcset="/img/loading.gif" lazyload alt="image-20210405132743251.png"></p>
-<h3 id="sys-schema-table-statistics-with-buffer"><a href="#sys-schema-table-statistics-with-buffer" class="headerlink" title="sys.schema_table_statistics_with_buffer"></a>sys.schema_table_statistics_with_buffer</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select group_concat(table_name)from sys.schema_table_statistics_with_buffer where table_schema&#x3D;database();</span><br></pre></td></tr></table></figure>
+<h3 id="sys-schema-table-statistics-with-buffer"><a href="#sys-schema-table-statistics-with-buffer" class="headerlink" title="sys.schema_table_statistics_with_buffer"></a>sys.schema_table_statistics_with_buffer</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <span class="hljs-keyword">group_concat</span>(table_name)<span class="hljs-keyword">from</span> sys.schema_table_statistics_with_buffer <span class="hljs-keyword">where</span> table_schema=<span class="hljs-keyword">database</span>();<br></code></pre></td></tr></table></figure>
 
 <p><img src="https://i.loli.net/2021/04/05/fpPjoHKAIeC1kcV.png" srcset="/img/loading.gif" lazyload alt="image-20210405132837988.png"></p>
 <h1 id="无列名注入"><a href="#无列名注入" class="headerlink" title="无列名注入"></a>无列名注入</h1><p>无列名注入的原理是依靠union select时产生的虚拟表来查询数据。</p>
@@ -251,15 +251,15 @@
 <p>union select产生的虚拟表，必须保证查询列数是准确的</p>
 <p><img src="https://i.loli.net/2021/04/05/JpVIDu3oLfjya6z.png" srcset="/img/loading.gif" lazyload alt="image-20210405131751893.png"></p>
 <p>只要给虚拟表取一个别名，即可查询其中的数据，下面查询了第二列的数据</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select &#96;2&#96; from (select 1,2,3 union select * from users)n;</span><br></pre></td></tr></table></figure>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-keyword">select</span> <span class="hljs-string">`2`</span> from (<span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">select</span> * <span class="hljs-title">from</span> <span class="hljs-title">users</span>)<span class="hljs-title">n</span>;</span><br></code></pre></td></tr></table></figure>
 
 <p><img src="https://i.loli.net/2021/04/05/Y2jrt3ITfaL5MNe.png" srcset="/img/loading.gif" lazyload alt="image-20210405131922758.png"></p>
 <p>在反引号被过滤时还可以使用给列起别名的方式查询</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select b from (select 1,2 as b,3 union select * from users)n;</span><br></pre></td></tr></table></figure>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-keyword">select</span> b from (<span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-number">2</span> <span class="hljs-keyword">as</span> b,<span class="hljs-number">3</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">select</span> * <span class="hljs-title">from</span> <span class="hljs-title">users</span>)<span class="hljs-title">n</span>;</span><br></code></pre></td></tr></table></figure>
 
 <p><img src="https://i.loli.net/2021/04/05/6XKGLpoBsx4QWyR.png" srcset="/img/loading.gif" lazyload alt="image-20210405132241116.png"></p>
 <p>还可以使用<code>表名.列名</code>这种形式，n是我们给虚拟表起的别名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select n.2 from (select 1,2,3 union select * from users)n;</span><br></pre></td></tr></table></figure>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-keyword">select</span> n.<span class="hljs-number">2</span> from (<span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">select</span> * <span class="hljs-title">from</span> <span class="hljs-title">users</span>)<span class="hljs-title">n</span>;</span><br></code></pre></td></tr></table></figure>
 
 <p><img src="https://i.loli.net/2021/04/05/1oPOW4lgibyE9rG.png" srcset="/img/loading.gif" lazyload alt="image-20210405132353492.png"></p>
 
