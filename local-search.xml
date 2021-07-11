@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>记一次黑盒测试</title>
+    <link href="/2021/07/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95/"/>
+    <url>/2021/07/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95/</url>
+    
+    <content type="html"><![CDATA[<h1 id="测试过程"><a href="#测试过程" class="headerlink" title="测试过程"></a>测试过程</h1><p>黑盒测试中发现目标网站登录处存在注入，目标系统统一使用sql server。这里传参有点问题，sqlmap没跑出来，所以手动编写poc验证</p><p><a href="https://imgtu.com/i/WCn1eS"><img src="https://z3.ax1x.com/2021/07/11/WCn1eS.png" alt="WCn1eS.png"></a></p><p>编写poc验证，读取数据库名</p><p><a href="https://imgtu.com/i/WCnJij"><img src="https://z3.ax1x.com/2021/07/11/WCnJij.png" alt="WCnJij.png"></a></p><p><a href="https://imgtu.com/i/WCnYJs"><img src="https://z3.ax1x.com/2021/07/11/WCnYJs.png" alt="WCnYJs.png"></a></p><p>fofa查找一波同类站点</p><p><a href="https://imgtu.com/i/WCn3dg"><img src="https://z3.ax1x.com/2021/07/11/WCn3dg.png" alt="WCn3dg.png"></a></p><p>从报错信息中得到了一些模糊的信息，查找到了开发公司，通过查看该公司官网，发现旗下还有一款产品存在同样漏洞</p><p><a href="https://imgtu.com/i/WCn8oQ"><img src="https://z3.ax1x.com/2021/07/11/WCn8oQ.png" alt="WCn8oQ.png"></a></p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>总体而言技术含量不高。黑盒测试挖掘cnvd证书的关键是从点到面，定位到开发公司，再fofa或google批量查找同类型的系统，从单一网站漏洞延申到通用漏洞。</p><p><a href="https://imgtu.com/i/WCntWn"><img src="https://z3.ax1x.com/2021/07/11/WCntWn.png" alt="WCntWn.png"></a></p><p><a href="https://imgtu.com/i/WCnNzq"><img src="https://z3.ax1x.com/2021/07/11/WCnNzq.png" alt="WCnNzq.png"></a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>网鼎杯 2020 朱雀组 Think Java</title>
     <link href="/2021/07/11/%E7%BD%91%E9%BC%8E%E6%9D%AF-2020-%E6%9C%B1%E9%9B%80%E7%BB%84-Think-Java/"/>
     <url>/2021/07/11/%E7%BD%91%E9%BC%8E%E6%9D%AF-2020-%E6%9C%B1%E9%9B%80%E7%BB%84-Think-Java/</url>
