@@ -18,7 +18,7 @@
   <meta name="author" content="sp4z">
   <meta name="keywords" content="">
   
-  <title>ThinkPHP3.2.x RCE漏洞分析 - sp4z&#39;s Blog</title>
+  <title>网鼎杯 2020 半决赛 faka - sp4z&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="ThinkPHP3.2.x RCE漏洞分析">
+            <span class="h2" id="subtitle" title="网鼎杯 2020 半决赛 faka">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-07-13 11:47" pubdate>
-        2021年7月13日 中午
+      <time datetime="2021-07-17 07:55" pubdate>
+        2021年7月17日 早上
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      681 字
+      603 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      9
+      7
        分钟
     </span>
   
@@ -225,85 +225,77 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">ThinkPHP3.2.x RCE漏洞分析</h1>
+            <h1 style="display: none">网鼎杯 2020 半决赛 faka</h1>
             
             <div class="markdown-body">
-              <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>修改控制器</p>
-<p>/Application/Home/Controller/IndexController.class.php</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"><span class="hljs-variable">$value</span>=<span class="hljs-string">&#x27;&#x27;</span></span>)</span>&#123;<br>    <span class="hljs-keyword">$this</span>-&gt;assign(<span class="hljs-variable">$value</span>);<br>    <span class="hljs-keyword">$this</span>-&gt;display();<br>&#125;<br></code></pre></td></tr></table></figure>
-
-
-
-<p>新建文件，内容随意</p>
-<p>/Application/Home/View/Index/index.html</p>
-<p><a href="https://imgtu.com/i/WksqJS"><img src="https://z3.ax1x.com/2021/07/13/WksqJS.png" srcset="/img/loading.gif" lazyload alt="WksqJS.png"></a></p>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>利用条件：assign方法的第一个变量可控。</p>
-<p>向日志文件写入攻击代码</p>
-<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">index</span>.php?m=<span class="hljs-comment">--&gt;&lt;?=phpinfo();?&gt;</span><br></code></pre></td></tr></table></figure>
-
-<p><a href="https://imgtu.com/i/WksWxH"><img src="https://z3.ax1x.com/2021/07/13/WksWxH.png" srcset="/img/loading.gif" lazyload alt="WksWxH.png"></a></p>
-<p>包含日志文件，日志文件的命名规则为<code>年_月_日.log</code></p>
-<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-meta">index</span>.php?m=Home<span class="hljs-variable">&amp;c</span>=<span class="hljs-meta">Index</span><span class="hljs-variable">&amp;a</span>=<span class="hljs-meta">index</span><span class="hljs-variable">&amp;value</span>[_filename]=./Application/Runtime/Logs/Common/21_07_12.log<br></code></pre></td></tr></table></figure>
-
-<p><a href="https://imgtu.com/i/WksRRe"><img src="https://z3.ax1x.com/2021/07/13/WksRRe.png" srcset="/img/loading.gif" lazyload alt="WksRRe.png"></a></p>
-<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>先进入assign方法</p>
-<p><a href="https://imgtu.com/i/WksgPO"><img src="https://z3.ax1x.com/2021/07/13/WksgPO.png" srcset="/img/loading.gif" lazyload alt="WksgPO.png"></a></p>
-<p>把assign方法的第一个参数赋值给$this-&gt;tVar</p>
-<p><a href="https://imgtu.com/i/Wks6IK"><img src="https://z3.ax1x.com/2021/07/13/Wks6IK.png" srcset="/img/loading.gif" lazyload alt="Wks6IK.png"></a></p>
-<p><code>ThinkPHP/Library/Think/View.class.php</code></p>
-<p>assign方法结束后进入display</p>
-<p><a href="https://imgtu.com/i/Wks2GD"><img src="https://z3.ax1x.com/2021/07/13/Wks2GD.png" srcset="/img/loading.gif" lazyload alt="Wks2GD.png"></a></p>
-<p><code>ThinkPHP/Library/Think/View.class.php#fetch</code></p>
-<p>进入fetch方法，因为模板文件名为空，所以先调用parseTemplate获取默认模板文件（./Application/Home/View/Index/index.html），也就是之前新建的文件。</p>
-<p><a href="https://imgtu.com/i/Wks5qI"><img src="https://z3.ax1x.com/2021/07/13/Wks5qI.png" srcset="/img/loading.gif" lazyload alt="Wks5qI.png"></a></p>
-<p>然后构造了params数组，包含了传入的value数组和默认模板文件名</p>
-<p><a href="https://imgtu.com/i/WksoZt"><img src="https://z3.ax1x.com/2021/07/13/WksoZt.png" srcset="/img/loading.gif" lazyload alt="WksoZt.png"></a></p>
-<p><code>/ThinkPHP/Library/Think/Hook.class.php</code></p>
-<p>进入exec</p>
-<p><a href="https://imgtu.com/i/WksTdP"><img src="https://z3.ax1x.com/2021/07/13/WksTdP.png" srcset="/img/loading.gif" lazyload alt="WksTdP.png"></a></p>
-<p><code>/ThinkPHP/Library/Think/Hook.class.php</code></p>
-<p>实际调用Behavior\ParseTemplateBehavior-&gt;run，把params数组作为参数</p>
-<p><a href="https://imgtu.com/i/Wks7If"><img src="https://z3.ax1x.com/2021/07/13/Wks7If.png" srcset="/img/loading.gif" lazyload alt="Wks7If.png"></a></p>
-<p><code>/ThinkPHP/Library/Behavior/ParseTemplateBehavior.class.php</code></p>
-<p>调用fetch</p>
-<p><a href="https://imgtu.com/i/WksLRg"><img src="https://z3.ax1x.com/2021/07/13/WksLRg.png" srcset="/img/loading.gif" lazyload alt="WksLRg.png"></a></p>
-<p><code>/ThinkPHP/Library/Think/Template.class.php</code></p>
-<p>获取缓存文件路径，然后进入load方法</p>
-<p><a href="https://imgtu.com/i/Wksbi8"><img src="https://z3.ax1x.com/2021/07/13/Wksbi8.png" srcset="/img/loading.gif" lazyload alt="Wksbi8.png"></a></p>
-<p><code>/ThinkPHP/Library/Think/Storage/Driver/File.class.php</code></p>
-<p>调用extract，将$vars数组作为参数进行变量覆盖。把$_filename覆盖为日志文件名，然后包含日志文件</p>
-<p><a href="https://imgtu.com/i/Wks4sA"><img src="https://z3.ax1x.com/2021/07/13/Wks4sA.png" srcset="/img/loading.gif" lazyload alt="Wks4sA.png"></a></p>
-<p>再回来看看payload，实际上只是传入了一个包含日志文件名的value数组，只需要关注它的流向就可以了</p>
-<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-meta">index</span>.php?m=Home<span class="hljs-variable">&amp;c</span>=<span class="hljs-meta">Index</span><span class="hljs-variable">&amp;a</span>=<span class="hljs-meta">index</span><span class="hljs-variable">&amp;value</span>[_filename]=./Application/Runtime/Logs/Common/21_07_12.log<br></code></pre></td></tr></table></figure>
-
-
-
-<p><strong>传入的value数组的流向：</strong></p>
-<ol>
-<li><p>在assign()方法中，传入的value数组被赋值给$this-&gt;tVar</p>
-<p><a href="https://imgtu.com/i/Wky9oV"><img src="https://z3.ax1x.com/2021/07/13/Wky9oV.png" srcset="/img/loading.gif" lazyload alt="Wky9oV.png"></a></p>
-</li>
-<li><p>在<code>ThinkPHP/Library/Think/View.class.php#fetch</code>中被赋值给params数组，然后作为第二个参数传给listen</p>
-<p><a href="https://imgtu.com/i/WksOzQ"><img src="https://z3.ax1x.com/2021/07/13/WksOzQ.png" srcset="/img/loading.gif" lazyload alt="WksOzQ.png"></a></p>
-</li>
-<li><p>在<code>/ThinkPHP/Library/Think/Hook.class.php#listen</code>中作为第三个参数传给exec</p>
-<p><a href="https://imgtu.com/i/WksjMj"><img src="https://z3.ax1x.com/2021/07/13/WksjMj.png" srcset="/img/loading.gif" lazyload alt="WksjMj.png"></a></p>
-</li>
-<li><p>在<code>/ThinkPHP/Library/Think/Hook.class.php#exec</code>中调用Behavior\ParseTemplateBehavior-&gt;run，把params数组作为参数</p>
-<p><a href="https://imgtu.com/i/WksxLn"><img src="https://z3.ax1x.com/2021/07/13/WksxLn.png" srcset="/img/loading.gif" lazyload alt="WksxLn.png"></a></p>
-</li>
-<li><p>在<code>/ThinkPHP/Library/Behavior/ParseTemplateBehavior.class.php#run</code>中，params[‘value’]也就是value数组被作为第二个参数传入fetch</p>
-<p><a href="https://imgtu.com/i/WkySZq"><img src="https://z3.ax1x.com/2021/07/13/WkySZq.png" srcset="/img/loading.gif" lazyload alt="WkySZq.png"></a></p>
-</li>
-<li><p>在<code>/ThinkPHP/Library/Think/Template.class.php#fetch</code>中又继续作为第二个参数传入load</p>
-<p><a href="https://imgtu.com/i/Wkypd0"><img src="https://z3.ax1x.com/2021/07/13/Wkypd0.png" srcset="/img/loading.gif" lazyload alt="Wkypd0.png"></a></p>
-</li>
-<li><p>在<code>/ThinkPHP/Library/Think/Storage/Driver/File.class.php#load</code>中进行变量覆盖，最终包含传入value数组中的<code>_filename</code>，执行了向日志文件中写入的代码，实现RCE</p>
-<p><a href="https://imgtu.com/i/Wksvss"><img src="https://z3.ax1x.com/2021/07/13/Wksvss.png" srcset="/img/loading.gif" lazyload alt="Wksvss.png"></a></p>
-</li>
+              <h1 id="网鼎杯-2020-半决赛-faka"><a href="#网鼎杯-2020-半决赛-faka" class="headerlink" title="[网鼎杯 2020 半决赛]faka"></a>[网鼎杯 2020 半决赛]faka</h1><h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><ol>
+<li>备份sql文件泄露账号密码</li>
+<li>代码审计（文件上传、任意文件读取）</li>
 </ol>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在代码审计知识星球看到了这个新出的漏洞，分析后感觉更适合作为权限维持的后门，实际业务代码中应该很少有这种情况</p>
-<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://mp.weixin.qq.com/s?__biz=MzkzNjI2MzgzOA==&amp;mid=2247483682&amp;idx=1&amp;sn=e7cb243b2c320610356d100ca05bdc70&amp;chksm=c2a028d3f5d7a1c5ea3a4f636896a2eca12479418bbf409309af7378dbf956b0bc0545a226d4&amp;mpshare=1&amp;scene=23&amp;srcid=07121TA77hb0MtSPJ6UdbS0q&amp;sharer_sharetime=1626084466936&amp;sharer_shareid=f045ea83ab618e2dffd974c4e052cd1b#rd">https://mp.weixin.qq.com/s?__biz=MzkzNjI2MzgzOA==&amp;mid=2247483682&amp;idx=1&amp;sn=e7cb243b2c320610356d100ca05bdc70&amp;chksm=c2a028d3f5d7a1c5ea3a4f636896a2eca12479418bbf409309af7378dbf956b0bc0545a226d4&amp;mpshare=1&amp;scene=23&amp;srcid=07121TA77hb0MtSPJ6UdbS0q&amp;sharer_sharetime=1626084466936&amp;sharer_shareid=f045ea83ab618e2dffd974c4e052cd1b#rd</a></p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="解法一（文件读取）"><a href="#解法一（文件读取）" class="headerlink" title="解法一（文件读取）"></a>解法一（文件读取）</h3><p>开始给了源码，目标是一个发卡网站</p>
+<p><a href="https://imgtu.com/i/W1iZ26"><img src="https://z3.ax1x.com/2021/07/17/W1iZ26.png" srcset="/img/loading.gif" lazyload alt="W1iZ26.png"></a></p>
+<p>查看sql文件获取admin密码</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">admin</span> admincccbbb<span class="hljs-number">123</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/W1ipKU"><img src="https://z3.ax1x.com/2021/07/17/W1ipKU.png" srcset="/img/loading.gif" lazyload alt="W1ipKU.png"></a></p>
+<p>登录成功</p>
+<p><a href="https://imgtu.com/i/W1iCb4"><img src="https://z3.ax1x.com/2021/07/17/W1iCb4.png" srcset="/img/loading.gif" lazyload alt="W1iCb4.png"></a></p>
+<p>备份管理处由数据库备份功能</p>
+<p><a href="https://imgtu.com/i/W1iV8x"><img src="https://z3.ax1x.com/2021/07/17/W1iV8x.png" srcset="/img/loading.gif" lazyload alt="W1iV8x.png"></a></p>
+<p>可能存在任意文件读取漏洞</p>
+<p><a href="https://imgtu.com/i/W1i9rF"><img src="https://z3.ax1x.com/2021/07/17/W1i9rF.png" srcset="/img/loading.gif" lazyload alt="W1i9rF.png"></a></p>
+<p>/application/manage/controller/Backup.php</p>
+<p>看下源码，确实可以读取文件</p>
+<p><a href="https://imgtu.com/i/W1iiVJ"><img src="https://z3.ax1x.com/2021/07/17/W1iiVJ.png" srcset="/img/loading.gif" lazyload alt="W1iiVJ.png"></a></p>
+<p>读取/etc/passwd成功</p>
+<p><a href="https://imgtu.com/i/W1PzvT"><img src="https://z3.ax1x.com/2021/07/17/W1PzvT.png" srcset="/img/loading.gif" lazyload alt="W1PzvT.png"></a></p>
+<p>读取flag，开始读/flag没有结果，后面才知道flag在flag.txt里。。。。。</p>
+<p><a href="https://imgtu.com/i/W1iFa9"><img src="https://z3.ax1x.com/2021/07/17/W1iFa9.png" srcset="/img/loading.gif" lazyload alt="W1iFa9.png"></a></p>
+<h3 id="解法二（文件上传）"><a href="#解法二（文件上传）" class="headerlink" title="解法二（文件上传）"></a>解法二（文件上传）</h3><p>找一个上传点</p>
+<p><a href="https://imgtu.com/i/W1inKO"><img src="https://z3.ax1x.com/2021/07/17/W1inKO.png" srcset="/img/loading.gif" lazyload alt="W1inKO.png"></a></p>
+<p>抓个包看看，发现会经过两步</p>
+<p><a href="https://imgtu.com/i/W1iEP1"><img src="https://z3.ax1x.com/2021/07/17/W1iEP1.png" srcset="/img/loading.gif" lazyload alt="W1iEP1.png"></a></p>
+<p><a href="https://imgtu.com/i/W1ik5R"><img src="https://z3.ax1x.com/2021/07/17/W1ik5R.png" srcset="/img/loading.gif" lazyload alt="W1ik5R.png"></a></p>
+<p>来看upload函数，先把post参数md5分割成两半，$md5[0]为前16位，$md5[1]为后16位，然后把<code>md5前16位/md5后16位.后缀名</code>赋值给$filename。这里进行一次token验证，由于session_id默认为空，token就等于md5($filename)。token验证后进入move函数</p>
+<p><a href="https://imgtu.com/i/W1iKqe"><img src="https://z3.ax1x.com/2021/07/17/W1iKqe.png" srcset="/img/loading.gif" lazyload alt="W1iKqe.png"></a></p>
+<p>move函数的第二个参数$savename等于md5参数的后16位，进入buildSaveName</p>
+<p><a href="https://imgtu.com/i/W1iurD"><img src="https://z3.ax1x.com/2021/07/17/W1iurD.png" srcset="/img/loading.gif" lazyload alt="W1iurD.png"></a></p>
+<p>因为这里是强类型判断，不进入if。接下来是判断md5后16位中是否包含<code>.</code>，如果包含就不拼接后缀名到后面。直接在md5参数中传入<code>.php</code>文件名就绕过限制了。最终返回的文件路径是<code>static/upload/md5前16位/md5后12位.php</code></p>
+<p><a href="https://imgtu.com/i/W1iexK"><img src="https://z3.ax1x.com/2021/07/17/W1iexK.png" srcset="/img/loading.gif" lazyload alt="W1iexK.png"></a></p>
+<p>流程</p>
+<p><a href="https://imgtu.com/i/W1iJRP"><img src="https://z3.ax1x.com/2021/07/17/W1iJRP.png" srcset="/img/loading.gif" lazyload alt="W1iJRP.png"></a></p>
+<p>在上传时修改下md5和token</p>
+<p>生成token</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs abnf">echo md5(<span class="hljs-string">&quot;9838e3992b1596cf/a777ae3206a4.php.png&quot;</span>)<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/W1ilad"><img src="https://z3.ax1x.com/2021/07/17/W1ilad.png" srcset="/img/loading.gif" lazyload alt="W1ilad.png"></a></p>
+<p>可以看到已经上传php文件了</p>
+<p><a href="https://imgtu.com/i/W1i8PI"><img src="https://z3.ax1x.com/2021/07/17/W1i8PI.png" srcset="/img/loading.gif" lazyload alt="W1i8PI.png"></a></p>
+<h3 id="未授权添加用户"><a href="#未授权添加用户" class="headerlink" title="未授权添加用户"></a>未授权添加用户</h3><p>/application/admin/controller/Index.php</p>
+<p>由于没有登录时session为空，所以<code>intval(session(&#39;user.id&#39;))</code>返回空，当没有传参数id时<code>intval($this-&gt;request-&gt;request(&#39;id&#39;))</code>也为空，两者相等进入_form</p>
+<p><a href="https://imgtu.com/i/W1iaqg"><img src="https://z3.ax1x.com/2021/07/17/W1iaqg.png" srcset="/img/loading.gif" lazyload alt="W1iaqg.png"></a></p>
+<p>_form中会直接把post参数存入systemuser表</p>
+<p><a href="https://imgtu.com/i/W1iwZQ"><img src="https://z3.ax1x.com/2021/07/17/W1iwZQ.png" srcset="/img/loading.gif" lazyload alt="W1iwZQ.png"></a></p>
+<p>/admin/index/info</p>
+<p><a href="https://imgtu.com/i/W1iUsS"><img src="https://z3.ax1x.com/2021/07/17/W1iUsS.png" srcset="/img/loading.gif" lazyload alt="W1iUsS.png"></a></p>
+<p><img src="%E7%BD%91%E9%BC%8E%E6%9D%AF-2020-%E5%8D%8A%E5%86%B3%E8%B5%9B-faka.assets/image-20210715135151662.png" srcset="/img/loading.gif" lazyload alt="image-20210715135151662"></p>
+<p>数据保存成功</p>
+<p><a href="https://imgtu.com/i/W1i1IA"><img src="https://z3.ax1x.com/2021/07/17/W1i1IA.png" srcset="/img/loading.gif" lazyload alt="W1i1IA.png"></a></p>
+<p>可以登录但是权限很低</p>
+<p><a href="https://imgtu.com/i/W1iYxf"><img src="https://z3.ax1x.com/2021/07/17/W1iYxf.png" srcset="/img/loading.gif" lazyload alt="W1iYxf.png"></a></p>
+<p>再看看表的字段，发现admin的authorize字段为3</p>
+<p><a href="https://imgtu.com/i/W1iNM8"><img src="https://z3.ax1x.com/2021/07/17/W1iNM8.png" srcset="/img/loading.gif" lazyload alt="W1iNM8.png"></a></p>
+<p>重新注册用户，post传参authorize字段为3</p>
+<p><a href="https://imgtu.com/i/W1i0aj"><img src="https://z3.ax1x.com/2021/07/17/W1i0aj.png" srcset="/img/loading.gif" lazyload alt="W1i0aj.png"></a></p>
+<p>登录后拿到admin权限</p>
+<p><a href="https://imgtu.com/i/W1irin"><img src="https://z3.ax1x.com/2021/07/17/W1irin.png" srcset="/img/loading.gif" lazyload alt="W1irin.png"></a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>在审计文件上传漏洞时要多注意文件名是否有地方可控，注意可控参数和文件名之间的关系</li>
+<li>挖掘未授权访问漏洞时，可以先观察一些关键方法处有无对登录状态（session）的判断，尝试绕过</li>
+</ol>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://xz.aliyun.com/t/7838">https://xz.aliyun.com/t/7838</a></p>
+<p><a href="https://www.cnblogs.com/W4nder/p/14078695.html">https://www.cnblogs.com/W4nder/p/14078695.html</a></p>
+<p><a href="https://blog.csdn.net/rfrder/article/details/115067196">https://blog.csdn.net/rfrder/article/details/115067196</a></p>
 
             </div>
             <hr>
@@ -324,9 +316,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/07/17/De1CTF-2019-ShellShellShell/">
+                      <a href="/2021/07/17/buu%E7%BB%83%E4%B9%A0%E8%AE%B0%E5%BD%95/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">De1CTF 2019 ShellShellShell</span>
+                        <span class="hidden-mobile">buu练习记录</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -334,8 +326,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/07/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95/">
-                        <span class="hidden-mobile">记一次黑盒测试</span>
+                      <a href="/2021/07/17/De1CTF-2019-ShellShellShell/">
+                        <span class="hidden-mobile">De1CTF 2019 ShellShellShell</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
