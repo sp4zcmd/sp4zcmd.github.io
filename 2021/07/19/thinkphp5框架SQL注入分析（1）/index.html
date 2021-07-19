@@ -18,7 +18,7 @@
   <meta name="author" content="sp4z">
   <meta name="keywords" content="">
   
-  <title>网鼎杯 2020 半决赛 faka - sp4z&#39;s Blog</title>
+  <title>thinkphp5框架SQL注入分析（1） - sp4z&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="网鼎杯 2020 半决赛 faka">
+            <span class="h2" id="subtitle" title="thinkphp5框架SQL注入分析（1）">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-07-17 07:55" pubdate>
-        2021年7月17日 早上
+      <time datetime="2021-07-19 14:56" pubdate>
+        2021年7月19日 下午
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      603 字
+      472 字
     </span>
   
 
@@ -225,77 +225,66 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">网鼎杯 2020 半决赛 faka</h1>
+            <h1 style="display: none">thinkphp5框架SQL注入分析（1）</h1>
             
             <div class="markdown-body">
-              <h1 id="网鼎杯-2020-半决赛-faka"><a href="#网鼎杯-2020-半决赛-faka" class="headerlink" title="[网鼎杯 2020 半决赛]faka"></a>[网鼎杯 2020 半决赛]faka</h1><h2 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h2><ol>
-<li>备份sql文件泄露账号密码</li>
-<li>代码审计（文件上传、任意文件读取）</li>
-</ol>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="解法一（文件读取）"><a href="#解法一（文件读取）" class="headerlink" title="解法一（文件读取）"></a>解法一（文件读取）</h3><p>开始给了源码，目标是一个发卡网站</p>
-<p><a href="https://imgtu.com/i/W1iZ26"><img src="https://z3.ax1x.com/2021/07/17/W1iZ26.png" srcset="/img/loading.gif" lazyload alt="W1iZ26.png"></a></p>
-<p>查看sql文件获取admin密码</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">admin</span> admincccbbb<span class="hljs-number">123</span><br></code></pre></td></tr></table></figure>
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>漏洞位置在存在于 Builder 类的 parseData方法中，将可控参数未经过滤就拼接进了insert语句，造成SQL注入</p>
+<p>漏洞影响版本： <strong>5.0.13&lt;=ThinkPHP&lt;=5.0.15</strong> 、 <strong>5.1.0&lt;=ThinkPHP&lt;=5.1.5</strong> 。</p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>下载源码</p>
+<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">composer </span><span class="hljs-built_in">create-project</span> <span class="hljs-built_in">--prefer-dist</span> <span class="hljs-string">topthink/</span><span class="hljs-string">think=</span>5.0.<span class="hljs-string">15 </span><span class="hljs-string">tpdemo</span><br></code></pre></td></tr></table></figure>
 
-<p><a href="https://imgtu.com/i/W1ipKU"><img src="https://z3.ax1x.com/2021/07/17/W1ipKU.png" srcset="/img/loading.gif" lazyload alt="W1ipKU.png"></a></p>
-<p>登录成功</p>
-<p><a href="https://imgtu.com/i/W1iCb4"><img src="https://z3.ax1x.com/2021/07/17/W1iCb4.png" srcset="/img/loading.gif" lazyload alt="W1iCb4.png"></a></p>
-<p>备份管理处由数据库备份功能</p>
-<p><a href="https://imgtu.com/i/W1iV8x"><img src="https://z3.ax1x.com/2021/07/17/W1iV8x.png" srcset="/img/loading.gif" lazyload alt="W1iV8x.png"></a></p>
-<p>可能存在任意文件读取漏洞</p>
-<p><a href="https://imgtu.com/i/W1i9rF"><img src="https://z3.ax1x.com/2021/07/17/W1i9rF.png" srcset="/img/loading.gif" lazyload alt="W1i9rF.png"></a></p>
-<p>/application/manage/controller/Backup.php</p>
-<p>看下源码，确实可以读取文件</p>
-<p><a href="https://imgtu.com/i/W1iiVJ"><img src="https://z3.ax1x.com/2021/07/17/W1iiVJ.png" srcset="/img/loading.gif" lazyload alt="W1iiVJ.png"></a></p>
-<p>读取/etc/passwd成功</p>
-<p><a href="https://imgtu.com/i/W1PzvT"><img src="https://z3.ax1x.com/2021/07/17/W1PzvT.png" srcset="/img/loading.gif" lazyload alt="W1PzvT.png"></a></p>
-<p>读取flag，开始读/flag没有结果，后面才知道flag在flag.txt里。。。。。</p>
-<p><a href="https://imgtu.com/i/W1iFa9"><img src="https://z3.ax1x.com/2021/07/17/W1iFa9.png" srcset="/img/loading.gif" lazyload alt="W1iFa9.png"></a></p>
-<h3 id="解法二（文件上传）"><a href="#解法二（文件上传）" class="headerlink" title="解法二（文件上传）"></a>解法二（文件上传）</h3><p>找一个上传点</p>
-<p><a href="https://imgtu.com/i/W1inKO"><img src="https://z3.ax1x.com/2021/07/17/W1inKO.png" srcset="/img/loading.gif" lazyload alt="W1inKO.png"></a></p>
-<p>抓个包看看，发现会经过两步</p>
-<p><a href="https://imgtu.com/i/W1iEP1"><img src="https://z3.ax1x.com/2021/07/17/W1iEP1.png" srcset="/img/loading.gif" lazyload alt="W1iEP1.png"></a></p>
-<p><a href="https://imgtu.com/i/W1ik5R"><img src="https://z3.ax1x.com/2021/07/17/W1ik5R.png" srcset="/img/loading.gif" lazyload alt="W1ik5R.png"></a></p>
-<p>来看upload函数，先把post参数md5分割成两半，$md5[0]为前16位，$md5[1]为后16位，然后把<code>md5前16位/md5后16位.后缀名</code>赋值给$filename。这里进行一次token验证，由于session_id默认为空，token就等于md5($filename)。token验证后进入move函数</p>
-<p><a href="https://imgtu.com/i/W1iKqe"><img src="https://z3.ax1x.com/2021/07/17/W1iKqe.png" srcset="/img/loading.gif" lazyload alt="W1iKqe.png"></a></p>
-<p>move函数的第二个参数$savename等于md5参数的后16位，进入buildSaveName</p>
-<p><a href="https://imgtu.com/i/W1iurD"><img src="https://z3.ax1x.com/2021/07/17/W1iurD.png" srcset="/img/loading.gif" lazyload alt="W1iurD.png"></a></p>
-<p>因为这里是强类型判断，不进入if。接下来是判断md5后16位中是否包含<code>.</code>，如果包含就不拼接后缀名到后面。直接在md5参数中传入<code>.php</code>文件名就绕过限制了。最终返回的文件路径是<code>static/upload/md5前16位/md5后12位.php</code></p>
-<p><a href="https://imgtu.com/i/W1iexK"><img src="https://z3.ax1x.com/2021/07/17/W1iexK.png" srcset="/img/loading.gif" lazyload alt="W1iexK.png"></a></p>
-<p>流程</p>
-<p><a href="https://imgtu.com/i/W1iJRP"><img src="https://z3.ax1x.com/2021/07/17/W1iJRP.png" srcset="/img/loading.gif" lazyload alt="W1iJRP.png"></a></p>
-<p>在上传时修改下md5和token</p>
-<p>生成token</p>
-<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs abnf">echo md5(<span class="hljs-string">&quot;9838e3992b1596cf/a777ae3206a4.php.png&quot;</span>)<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
 
-<p><a href="https://imgtu.com/i/W1ilad"><img src="https://z3.ax1x.com/2021/07/17/W1ilad.png" srcset="/img/loading.gif" lazyload alt="W1ilad.png"></a></p>
-<p>可以看到已经上传php文件了</p>
-<p><a href="https://imgtu.com/i/W1i8PI"><img src="https://z3.ax1x.com/2021/07/17/W1i8PI.png" srcset="/img/loading.gif" lazyload alt="W1i8PI.png"></a></p>
-<h3 id="未授权添加用户"><a href="#未授权添加用户" class="headerlink" title="未授权添加用户"></a>未授权添加用户</h3><p>/application/admin/controller/Index.php</p>
-<p>由于没有登录时session为空，所以<code>intval(session(&#39;user.id&#39;))</code>返回空，当没有传参数id时<code>intval($this-&gt;request-&gt;request(&#39;id&#39;))</code>也为空，两者相等进入_form</p>
-<p><a href="https://imgtu.com/i/W1iaqg"><img src="https://z3.ax1x.com/2021/07/17/W1iaqg.png" srcset="/img/loading.gif" lazyload alt="W1iaqg.png"></a></p>
-<p>_form中会直接把post参数存入systemuser表</p>
-<p><a href="https://imgtu.com/i/W1iwZQ"><img src="https://z3.ax1x.com/2021/07/17/W1iwZQ.png" srcset="/img/loading.gif" lazyload alt="W1iwZQ.png"></a></p>
-<p>/admin/index/info</p>
-<p><a href="https://imgtu.com/i/W1iUsS"><img src="https://z3.ax1x.com/2021/07/17/W1iUsS.png" srcset="/img/loading.gif" lazyload alt="W1iUsS.png"></a></p>
-<p><a href="https://imgtu.com/i/W1iGGt"><img src="https://z3.ax1x.com/2021/07/17/W1iGGt.png" srcset="/img/loading.gif" lazyload alt="W1iGGt.png"></a></p>
-<p>数据保存成功</p>
-<p><a href="https://imgtu.com/i/W1i1IA"><img src="https://z3.ax1x.com/2021/07/17/W1i1IA.png" srcset="/img/loading.gif" lazyload alt="W1i1IA.png"></a></p>
-<p>可以登录但是权限很低</p>
-<p><a href="https://imgtu.com/i/W1iYxf"><img src="https://z3.ax1x.com/2021/07/17/W1iYxf.png" srcset="/img/loading.gif" lazyload alt="W1iYxf.png"></a></p>
-<p>再看看表的字段，发现admin的authorize字段为3</p>
-<p><a href="https://imgtu.com/i/W1iNM8"><img src="https://z3.ax1x.com/2021/07/17/W1iNM8.png" srcset="/img/loading.gif" lazyload alt="W1iNM8.png"></a></p>
-<p>重新注册用户，post传参authorize字段为3</p>
-<p><a href="https://imgtu.com/i/W1i0aj"><img src="https://z3.ax1x.com/2021/07/17/W1i0aj.png" srcset="/img/loading.gif" lazyload alt="W1i0aj.png"></a></p>
-<p>登录后拿到admin权限</p>
-<p><a href="https://imgtu.com/i/W1irin"><img src="https://z3.ax1x.com/2021/07/17/W1irin.png" srcset="/img/loading.gif" lazyload alt="W1irin.png"></a></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
-<li>在审计文件上传漏洞时要多注意文件名是否有地方可控，注意可控参数和文件名之间的关系</li>
-<li>挖掘未授权访问漏洞时，可以先观察一些关键方法处有无对登录状态（session）的判断，尝试绕过</li>
-</ol>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://xz.aliyun.com/t/7838">https://xz.aliyun.com/t/7838</a></p>
-<p><a href="https://www.cnblogs.com/W4nder/p/14078695.html">https://www.cnblogs.com/W4nder/p/14078695.html</a></p>
-<p><a href="https://blog.csdn.net/rfrder/article/details/115067196">https://blog.csdn.net/rfrder/article/details/115067196</a></p>
+
+<p>修改composer.json中的require字段，然后执行<code>composer update</code></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-string">&quot;require&quot;</span>: &#123;<br>    <span class="hljs-string">&quot;php&quot;</span>: <span class="hljs-string">&quot;&gt;=5.4.0&quot;</span>,<br>    <span class="hljs-string">&quot;topthink/framework&quot;</span>: <span class="hljs-string">&quot;5.0.15&quot;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>创建数据库，然后在/application/database.php配置数据库连接信息</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">create</span> <span class="hljs-keyword">database</span> tpdemo;<br><span class="hljs-keyword">use</span> tpdemo;<br><span class="hljs-keyword">create</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">users</span>(<br>	<span class="hljs-keyword">id</span> <span class="hljs-built_in">int</span> primary <span class="hljs-keyword">key</span> auto_increment,<br>	username <span class="hljs-built_in">varchar</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">not</span> <span class="hljs-literal">null</span><br>);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>/application/index/controller/Index.php</p>
+<p>添加控制器</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">index</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$username</span> = request()-&gt;get(<span class="hljs-string">&#x27;username/a&#x27;</span>);<br>        db(<span class="hljs-string">&#x27;users&#x27;</span>)-&gt;insert([<span class="hljs-string">&#x27;username&#x27;</span> =&gt; <span class="hljs-variable">$username</span>]);<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;Update success&#x27;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>/application/config.php</p>
+<p>把app_debug改成true</p>
+<p><a href="https://imgtu.com/i/WGLTsJ"><img src="https://z3.ax1x.com/2021/07/19/WGLTsJ.png" srcset="/img/loading.gif" lazyload alt="WGLTsJ.png"></a></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>payload</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://localhost/tpdemo/public/?username[<span class="hljs-number">0</span>]=inc&amp;username[<span class="hljs-number">1</span>]=updatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>,user(),<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e),<span class="hljs-number">1</span>)&amp;username[<span class="hljs-number">2</span>]=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/WGLLIx"><img src="https://z3.ax1x.com/2021/07/19/WGLLIx.png" srcset="/img/loading.gif" lazyload alt="WGLLIx.png"></a></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p><code>/thinkphp/library/think/db/Query.php</code></p>
+<p>$this-&gt;builder等于think\db\builder\Mysql，调用的是think\db\builder\Mysql里的insert方法</p>
+<p><a href="https://imgtu.com/i/WGLqd1"><img src="https://z3.ax1x.com/2021/07/19/WGLqd1.png" srcset="/img/loading.gif" lazyload alt="WGLqd1.png"></a></p>
+<p><code>/thinkphp/library/think/db/Builder.php</code></p>
+<p>来到think\db\builder\Mysql的insert方法，进入parseData</p>
+<p><a href="https://imgtu.com/i/WGL7L9"><img src="https://z3.ax1x.com/2021/07/19/WGL7L9.png" srcset="/img/loading.gif" lazyload alt="WGL7L9.png"></a></p>
+<p><code>/thinkphp/library/think/db/Builder.php</code></p>
+<p>这里会对我们传入的username数组进行解析。先用switch case判断username[0]的值是exp、inc或者dec，然后再把username[1]也就是注入payload与操作符、username[2]进行拼接。</p>
+<p><a href="https://imgtu.com/i/WGLXi6"><img src="https://z3.ax1x.com/2021/07/19/WGLXi6.png" srcset="/img/loading.gif" lazyload alt="WGLXi6.png"></a></p>
+<p>parseKey函数不会修改输入内容，最后返回的$result</p>
+<p><a href="https://imgtu.com/i/WGLvRO"><img src="https://z3.ax1x.com/2021/07/19/WGLvRO.png" srcset="/img/loading.gif" lazyload alt="WGLvRO.png"></a></p>
+<p><code>/thinkphp/library/think/db/builder/Mysql.php</code></p>
+<p>parseKey原封不动的返回了我们的payload</p>
+<p><a href="https://imgtu.com/i/WGLjJK"><img src="https://z3.ax1x.com/2021/07/19/WGLjJK.png" srcset="/img/loading.gif" lazyload alt="WGLjJK.png"></a></p>
+<p><code>/thinkphp/library/think/db/Builder.php</code></p>
+<p>回到think\db\builder\Mysql的insert方法，parseData解析完username数组后，执行str_replace把返回结果拼接到insert语句里</p>
+<p><a href="https://imgtu.com/i/WGOSQe"><img src="https://z3.ax1x.com/2021/07/19/WGOSQe.png" srcset="/img/loading.gif" lazyload alt="WGOSQe.png"></a></p>
+<p>最终返回的结果</p>
+<p><a href="https://imgtu.com/i/WGLxzD"><img src="https://z3.ax1x.com/2021/07/19/WGLxzD.png" srcset="/img/loading.gif" lazyload alt="WGLxzD.png"></a></p>
+<p><code>/thinkphp/library/think/db/Query.php</code></p>
+<p>然后回到开始的insert，执行sql语句</p>
+<p><a href="https://imgtu.com/i/WGOpsH"><img src="https://z3.ax1x.com/2021/07/19/WGOpsH.png" srcset="/img/loading.gif" lazyload alt="WGOpsH.png"></a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>自己画了张流程图</p>
+<p><a href="https://imgtu.com/i/WGO9Ld"><img src="https://z3.ax1x.com/2021/07/19/WGO9Ld.png" srcset="/img/loading.gif" lazyload alt="WGO9Ld.png"></a></p>
+<p>再参考下大佬的图</p>
+<p><a href="https://imgtu.com/i/WGLbZR"><img src="https://z3.ax1x.com/2021/07/19/WGLbZR.png" srcset="/img/loading.gif" lazyload alt="WGLbZR.png"></a></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://github.com/Mochazz/ThinkPHP-Vuln">https://github.com/Mochazz/ThinkPHP-Vuln</a></p>
 
             </div>
             <hr>
@@ -316,18 +305,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/07/17/buu%E7%BB%83%E4%B9%A0%E8%AE%B0%E5%BD%95/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">buu练习记录</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/07/17/De1CTF-2019-ShellShellShell/">
-                        <span class="hidden-mobile">De1CTF 2019 ShellShellShell</span>
+                      <a href="/2021/07/17/buu%E7%BB%83%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+                        <span class="hidden-mobile">buu练习记录</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
