@@ -182,6 +182,46 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/07/24/Weblogic%E5%AD%A6%E4%B9%A0%EF%BC%9AT3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+          Weblogic学习：T3反序列化
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/07/24/Weblogic%E5%AD%A6%E4%B9%A0%EF%BC%9AT3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+          
+          
+            
+          
+          前言之前遇到Weblogic就是工具一把梭，现在来详细分析下Weblogic相关漏洞的原理。
+weblogic反序列化主要有XMLDecoder和T3协议。先从T3协议开始，主要是CVE-2015-4852这个漏洞
+环境搭建构建镜像下载jdk压缩包和weblogic，然后把下载好的jdk文件放在该项目的jdks文件夹下，weblogic的源码放在weblogics文件夹下。
+执行命令
+123doc
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-24 17:42" pubdate>
+              2021-07-24
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/07/23/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9A%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0/" target="_self">
           thinkphp5框架SQL注入分析：聚合函数
         </a>
@@ -556,51 +596,6 @@ flask session伪造
             <i class="iconfont icon-date"></i>
             <time datetime="2021-07-13 11:47" pubdate>
               2021-07-13
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95/" target="_self">
-          记一次黑盒测试
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/07/11/%E8%AE%B0%E4%B8%80%E6%AC%A1%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95/" target="_self">
-          
-          
-            
-          
-          测试过程黑盒测试中发现目标网站登录处存在注入，目标系统统一使用sql server。这里传参有点问题，sqlmap没跑出来，所以手动编写poc验证
-
-编写poc验证，读取数据库名
-
-
-fofa查找一波同类站点
-
-从报错信息中得到了一些模糊的信息，查找到了开发公司，通过查看该公司官网，发现旗下还有一款产品存在同样漏洞
-
-总结总体而言技术含量不高。黑盒测试挖掘cnvd证书的关键是从点到面，定位到开发公
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-11 19:29" pubdate>
-              2021-07-11
             </time>
           </div>
         
