@@ -182,6 +182,45 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/07/19/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseData/" target="_self">
+          thinkphp5框架SQL注入分析：parseData
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/07/19/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseData/" target="_self">
+          
+          
+            
+          
+          前言漏洞位置在存在于 Builder 类的 parseData方法中，将可控参数未经过滤就拼接进了insert语句，造成SQL注入
+漏洞影响版本： 5.0.13&lt;=ThinkPHP&lt;=5.0.15 、 5.1.0&lt;=ThinkPHP&lt;=5.1.5 。
+环境搭建下载源码
+1composer create-project --prefer-dist topthink/think
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-19 14:56" pubdate>
+              2021-07-19
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/07/17/buu%E7%BB%83%E4%B9%A0%E8%AE%B0%E5%BD%95/" target="_self">
           buu练习记录
         </a>
@@ -564,57 +603,6 @@ babycat
             <i class="iconfont icon-date"></i>
             <time datetime="2021-06-30 10:41" pubdate>
               2021-06-30
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/06/25/2021%E5%9B%BD%E8%B5%9B%E7%BA%BF%E4%B8%8Bawd%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90/" target="_self">
-          2021国赛线下awd题目分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/06/25/2021%E5%9B%BD%E8%B5%9B%E7%BA%BF%E4%B8%8Bawd%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          elitecms漏洞
-
-任意文件读取
-后台弱口令+任意文件上传
-sql注入
-
-任意文件读取/setup/index.php
-fopen参数可控，传入如下参数即可读取flag
-1http://localhost/setup/index.php?step=5&amp;file=/flag
-
-
-sql注入/includes/functions.php
-存在sql注入
-
-/index.php
-直接调用上面
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-25 13:38" pubdate>
-              2021-06-25
             </time>
           </div>
         
