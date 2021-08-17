@@ -182,6 +182,89 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/07/25/XCTF-CyBRICS-2021-%E9%83%A8%E5%88%86wp%E5%8F%8A%E6%80%9D%E8%B7%AF/" target="_self">
+          XCTF-CyBRICS 2021 部分wp及思路
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/07/25/XCTF-CyBRICS-2021-%E9%83%A8%E5%88%86wp%E5%8F%8A%E6%80%9D%E8%B7%AF/" target="_self">
+          
+          
+            
+          
+          前言国际比赛懂得都懂，网站经常访问不了，体验极差
+Ad Network题目描述大概是重定向到1337次就有flag
+
+直接写个脚本
+12345678910111213141516171819202122232425262728import requestsimport repattern=&quot;&lt;a href=\&quot;(.+?)\&quot;&gt;See Other&lt;/a
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-25 21:46" pubdate>
+              2021-07-25
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/07/25/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseWhereItem-filterValue/" target="_self">
+          thinkphp5框架SQL注入分析：parseWhereItem+filterValue
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/07/25/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseWhereItem-filterValue/" target="_self">
+          
+          
+            
+          
+          前言漏洞概要：
+
+漏洞存在于 Mysql 类的 parseWhereItem 方法中，数据未经过过滤就拼接进sql语句。
+Request 类的 filterValue 方法漏过滤 NOT LIKE 关键字，
+
+漏洞影响版本： ThinkPHP=5.0.10 
+环境搭建控制器
+123456789101112&lt;?phpnamespace app\index\controller;class In
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-25 09:22" pubdate>
+              2021-07-25
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/07/24/Weblogic%E5%AD%A6%E4%B9%A0%EF%BC%9AT3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
           Weblogic学习：T3反序列化
         </a>
@@ -514,88 +597,6 @@ flask session伪造
             <i class="iconfont icon-date"></i>
             <time datetime="2021-07-17 07:55" pubdate>
               2021-07-17
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/17/De1CTF-2019-ShellShellShell/" target="_self">
-          De1CTF 2019 ShellShellShell
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/07/17/De1CTF-2019-ShellShellShell/" target="_self">
-          
-          
-            
-          
-          [De1CTF 2019]ShellShellShell过程sql注入需要先生成md5验证码
-
-生成验证码的python脚本
-1234567891011import hashlibdef func(md5_val):    for x in range(999999, 100000000):        md5_value=hashlib.md5(str(x).encode(encoding=&
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-17 07:54" pubdate>
-              2021-07-17
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/13/ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          ThinkPHP3.2.x RCE漏洞分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/07/13/ThinkPHP3-2-x-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          环境搭建修改控制器
-/Application/Home/Controller/IndexController.class.php
-1234public function index($value=&#x27;&#x27;)&#123;    $this-&gt;assign($value);    $this-&gt;display();&#125;
-
-
-
-新建文件，内容随意
-/Applicati
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-13 11:47" pubdate>
-              2021-07-13
             </time>
           </div>
         
