@@ -223,6 +223,46 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/09/21/espcms%E5%89%8D%E5%8F%B0%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_self">
+          
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/09/21/espcms%E5%89%8D%E5%8F%B0%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_self">
+          
+          
+            
+          
+          espcms前台注入分析《代码审计 企业级Web代码安全架构》一书中出现的cms，14年的老版本出现的Insert型注入。漏洞位于前台提交订单处
+/interface/order.php
+$ptitle和$tsn为可控变量，通过accept方法获取参数
+
+12$ptitle = $this-&gt;fun-&gt;accept(&#x27;ptitle&#x27;, &#x27;P&#x27;);
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-09-21 21:05" pubdate>
+              2021-09-21
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/09/01/ofcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
           ofcms漏洞分析
         </a>
@@ -543,52 +583,6 @@ http://www.catfish-cms.com/article/68.html
 进入系统设置-&gt;主题，上传修改后的主题
 
 访问/p
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-17 08:29" pubdate>
-              2021-08-17
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AYUNUCMS%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" target="_self">
-          代码审计：YUNUCMS后台文件删除漏洞
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AYUNUCMS%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" target="_self">
-          
-          
-            
-          
-          漏洞复现官网：http://www.yunucms.com/code/fenzhan/
-源码下载地址：http://www.yunucms.com/download/citycode/
-下载源码后在本地搭建，登录后台
-
-安装锁install.lock文件位于./data目录下
-
-发送数据包
-1http://localhost/index.php?s=/admin/upload/delfile
-
-
-
         </a>
       </p>
 
