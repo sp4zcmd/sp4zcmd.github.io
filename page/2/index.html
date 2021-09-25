@@ -182,6 +182,53 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9ACatfishcms%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" target="_self">
+          代码审计：Catfishcms后台文件上传漏洞
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9ACatfishcms%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" target="_self">
+          
+          
+            
+          
+          漏洞分析/application/admin/controller/Index.php
+uploadtheme方法没有判断压缩文件内容，直接解压到public目录下，造成文件上传漏洞
+
+漏洞复现下载主题压缩包，加入webshell后重新压缩
+http://www.catfish-cms.com/article/68.html
+
+
+登陆后台
+
+进入系统设置-&gt;主题，上传修改后的主题
+
+访问/p
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-17 08:29" pubdate>
+              2021-08-17
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AYUNUCMS%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" target="_self">
           代码审计：YUNUCMS后台文件删除漏洞
         </a>
@@ -535,46 +582,6 @@ LazyMap和TransformedMap的区别LazyMap和TransformedMap类似，都来自于Co
             <i class="iconfont icon-date"></i>
             <time datetime="2021-07-26 15:37" pubdate>
               2021-07-26
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/25/XCTF-CyBRICS-2021-%E9%83%A8%E5%88%86wp%E5%8F%8A%E6%80%9D%E8%B7%AF/" target="_self">
-          XCTF-CyBRICS 2021 部分wp及思路
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/07/25/XCTF-CyBRICS-2021-%E9%83%A8%E5%88%86wp%E5%8F%8A%E6%80%9D%E8%B7%AF/" target="_self">
-          
-          
-            
-          
-          前言国际比赛懂得都懂，网站经常访问不了，体验极差
-Ad Network题目描述大概是重定向到1337次就有flag
-
-直接写个脚本
-12345678910111213141516171819202122232425262728import requestsimport repattern=&quot;&lt;a href=\&quot;(.+?)\&quot;&gt;See Other&lt;/a
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-25 21:46" pubdate>
-              2021-07-25
             </time>
           </div>
         
