@@ -182,6 +182,44 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/09/28/%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/" target="_self">
+          祥云杯三道nodejs题目复现
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/09/28/%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/" target="_self">
+          
+          
+            
+          
+          Secrets of Admin分析
+终点是/api/files/:id的任意文件读取，filename来源于DB.getFile获取的files表filename字段值。files表已有一条username为superuser、filename为flag的记录，但是不可用。需要添加新纪录控制filename字段
+/api/files调用DB.Create方法向files表添加新记录，可以利用，但
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-09-28 12:18" pubdate>
+              2021-09-28
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/09/25/CVE-2021-3129%E5%88%86%E6%9E%90/" target="_self">
           CVE-2021-3129分析
         </a>
@@ -549,51 +587,6 @@ listqun方法直接将可控参数传入unserialize，造成反序列化漏洞�
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
             <time datetime="2021-08-29 20:15" pubdate>
-              2021-08-29
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/29/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AHulaCWMS%E5%90%8E%E5%8F%B0phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_self">
-          代码审计：HulaCWMS后台phar反序列化漏洞
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/08/29/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AHulaCWMS%E5%90%8E%E5%8F%B0phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_self">
-          
-          
-            
-          
-          环境搭建下载源码：http://down.chinaz.com/soft/39542.htm
-创建数据库，导入sql
-
-/config/database.php
-修改数据库连接信息
-
-安装成功
-
-漏洞复现poc
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-29 20:14" pubdate>
               2021-08-29
             </time>
           </div>
