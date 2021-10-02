@@ -182,6 +182,43 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/04/11/Thinkphp6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+          Thinkphp6.0.x反序列化
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/04/11/Thinkphp6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+          
+          
+            
+          
+          分析利用链
+1234567891011121314think\Model --&gt; __destruct()think\Model --&gt; save()think\Model --&gt; updateData()think\Model --&gt; checkAllowFields()think\Model --&gt; db()后半部分利用链（同tp 5.2后半部分利用链)think
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-11 15:48" pubdate>
+              2021-04-11
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/04/10/Thinkphp6-0-0-6-0-1-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
           Thinkphp6.0.0-6.0.1 任意文件操作漏洞复现
         </a>
@@ -539,49 +576,6 @@ words
             <i class="iconfont icon-date"></i>
             <time datetime="2021-03-13 10:11" pubdate>
               2021-03-13
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/03/11/msf%E5%92%8Ccs%E8%81%94%E5%8A%A8/" target="_self">
-          msf和cs联动
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/03/11/msf%E5%92%8Ccs%E8%81%94%E5%8A%A8/" target="_self">
-          
-          
-            
-          
-          cs派生给msf配置好listener，选择Foreign HTTP
-
-使用cs的spawn功能
-
-msf设置payload为/windows/meterpreter/reverse_http，ip和端口与listener中的一致，不要使用64位的payload，会出现问题。这样即可接收到派生过来的session
-
-msf派生给cs只有meterpreter类型的session才能派生给cs
-使用
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-03-11 10:43" pubdate>
-              2021-03-11
             </time>
           </div>
         
