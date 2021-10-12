@@ -182,6 +182,48 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/10/12/Undefsafe%E6%A8%A1%E5%9D%97%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" target="_self">
+          Undefsafe模块原型链污染
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/10/12/Undefsafe%E6%A8%A1%E5%9D%97%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" target="_self">
+          
+          
+            
+          
+          Undefsafe模块简介undefsafe 是 Nodejs 的一个第三方模块，其核心为一个简单的函数，用来处理访问对象属性不存在时的报错问题。但其在低版本（&lt; 2.0.3）中存在原型链污染漏洞，攻击者可利用该漏洞添加或修改 Object.prototype 属性。
+安装
+1npm install express undefsafe@2.0.2
+
+
+
+使用12345678910111213
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-10-12 20:17" pubdate>
+              2021-10-12
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/10/02/HFCTF-2021-Final-%E5%A4%8D%E7%8E%B0/" target="_self">
           HFCTF 2021 Final 复现
         </a>
@@ -551,47 +593,6 @@ Spring Data Commons在2.0.5及以前版本中，存在一处SpEL表达式注入�
             <i class="iconfont icon-date"></i>
             <time datetime="2021-08-31 21:03" pubdate>
               2021-08-31
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/30/%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_self">
-          若依cms后台注入分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/08/30/%E8%8B%A5%E4%BE%9Dcms%E5%90%8E%E5%8F%B0%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          漏洞概要影响版本：RuoYi &lt;= v4.6.1
-修复措施和其他情况可参考官方文档
-https://doc.ruoyi.vip/ruoyi/document/kslj.html#%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E
-
-漏洞复现payload
-1pageSize=&amp;pageNum=&amp;orderByColumn=&amp;isAsc=&amp;
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-30 13:21" pubdate>
-              2021-08-30
             </time>
           </div>
         
