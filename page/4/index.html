@@ -182,6 +182,50 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseOrderby/" target="_self">
+          thinkphp5框架SQL注入分析：parseOrderby
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseOrderby/" target="_self">
+          
+          
+            
+          
+          前言漏洞存在于Builder类的parseOrderby方法中，order by注入
+漏洞影响版本： 5.1.16&lt;=ThinkPHP5&lt;=5.1.22 。
+测试的时候用php7一直报错，换成php5才行
+环境搭建下载源码
+1composer create-project --prefer-dist topthink/think=5.1.22 tp5122
+
+
+
+修改composer.
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-22 14:39" pubdate>
+              2021-07-22
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/07/22/thinkphp5%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%9AparseWhereItem/" target="_self">
           thinkphp5框架SQL注入分析：parseWhereItem
         </a>
@@ -570,49 +614,11 @@ dbName直接被拼接到了sql语句中，存在sql注入，在源码中可以�
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/08/CommonsCollections2%E5%88%A9%E7%94%A8%E9%93%BE%E5%AD%A6%E4%B9%A0/" target="_self">
-          CommonsCollections2利用链学习
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/07/08/CommonsCollections2%E5%88%A9%E7%94%A8%E9%93%BE%E5%AD%A6%E4%B9%A0/" target="_self">
-          
-          
-            
-          
-          环境搭建依赖commmonscollections4（3.1中TransformingComparator没有继承自Serializable所以无法进行Java反序列化）
-pom.xml
-1234567891011 &lt;dependency&gt;            &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;            &
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-08 22:49" pubdate>
-              2021-07-08
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/#board">9</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#board">10</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
