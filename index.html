@@ -182,6 +182,44 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/06/01/java%E5%8A%A0%E8%BD%BDshellcode%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/" target="_self">
+          java加载shellcode方法整理
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/06/01/java%E5%8A%A0%E8%BD%BDshellcode%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/" target="_self">
+          
+          
+            
+          
+          JNI需要先准备好一个dll文件，然后在导出函数中实现执行shellcode的方法，在java通过JNI调用dll的导出函数执行指定shellcode
+声明一个native方法，然后在dll文件中实现这个方法
+12345678public class Hello &#123;    public native void inject(byte[] me);    public static voi
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-06-01 21:32" pubdate>
+              2022-06-01
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/04/20/WeblogicExploit-GUI-weblogic%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%9B%BE%E5%BD%A2%E5%8C%96%E5%B7%A5%E5%85%B7/" target="_self">
           WeblogicExploit-GUI weblogic漏洞利用图形化工具
         </a>
@@ -543,56 +581,6 @@ Person类
             <i class="iconfont icon-date"></i>
             <time datetime="2021-09-28 12:18" pubdate>
               2021-09-28
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/25/CVE-2021-3129%E5%88%86%E6%9E%90/" target="_self">
-          CVE-2021-3129分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/09/25/CVE-2021-3129%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          环境搭建直接用github上的环境
-https://github.com/SNCKER/CVE-2021-3129
-启动docker
-1docker-compose up -d 
-
-
-提示缺少 app key，点击Generate app key生成一个app key，然后刷新一下即可
-
-访问成功
-
-把源码拷出来
-1docker cp 10248b3157ad:/src ./src
-
-
-漏洞复现p
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-25 16:44" pubdate>
-              2021-09-25
             </time>
           </div>
         
