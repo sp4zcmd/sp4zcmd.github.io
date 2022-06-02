@@ -182,19 +182,22 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/23/%E7%BE%8A%E5%9F%8E%E6%9D%AF2020%E5%A4%8D%E7%8E%B0/" target="_self">
-          羊城杯2020复现
+        <a href="/2021/02/26/%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%8A%AB%E6%8C%81BypassUAC/" target="_self">
+          注册表劫持BypassUAC
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/23/%E7%BE%8A%E5%9F%8E%E6%9D%AF2020%E5%A4%8D%E7%8E%B0/" target="_self">
+        <a href="/2021/02/26/%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%8A%AB%E6%8C%81BypassUAC/" target="_self">
           
           
             
           
-          easyphp给出源码，可以看到只能上传一个文件，并且文件名只能为.xxxx这种形式
-123456789101112131415161718192021222324252627282930313233 &lt;?php    $files = scandir(&#x27;./&#x27;);     foreach($files as $file) &#123;        if(is_file
+          原理一部分系统程序可以直接获取管理员权限而不触发UAC弹窗，这类程序被称为白名单程序。如fodhelper
+fodhelper.exe在启动过程查询注册表项
+1HKCU:\Software\Classes\ms-settings\Shell\Open\command
+
+该键值对存储可执行文件路径，普通用户对HKCU有编辑权限，可以写入想要执行的任意文件，如cmd.exe，写入后的文件会以最高权限执
         </a>
       </p>
 
@@ -202,8 +205,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-23 07:44" pubdate>
-              2021-04-23
+            <time datetime="2021-02-26 18:51" pubdate>
+              2021-02-26
             </time>
           </div>
         
@@ -219,25 +222,24 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/20/ThinkPhp3-2-3%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" target="_self">
-          ThinkPhp3.2.3注入漏洞总结
+        <a href="/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/" target="_self">
+          python利用dns的PTR记录加载shellcode
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/20/ThinkPhp3-2-3%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" target="_self">
+        <a href="/2021/02/26/python%E5%88%A9%E7%94%A8dns%E7%9A%84PTR%E8%AE%B0%E5%BD%95%E5%8A%A0%E8%BD%BDshellcode/" target="_self">
           
           
             
           
-          环境配置数据库连接配置
+          DNS解析中的PTR记录负责反向解析，即把IP地址解析为域名。利用PTR记录保存shellcode，然后通过dns请求获取到shellcode后执行，来达到免杀的目的。
+PTR记录的两个特性
+1.不区分大小写，dns解析结果统一转为小写
+2.格式不定，可以出现包括“!@#$%^&amp;*()_+=/?&lt;&gt;”在内的各种特殊字符和空格，只有反斜杠“\”会被过滤。
+在本地服务器添加
 
-thinkphp3.2.3 where注入控制器
-/Application/Home/Controller/IndexController.class.php
-
-
-payload
-1http://localhost/tp3/?id[where]=1%20and%201=updatexml(1,concat(0x7e,(select database()),0x7e),1)
+进行
         </a>
       </p>
 
@@ -245,8 +247,8 @@ payload
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-20 16:34" pubdate>
-              2021-04-20
+            <time datetime="2021-02-26 15:53" pubdate>
+              2021-02-26
             </time>
           </div>
         
@@ -262,28 +264,23 @@ payload
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/19/php%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%88%A9%E7%94%A8/" target="_self">
-          php原生类利用
+        <a href="/2021/02/08/PHPOK-v5-5-csrf-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Egetshell%E5%88%86%E6%9E%90/" target="_self">
+          PHPOK v5.5 csrf+反序列化漏洞getshell分析
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/19/php%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%88%A9%E7%94%A8/" target="_self">
+        <a href="/2021/02/08/PHPOK-v5-5-csrf-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9Egetshell%E5%88%86%E6%9E%90/" target="_self">
           
           
             
           
-          适用场景在存在任意类实例化漏洞但是没有pop链的情况下，可以尝试利用原生类
-GlobIterator可以列出目录下的文件名
-适用版本：php5.3.* php 7
-第一个参数指定搜索的路径和类型，第二个参数为选择文件的哪个信息作为键名
-1$newclass = new GlobIterator(&#x27;./*.php&#x27;,0);
+          漏洞影响版本PHPOK v5.5
+漏洞分析路由规则phpokcms代码结构，关键代码都在framework文件夹下
 
-
-
-
-
-12345678&lt;?php$iterat
+phpokcms的路由规则比较简单，index.php admin.php api.php 分别对应 framework文件夹下的www admin api这三个文件夹
+请求url
+1http://localhost/phpok/admin.php?c=address&amp;f=
         </a>
       </p>
 
@@ -291,8 +288,8 @@ GlobIterator可以列出目录下的文件名
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-19 21:41" pubdate>
-              2021-04-19
+            <time datetime="2021-02-08 09:03" pubdate>
+              2021-02-08
             </time>
           </div>
         
@@ -308,20 +305,19 @@ GlobIterator可以列出目录下的文件名
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/17/JNDI%E6%B3%A8%E5%85%A5/" target="_self">
-          JNDI注入
+        <a href="/2021/02/05/Windows%E9%92%A9%E5%AD%90%E5%87%BD%E6%95%B0/" target="_self">
+          Windows钩子函数
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/17/JNDI%E6%B3%A8%E5%85%A5/" target="_self">
+        <a href="/2021/02/05/Windows%E9%92%A9%E5%AD%90%E5%87%BD%E6%95%B0/" target="_self">
           
           
             
           
-          概念JNDIJava命名和目录接口（JNDI）是一种Java API，类似于一个索引中心，它允许客户端通过name发现和查找数据和对象。JNDI本质上是一个接口，在这个接口下可以实现多种目录系统服务，如RMI、LDAP等，可以通过名称查询相关对象
-
-RMIRMI（Remote Method Invocation）  即Java远程方法调用，一种用于实现远程过程调用的应用程序编程接口，常见的两种接口
+          钩子原理​    Windows下的应用程序大部分是基于消息模式机制的，一些CUI程序不基于消息。Windows下应用程序都有一个消息函数，根据不同的消息来完成不同的功能。Windows提供的钩子机制是用来截获监视系统中的消息。不同的钩子可以处理不同信息。
+​    钩子分为局部钩子和全局钩子。局部钩子是针对一个线程的，而全局钩子是针对整个操作系统内基于消息机制的应用程序的。全局钩子需要使用DLL
         </a>
       </p>
 
@@ -329,8 +325,8 @@ RMIRMI（Remote Method Invocation）  即Java远程方法调用，一种用于�
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-17 13:24" pubdate>
-              2021-04-17
+            <time datetime="2021-02-05 12:35" pubdate>
+              2021-02-05
             </time>
           </div>
         
@@ -346,25 +342,21 @@ RMIRMI（Remote Method Invocation）  即Java远程方法调用，一种用于�
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/" target="_self">
-          2021红明谷ctf web部分复现
+        <a href="/2021/02/03/Inline-Hook-%E5%86%85%E8%81%94%E9%92%A9%E5%AD%90/" target="_self">
+          Inline Hook(内联钩子)
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/16/2021%E7%BA%A2%E6%98%8E%E8%B0%B7ctf-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/" target="_self">
+        <a href="/2021/02/03/Inline-Hook-%E5%86%85%E8%81%94%E9%92%A9%E5%AD%90/" target="_self">
           
           
             
           
-          easytp报错得到thinkphp版本为3.2.3
+          原理API函数保存在操作系统的DLL文件中，在运行程序后程序会将API所在的DLL加载入进程中，当在程序中使用某个API函数时。这样程序就会像调用自己的函数一样调用API，大体过程如图1所示。
 
-存在备份文件www.zip
-
-控制器中存在unserialize函数，需要利用反序列化漏洞
-
-Thinkphp3.2.3反序列化漏洞（注入&amp;文件读取）
-https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&amp;sn=0dd0f7
+图1 调用API函数的大体过程
+从图1中可以看出，在进程中当EXE模块调用CreateFile()函数的时候，会去调用kernel32.dll模块中的CreateFile()函数，因为真正的CreateF
         </a>
       </p>
 
@@ -372,8 +364,8 @@ https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&a
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 20:35" pubdate>
-              2021-04-16
+            <time datetime="2021-02-03 14:19" pubdate>
+              2021-02-03
             </time>
           </div>
         
@@ -389,24 +381,19 @@ https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&a
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/15/thinkphp-5-1-x-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-md/" target="_self">
-          thinkphp 5.1.x 反序列化漏洞分析.md
+        <a href="/2021/02/02/%E8%BF%9C%E7%A8%8B%E7%BA%BF%E7%A8%8B%E6%B3%A8%E5%85%A5DLL/" target="_self">
+          远程线程注入DLL
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/15/thinkphp-5-1-x-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-md/" target="_self">
+        <a href="/2021/02/02/%E8%BF%9C%E7%A8%8B%E7%BA%BF%E7%A8%8B%E6%B3%A8%E5%85%A5DLL/" target="_self">
           
           
             
           
-          利用链11/thinkphp/library/think/process/pipes/Windows.php
-
-存在__destruct()方法
-
-跟进removeFiles()，file_exists在处理filename时会当成字符串处理，只要让构造$this-&gt;files为包含类的数组就可以调用__toString()
-
-1/thinkphp/library/think/model/c
+          原理在Windows操作系统中，每个进程的内存空间都是被隔离的，但是某些时候需要两个进程协调工作或者是跨进程操作。“远程线程”意思是跨进程，简单来说就是进程A在进程B中创建一个线程，这就叫远程线程。
+DLL文件加载到进程的地址空间中，不会有进程名，隐蔽性较好，方法是强制让某进程加载DLL文件。只要有进程PID，先通过OpenProcess获取该进程句柄，再使用CreateRemoteThread。
         </a>
       </p>
 
@@ -414,8 +401,8 @@ https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&a
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-15 14:02" pubdate>
-              2021-04-15
+            <time datetime="2021-02-02 15:19" pubdate>
+              2021-02-02
             </time>
           </div>
         
@@ -431,22 +418,23 @@ https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&a
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/12/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" target="_self">
-          java反序列化学习
+        <a href="/2020/12/15/%E4%B8%8D%E5%87%BA%E7%BD%91%E4%B8%BB%E6%9C%BA%E4%B8%8A%E7%BA%BF%E6%96%B9%E6%B3%95/" target="_self">
+          不出网主机上线方法
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/12/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" target="_self">
+        <a href="/2020/12/15/%E4%B8%8D%E5%87%BA%E7%BD%91%E4%B8%BB%E6%9C%BA%E4%B8%8A%E7%BA%BF%E6%96%B9%E6%B3%95/" target="_self">
           
           
             
           
-          SerializeableSeializeable是java实现序列化机制的工具，序列化数据包含对象类型和属性值。
-Serializeable工具的简单说明
-1234只需要实现Serializeable接口就可以进行对象的序列化处理序列化对象可以是基本数据类型、集合类或其他对象使用transient、static关键字修饰的属性不会被序列化父类不可序列化时，需要父类中存在无参构造函数。
+          测试环境假设192.168.111.0/24为公网ip段，192.168.204.0/24为内网ip段
+web服务器 Windows 2008 r2DMZ主机 虚拟机两块网卡一块设置为NAT模式，一块设置为HOSTONLY模式，可通外网 
+公网ip:192.168.111.132
+内网ip:192.168.204.188
 
-相关接口
+内网主机 Windows 2012虚拟机网卡设置HOSTONLY模式，不通
         </a>
       </p>
 
@@ -454,8 +442,8 @@ Serializeable工具的简单说明
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-12 13:09" pubdate>
-              2021-04-12
+            <time datetime="2020-12-15 20:21" pubdate>
+              2020-12-15
             </time>
           </div>
         
@@ -471,19 +459,19 @@ Serializeable工具的简单说明
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/11/Thinkphp6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
-          Thinkphp6.0.x反序列化
+        <a href="/2020/12/13/%E5%88%A9%E7%94%A8SOCKET%E5%88%86%E7%A6%BBshellcode/" target="_self">
+          利用SOCKET分离shellcode
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/11/Thinkphp6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+        <a href="/2020/12/13/%E5%88%A9%E7%94%A8SOCKET%E5%88%86%E7%A6%BBshellcode/" target="_self">
           
           
             
           
-          分析利用链
-1234567891011121314think\Model --&gt; __destruct()think\Model --&gt; save()think\Model --&gt; updateData()think\Model --&gt; checkAllowFields()think\Model --&gt; db()后半部分利用链（同tp 5.2后半部分利用链)think
+          原理客户端运行后向服务端发起请求接收xor运算后的shellcode还原后执行，达到远程加载shellcode的目的，与stager的功能有些类似。
+服务端代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646
         </a>
       </p>
 
@@ -491,8 +479,8 @@ Serializeable工具的简单说明
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-11 15:48" pubdate>
-              2021-04-11
+            <time datetime="2020-12-13 16:20" pubdate>
+              2020-12-13
             </time>
           </div>
         
@@ -508,25 +496,21 @@ Serializeable工具的简单说明
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/10/Thinkphp6-0-0-6-0-1-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
-          Thinkphp6.0.0-6.0.1 任意文件操作漏洞复现
+        <a href="/2020/12/06/DLL%E4%BB%A3%E7%90%86%E5%8A%A0%E8%BD%BDshellcode%E5%AE%9E%E8%B7%B5/" target="_self">
+          DLL代理加载shellcode实践
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/10/Thinkphp6-0-0-6-0-1-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
+        <a href="/2020/12/06/DLL%E4%BB%A3%E7%90%86%E5%8A%A0%E8%BD%BDshellcode%E5%AE%9E%E8%B7%B5/" target="_self">
           
           
             
           
-          环境配置thinkphp6默认是没有开启session功能的,需要取消app\middleware.php文件中对session的注释
+          在程序开发过程中往往会使用第三方库，大多数第三方库会提供DLL(动态链接库)文件，因此程序需要相应的DLL文件才能启动，通过Dll代理将正常dll替换为欸一dll，可以进行免杀或权限维持
+找出运行必须的dll文件依照DLL代理加载shellcod用于免杀，维权等等中的例子下载Filezilla，将fzsftp.exe放到单独文件夹运行，找到运行必须的libnettle-8.dll文件
 
-由于默认情况下没有创建session，所需要修改一下控制器，加上创建session的功能。
-
-漏洞利用修改cookie为PHPSESSID=aaaabbbbccccddddeeeeffff1234.php，文件名长度必须等于32位
-
-写入成功
-1http://l
+编译Sha
         </a>
       </p>
 
@@ -534,8 +518,8 @@ Serializeable工具的简单说明
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-10 14:17" pubdate>
-              2021-04-10
+            <time datetime="2020-12-06 17:39" pubdate>
+              2020-12-06
             </time>
           </div>
         
@@ -551,24 +535,22 @@ Serializeable工具的简单说明
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/08/2021-DASCTF%E4%B8%89%E6%9C%88%E8%B5%9Bweb%E6%80%BB%E7%BB%93/" target="_self">
-          2021 DASCTF三月赛web总结
+        <a href="/2020/12/06/C-xor%E5%8A%A0%E5%AF%86%E5%85%8D%E6%9D%80/" target="_self">
+          C编译xor加密shellcode免杀
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/08/2021-DASCTF%E4%B8%89%E6%9C%88%E8%B5%9Bweb%E6%80%BB%E7%BB%93/" target="_self">
+        <a href="/2020/12/06/C-xor%E5%8A%A0%E5%AF%86%E5%85%8D%E6%9D%80/" target="_self">
           
           
             
           
-          BestDBunion注入
-开始就提示了sql语句，单引号和空格被过滤，双引号闭合即可
-1$sql = &quot;SELECT * FROM users WHERE id = &#x27;$query&#x27; OR username = \&quot;$query\&quot;&quot;;
+          生成shellcodecs生成c格式shellcode
 
+用010editor加密shellcodeCtrl+Shift+V将shellcode复制到010editor中，选择Tools-&gt;Hex Operation-&gt;Binary Xor，设置运算数为0x97,将shellcode与0x97异或后生成新的shellcode
 
-读取表名
-1http://183.129.189.60:10005/?query=asd&quo
+将shellcode与0x97异或后生成新的shellco
         </a>
       </p>
 
@@ -576,8 +558,8 @@ Serializeable工具的简单说明
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-08 13:12" pubdate>
-              2021-04-08
+            <time datetime="2020-12-06 17:37" pubdate>
+              2020-12-06
             </time>
           </div>
         
@@ -591,7 +573,7 @@ Serializeable工具的简单说明
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

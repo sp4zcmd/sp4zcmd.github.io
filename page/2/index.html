@@ -182,176 +182,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/09/25/CVE-2021-3129%E5%88%86%E6%9E%90/" target="_self">
-          CVE-2021-3129分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/09/25/CVE-2021-3129%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          环境搭建直接用github上的环境
-https://github.com/SNCKER/CVE-2021-3129
-启动docker
-1docker-compose up -d 
-
-
-提示缺少 app key，点击Generate app key生成一个app key，然后刷新一下即可
-
-访问成功
-
-把源码拷出来
-1docker cp 10248b3157ad:/src ./src
-
-
-漏洞复现p
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-25 16:44" pubdate>
-              2021-09-25
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/21/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" target="_self">
-          JDBC反序列化学习
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/09/21/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0/" target="_self">
-          
-          
-            
-          
-          环境搭建https://downloads.mysql.com/archives/c-j/
-
-把下载的jar包添加到依赖里
-
-在pom.xml中添加common-collections依赖
-12345678&lt;dependencies&gt;        &lt;!-- https://mvnrepository.com/artifact/commons-collections/common
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-21 21:12" pubdate>
-              2021-09-21
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/21/espcms%E5%89%8D%E5%8F%B0%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_self">
-          
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/09/21/espcms%E5%89%8D%E5%8F%B0%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          espcms前台注入分析《代码审计 企业级Web代码安全架构》一书中出现的cms，14年的老版本出现的Insert型注入。漏洞位于前台提交订单处
-/interface/order.php
-$ptitle和$tsn为可控变量，通过accept方法获取参数
-
-12$ptitle = $this-&gt;fun-&gt;accept(&#x27;ptitle&#x27;, &#x27;P&#x27;);
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-21 21:05" pubdate>
-              2021-09-21
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/01/ofcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          ofcms漏洞分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/09/01/ofcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          文件上传漏洞复现登录后台
-
-抓包并按如下方式修改POST数据包，file_content是jsp马的内容
-123456789101112131415161718POST /ofcms_admin_war/admin/cms/template/save.json HTTP/1.1Host: localhost:8080User-Agent: Mozilla/5.0 (Windows NT 10.0;
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-01 19:27" pubdate>
-              2021-09-01
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
         <a href="/2021/09/01/FreeMarker%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5/" target="_self">
           FreeMarker模板注入
         </a>
@@ -604,11 +434,181 @@ listqun方法直接将可控参数传入unserialize，造成反序列化漏洞�
     </article>
   </div>
 
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9ACatfishcms%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" target="_self">
+          代码审计：Catfishcms后台文件上传漏洞
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9ACatfishcms%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" target="_self">
+          
+          
+            
+          
+          漏洞分析/application/admin/controller/Index.php
+uploadtheme方法没有判断压缩文件内容，直接解压到public目录下，造成文件上传漏洞
+
+漏洞复现下载主题压缩包，加入webshell后重新压缩
+http://www.catfish-cms.com/article/68.html
+
+
+登陆后台
+
+进入系统设置-&gt;主题，上传修改后的主题
+
+访问/p
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-17 08:29" pubdate>
+              2021-08-17
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AYUNUCMS%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" target="_self">
+          代码审计：YUNUCMS后台文件删除漏洞
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/17/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%EF%BC%9AYUNUCMS%E5%90%8E%E5%8F%B0%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" target="_self">
+          
+          
+            
+          
+          漏洞复现官网：http://www.yunucms.com/code/fenzhan/
+源码下载地址：http://www.yunucms.com/download/citycode/
+下载源码后在本地搭建，登录后台
+
+安装锁install.lock文件位于./data目录下
+
+发送数据包
+1http://localhost/index.php?s=/admin/upload/delfile
+
+
+
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-17 08:29" pubdate>
+              2021-08-17
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/11/JavaScript%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%AD%A6%E4%B9%A0/" target="_self">
+          JavaScript原型链污染学习
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/11/JavaScript%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E5%AD%A6%E4%B9%A0/" target="_self">
+          
+          
+            
+          
+          原型链概念在 JavaScript 中，没有父类和子类这个概念，也没有类和实例的区分，而 JavaScript 中的继承关系则是靠一种叫做 “原型链” 的模式来实现的。
+如果要定义一个类，需要以定义“构造函数”的方式来定义。例如下面的Foo函数就是Foo类的构造函数，this.bar就是Foo类的一个属性
+12345function Foo() &#123;    this.bar = 1&#12
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-11 21:35" pubdate>
+              2021-08-11
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/10/Thinkphp5%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
+          Thinkphp5文件包含漏洞分析
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/10/Thinkphp5%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
+          
+          
+            
+          
+          漏洞概要漏洞影响版本： 5.0.0&lt;=ThinkPHP5&lt;=5.0.18 、5.1.0&lt;=ThinkPHP&lt;=5.1.10。
+环境搭建测试版本：5.0.18
+控制器
+123456789101112&lt;?phpnamespace app\index\controller;class Index&#123;    public function index()    &#1
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-10 16:20" pubdate>
+              2021-08-10
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#board">10</a><a class="extend next" rel="next" href="/page/3/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/#board">8</a><a class="extend next" rel="next" href="/page/3/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

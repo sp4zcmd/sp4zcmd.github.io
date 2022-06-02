@@ -182,26 +182,25 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/06/08/%E8%93%9D%E5%B8%BD%E6%9D%AF-2021-One-Pointer-PHP/" target="_self">
-          蓝帽杯 2021 One Pointer PHP
+        <a href="/2021/04/10/Thinkphp6-0-0-6-0-1-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
+          Thinkphp6.0.0-6.0.1 任意文件操作漏洞复现
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/06/08/%E8%93%9D%E5%B8%BD%E6%9D%AF-2021-One-Pointer-PHP/" target="_self">
+        <a href="/2021/04/10/Thinkphp6-0-0-6-0-1-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
           
           
             
           
-          [蓝帽杯 2021]One Pointer PHP下载web.zip，总共就两个文件
+          环境配置thinkphp6默认是没有开启session功能的,需要取消app\middleware.php文件中对session的注释
 
-cookie中的data字段被反序列化
-add_api.php
+由于默认情况下没有创建session，所需要修改一下控制器，加上创建session的功能。
 
-user.php
+漏洞利用修改cookie为PHPSESSID=aaaabbbbccccddddeeeeffff1234.php，文件名长度必须等于32位
 
-只要让count属性等于long类型的最大值9223372036854775806即可绕过
-12345678&lt;?phpclass User&#123;	public $count=9223372036854775806;
+写入成功
+1http://l
         </a>
       </p>
 
@@ -209,8 +208,8 @@ user.php
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-08 09:26" pubdate>
-              2021-06-08
+            <time datetime="2021-04-10 14:17" pubdate>
+              2021-04-10
             </time>
           </div>
         
@@ -226,25 +225,22 @@ user.php
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/05/30/Shiro-550%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          Shiro-550反序列化漏洞分析
+        <a href="/2021/04/05/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" target="_self">
+          无列名注入总结
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/05/30/Shiro-550%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
+        <a href="/2021/04/05/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" target="_self">
           
           
             
           
-          加密过程org.apache.shiro.mgt.AbstractRememberMeManager
-首先找到硬编码key的位置
-1private static final byte[] DEFAULT_CIPHER_KEY_BYTES = Base64.decode(&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;);
-
-
-登陆，记得勾选Remember Me
-
-org.
+          前言在information_schema被过滤时，无法获取到表名和列名，这时候就需要通过无列名注入来获取信息。
+获取表名无列名注入也是需要表名的，可以先通过InnoDb和sys来获取表名
+InnoDb要求：Mysql版本&gt;5.6
+inndb中有innodb_index_stats和innodb_table_stats两张表，这两张表中存储了数据库和其中的数据表的信息，但是没有存储列名。
+查
         </a>
       </p>
 
@@ -252,8 +248,8 @@ org.
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-05-30 15:20" pubdate>
-              2021-05-30
+            <time datetime="2021-04-05 13:38" pubdate>
+              2021-04-05
             </time>
           </div>
         
@@ -269,30 +265,22 @@ org.
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/05/28/ESP%E5%AE%9A%E5%BE%8B%E5%92%8C%E5%8A%A8%E6%80%81%E8%84%B1UPX%E5%A3%B3/" target="_self">
-          ESP定律和动态脱UPX壳
+        <a href="/2021/04/04/ThinkPHP-v3-2-%EF%BC%88SQL%E6%B3%A8%E5%85%A5-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%EF%BC%89%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%A4%8D%E7%8E%B0/" target="_self">
+          ThinkPHP v3.2.* （SQL注入&amp;文件读取）反序列化复现
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/05/28/ESP%E5%AE%9A%E5%BE%8B%E5%92%8C%E5%8A%A8%E6%80%81%E8%84%B1UPX%E5%A3%B3/" target="_self">
+        <a href="/2021/04/04/ThinkPHP-v3-2-%EF%BC%88SQL%E6%B3%A8%E5%85%A5-%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%EF%BC%89%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%A4%8D%E7%8E%B0/" target="_self">
           
           
             
           
-          关于ESP定律简单来说，给栈顶ESP下硬件断点，ESP被拿走的时候就会停住，而在ESP上面push值或者pop值都不会停住
-12S:Stack栈P:Pointer指针
+          参考
+https://mp.weixin.qq.com/s?__biz=MzU2NDc2NDYwMA==&amp;mid=2247484711&amp;idx=1&amp;sn=0dd0f72b376b4922e4ae5b8bd614ae89&amp;scene=21#wechat_redirect
+搭建环境框架会自动生成一个默认控制器，在默认控制器下添加一个测试用的Action即可。
 
-
-
-注意栈底部大上面小，SP是栈顶指针，一有羽毛球进去就会减少4个大小
-
-先放了一个球进栈，ESP值由开始的0012FFC4减去4变成了0012FFC0
-
-再放一个ESP又减去4
-
-所有的步骤执行完，ESP变成了0012FFA4
-
+分析1.
         </a>
       </p>
 
@@ -300,8 +288,8 @@ org.
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-05-28 12:36" pubdate>
-              2021-05-28
+            <time datetime="2021-04-04 22:02" pubdate>
+              2021-04-04
             </time>
           </div>
         
@@ -317,21 +305,25 @@ org.
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/05/23/Servlet%E5%AD%A6%E4%B9%A0/" target="_self">
-          Servlet学习
+        <a href="/2021/03/11/msf%E5%92%8Ccs%E8%81%94%E5%8A%A8/" target="_self">
+          msf和cs联动
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/05/23/Servlet%E5%AD%A6%E4%B9%A0/" target="_self">
+        <a href="/2021/03/11/msf%E5%92%8Ccs%E8%81%94%E5%8A%A8/" target="_self">
           
           
             
           
-          概念Servlet
-1Java  Servlet（Java服务器小程序）是一个基于Java技术的Web组件，运行在服务器端，它由Servlet容器所管理，用于生成动态的内容。  Servlet是平台独立的Java类，编写一个Servlet，实际上就是按照Servlet规范编写一个Java类。Servlet被编译为平台独立 的字节码，可以被动态地加载到支持Java技术的Web服务器中运行。
+          cs派生给msf配置好listener，选择Foreign HTTP
 
-Ser
+使用cs的spawn功能
+
+msf设置payload为/windows/meterpreter/reverse_http，ip和端口与listener中的一致，不要使用64位的payload，会出现问题。这样即可接收到派生过来的session
+
+msf派生给cs只有meterpreter类型的session才能派生给cs
+使用
         </a>
       </p>
 
@@ -339,8 +331,8 @@ Ser
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-05-23 14:38" pubdate>
-              2021-05-23
+            <time datetime="2021-03-11 10:43" pubdate>
+              2021-03-11
             </time>
           </div>
         
@@ -356,22 +348,20 @@ Ser
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" target="_self">
-          CISCN2021 web部分题解
+        <a href="/2021/03/06/python%E7%BC%96%E5%86%99Redis%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B%E5%92%8C%E5%88%A9%E7%94%A8%E8%84%9A%E6%9C%AC/" target="_self">
+          python编写Redis漏洞检测和利用脚本
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" target="_self">
+        <a href="/2021/03/06/python%E7%BC%96%E5%86%99Redis%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B%E5%92%8C%E5%88%A9%E7%94%A8%E8%84%9A%E6%9C%AC/" target="_self">
           
           
             
           
-          easy_sql利用join进行无列名注入，先得到第一个列名为id
-1uname=1mm1&#x27;) and updatexml(1,concat(0x7e,(select * from(select * from flag a join (select * from flag)b)c)),0)%23&amp;passwd=11&amp;Submit=%E7%99%BB%E5%BD%95
+          python编写Redis漏洞检测和利用脚本环境配置1234# wget http://download.redis.io/releases/redis-6.0.8.tar.gz# tar xzf redis-6.0.8.tar.gz# cd redis-6.0.8# make
 
-
-
+执行完 make 命令后，redis-6.0.8 的 src 目录下会出现编译后的 redis 服务程序 redis-
         </a>
       </p>
 
@@ -379,8 +369,8 @@ Ser
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-05-18 14:04" pubdate>
-              2021-05-18
+            <time datetime="2021-03-06 11:15" pubdate>
+              2021-03-06
             </time>
           </div>
         
@@ -396,23 +386,19 @@ Ser
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/05/14/MRCTF2020-EzpopRevenge/" target="_self">
-          MRCTF2020-EzpopRevenge
+        <a href="/2021/03/04/%E5%9F%BA%E4%BA%8ECOM%E7%BB%84%E4%BB%B6%E6%8E%A5%E5%8F%A3%E7%9A%84BypassUAC/" target="_self">
+          基于COM组件接口的BypassUAC
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/05/14/MRCTF2020-EzpopRevenge/" target="_self">
+        <a href="/2021/03/04/%E5%9F%BA%E4%BA%8ECOM%E7%BB%84%E4%BB%B6%E6%8E%A5%E5%8F%A3%E7%9A%84BypassUAC/" target="_self">
           
           
             
           
-          一道挺有意思的ssrf+crlf+反序列化题
-下载www.zip
-/flag.php
-看到$_SERVER[&#39;REMOTE_ADDR&#39;]===&quot;127.0.0.1&quot;)就知道和ssrf有关。满足条件后，flag会被保存到$_SESSION[&#39;flag&#39;]中
-
-反序列化点/usr/plugins/HelloWorld/Plugin/Plugin.ph
+          COM提升名称（COM Elevation Moniker）技术允许运行在用户账户控制下的应用程序用提升权限的方法来激活COM类，以此提升COM接口权限。其中，ICMLuaUtil接口提供了ShellExec方法执行命令，创建指定进程。
+原理是利用COM提升名称以高权限调用ICMLuaUtil接口，从而以高权限执行ShellExec创建指定进程。使用权限提升COM类的程序必须通过调用CoCreat
         </a>
       </p>
 
@@ -420,8 +406,8 @@ Ser
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-05-14 18:17" pubdate>
-              2021-05-14
+            <time datetime="2021-03-04 20:55" pubdate>
+              2021-03-04
             </time>
           </div>
         
@@ -437,20 +423,25 @@ Ser
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/30/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-CommonsCollections3-1/" target="_self">
-          java反序列化学习-CommonsCollections3.1
+        <a href="/2021/03/03/typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%86%E6%9E%90/" target="_self">
+          typecho反序列化分析
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/30/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-CommonsCollections3-1/" target="_self">
+        <a href="/2021/03/03/typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%86%E6%9E%90/" target="_self">
           
           
             
           
-          commons-collections-3.1Java commons-collections是JDK 1.2中的一个主要新增部分。它添加了许多强大的数据结构，可以加速大多数重要Java应用程序的开发。从那时起，它已经成为Java中公认的集合处理标准。
-Commons Collections实现了一个TransformedMap类，该类是对Java标准数据结构Map接口的一个扩展
-该类可以在一个元
+          分析1.install.php
+install.php中存在unserialize函数，__typecho_config可控。值被作为参数传入类Typecho_Db
+
+2./var/Typecho/Cookie.php
+Typecho_Cookie::get方法从Cookie或者是POST数组中获取数据
+
+3./var/Typecho/Db.php
+跟进类Typecho_Db,传入的参数被作为字符
         </a>
       </p>
 
@@ -458,8 +449,8 @@ Commons Collections实现了一个TransformedMap类，该类是对Java标准数�
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-30 16:29" pubdate>
-              2021-04-30
+            <time datetime="2021-03-03 15:32" pubdate>
+              2021-03-03
             </time>
           </div>
         
@@ -475,20 +466,19 @@ Commons Collections实现了一个TransformedMap类，该类是对Java标准数�
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/" target="_self">
-          ssrf中gopher+redis的利用总结
+        <a href="/2021/03/01/%E9%80%9A%E8%BF%87%E6%B7%BB%E5%8A%A0%E5%90%AF%E5%8A%A8%E7%9B%AE%E5%BD%95%E5%92%8C%E5%92%8C%E4%BF%AE%E6%94%B9%E6%B3%A8%E5%86%8C%E8%A1%A8%E8%BF%9B%E8%A1%8C%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/" target="_self">
+          通过添加启动目录和和修改注册表进行权限维持
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/26/ssrf%E4%B8%ADgopher-redis%E7%9A%84%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93/" target="_self">
+        <a href="/2021/03/01/%E9%80%9A%E8%BF%87%E6%B7%BB%E5%8A%A0%E5%90%AF%E5%8A%A8%E7%9B%AE%E5%BD%95%E5%92%8C%E5%92%8C%E4%BF%AE%E6%94%B9%E6%B3%A8%E5%86%8C%E8%A1%A8%E8%BF%9B%E8%A1%8C%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81/" target="_self">
           
           
             
           
-          crontab只能在Centos上使用，原因：
-1.redis默认写入文件的权限为644，而ubuntu要求执行定时任务文件/var/spool/cron/crontabs/&lt;username&gt;权限必须是600，否则会报错。而Centos的定时任务文件/var/spool/cron/&lt;username&gt;权限644也可执行。
-2.因为redis保存RDB会存在乱码，在Ubun
+          添加启动目录由于启动目录不固定，需要先通过SHGetSpecialFolderPath获取启动路径，再CopyFile把要自启动的程序复制过去
+12345678910111213141516171819202122#include &lt;iostream&gt;#include &lt;Windows.h&gt;#include &lt;shlobj_core.h&gt;int main()&#
         </a>
       </p>
 
@@ -496,8 +486,8 @@ Commons Collections实现了一个TransformedMap类，该类是对Java标准数�
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-26 20:28" pubdate>
-              2021-04-26
+            <time datetime="2021-03-01 21:10" pubdate>
+              2021-03-01
             </time>
           </div>
         
@@ -513,20 +503,20 @@ Commons Collections实现了一个TransformedMap类，该类是对Java标准数�
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/25/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
-          FastJson反序列化
+        <a href="/2021/02/28/%E4%BD%BF%E7%94%A8COM%E7%BB%84%E4%BB%B6%E5%88%9B%E5%BB%BA%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/" target="_self">
+          使用COM组件创建计划任务
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/25/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+        <a href="/2021/02/28/%E4%BD%BF%E7%94%A8COM%E7%BB%84%E4%BB%B6%E5%88%9B%E5%BB%BA%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/" target="_self">
           
           
             
           
-          Fastjson使用astjson是Alibaba开发的Java语言编写的高性能JSON库，用于将数据在JSON和Java  Object之间互相转换，提供两个主要接口JSON.toJSONString和JSON.parseObject/JSON.parse来分别实现序列化和反序列化操作。
-pom.xml设置
-12345&lt;dependency&gt;            &lt;group
+          Windows系统可以设置计划任务来指向一些定时任务。本书中计划任务的触发条件是在用户登陆时触发，执行启动指定路径程序的操作
+创建计划任务时涉及到COM组件接口的调用，要求管理员权限，程序逻辑概括为三个部分，分别是初始化操作、创建计划任务操作、删除计划任务操作。
+1.初始化操作由于使用COM组件，所以必须调用CoInitialize函数来初始化COM接口环境，这样才能使用COM接口函数。同时也要先
         </a>
       </p>
 
@@ -534,8 +524,8 @@ pom.xml设置
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-25 22:06" pubdate>
-              2021-04-25
+            <time datetime="2021-02-28 16:47" pubdate>
+              2021-02-28
             </time>
           </div>
         
@@ -551,19 +541,23 @@ pom.xml设置
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/24/jdk7u21%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
-          jdk7u21反序列化
+        <a href="/2021/02/27/uuid%E5%85%8D%E6%9D%80/" target="_self">
+          uuid免杀
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/04/24/jdk7u21%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+        <a href="/2021/02/27/uuid%E5%85%8D%E6%9D%80/" target="_self">
           
           
             
           
-          原理由javassist负责构建一个恶意类并得到字节码，然后向TemplatesImpl的_bytecodes属性赋值恶意类的字节码，字节码数组在被defineTransletClasses()中被实例化成恶意类，调用构造函数中的命令触发RCE，需要调用getOutputProperties()触发
-12345恶意类的父类必须为ABSTRACT_TRANSLET TemplatesImpl类的_b
+          原理分析UUID通用唯一标识符（universally unique identifier, UUID）是一个128位的用于在计算机系统中以识别信息的数目。在Windows中也有使用GUID来标识唯一对象
+将shellcode转换为uuid用msf生成shellcode
+1msfvenom -p windows/x64/exec CMD=&quot;calc.exe&quot; -f c
+
+
+16
         </a>
       </p>
 
@@ -571,8 +565,8 @@ pom.xml设置
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-24 11:01" pubdate>
-              2021-04-24
+            <time datetime="2021-02-27 13:45" pubdate>
+              2021-02-27
             </time>
           </div>
         
@@ -586,7 +580,7 @@ pom.xml设置
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/5/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/#board">7</a><a class="page-number" href="/page/8/#board">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#board">10</a><a class="extend next" rel="next" href="/page/7/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/5/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/#board">7</a><a class="page-number" href="/page/8/#board">8</a><a class="extend next" rel="next" href="/page/7/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
