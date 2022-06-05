@@ -182,6 +182,43 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/06/05/CVE-2022-26923-ADCS%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
+          CVE-2022-26923 ADCS权限提升漏洞复现
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/06/05/CVE-2022-26923-ADCS%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_self">
+          
+          
+            
+          
+          原理由于Windows并未对dNSHostName做唯一性判断，攻击者获取到域内低权限账户后可以利用该漏洞向证书服务请求颁发和其他账户关联的证书，并向域控发起身份验证，从而获取到域管理员权限，通过域管理员权限可以控制域里面的所有机器。
+只有dNSHostName属性影响ADCS服务器生成对应机器的证书。并且在域内dNsHostName属性不具有唯一性，因此可以利用普通域用户创建机器用户，然后修改该
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-06-05 15:06" pubdate>
+              2022-06-05
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/06/02/ADCS%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB%E5%A4%8D%E7%8E%B0/" target="_self">
           ADCS中继攻击复现
         </a>
@@ -547,45 +584,6 @@ https://github.com/SNCKER/CVE-2021-3129
             <i class="iconfont icon-date"></i>
             <time datetime="2021-09-21 21:12" pubdate>
               2021-09-21
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/01/ofcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          ofcms漏洞分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/09/01/ofcms%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_self">
-          
-          
-            
-          
-          文件上传漏洞复现登录后台
-
-抓包并按如下方式修改POST数据包，file_content是jsp马的内容
-123456789101112131415161718POST /ofcms_admin_war/admin/cms/template/save.json HTTP/1.1Host: localhost:8080User-Agent: Mozilla/5.0 (Windows NT 10.0;
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-01 19:27" pubdate>
-              2021-09-01
             </time>
           </div>
         
